@@ -1,0 +1,34 @@
+to-report random-religion   report one-of ["a" "b" "c" "d"] end
+to-report random-birth-year report 0 - random 80            end
+
+to-report propensity-factors
+  report (list
+    (list 1 [ -> random-float 1 ]) ; stochastic factor
+    (list 1 [ -> ifelse-value (religion = "a") [ 1 ] [ 0 ] ])
+  )
+end
+
+to-report risk-factors
+  report (list
+    (list 1 [ -> propensity ])
+    (list 1 [ -> 1 / ((abs (age - 18)) + 1) ])
+  )
+end
+
+to-report location-definitions
+  report (list
+    (list 1 "mosque"           "house bungalow"  red)
+    (list 1 "school"           "house ranch"     brown)
+    (list 1 "hospital"         "house colonial"  white)
+    (list 1 "community center" "house two story" cyan)
+    (list 2 "cafe"             "building store"  orange)
+    (list 5 "workplace"        "house"           blue)
+    (list 2 "parc"             "square"          (green - 2))
+  )
+end
+
+to-report job-definitions
+  report (list
+    ; location-type num-jobs start-time
+    )
+end
