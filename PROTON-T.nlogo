@@ -2,6 +2,11 @@ __includes [ "setup.nls" ]
 
 extensions [ table ]
 
+breed [ locations location ]
+locations-own [
+  location-type
+]
+
 breed [ citizens citizen ]
 citizens-own [
   birth-year
@@ -9,22 +14,39 @@ citizens-own [
   propensity
   residence
   employer
-]
-
-breed [ locations location ]
-locations-own [
-  location-type
+  schedule
+  current-activity
+  countdown
 ]
 
 to setup
   clear-all
+  reset-ticks ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
   setup-communities
-  reset-ticks
+  setup-jobs
+  setup-education
 end
 
 to go
-  ask citizens [ rt 30 lt 30 fd 1 ]
+  ask citizens [
+    if table:has-key? schedule current-time [
+      let activity-def table:get schedule current-time
+      set countdown        item 0 activity-def
+      move-to              item 1 activity-def
+      set current-activity item 2 activity-def
+    ]
+    if countdown <= 0 [
+      set current-activity nobody
+    ]
+    ifelse is-anonymous-command? current-activity [
+      run current-activity
+    ] [
+      ; free time!
+      ; TODO: select free time activity
+    ]
+    set countdown countdown - 1
+  ]
   tick
 end
 
@@ -35,7 +57,7 @@ to setup-communities
   let communities make-community-list
 
   (foreach communities range length communities [ [community-patches i] ->
-    ask community-patches [ set pcolor 1 + ((i mod 2)) + random-float 0.5 ]
+    ask community-patches [ set pcolor 1 + i mod 2 + random-float 0.5 ]
     setup-locations community-patches
     setup-citizens community-patches with [ not location-here? ]
   ])
@@ -60,11 +82,45 @@ end
 to setup-citizens [target-patches]
   create-citizens citizens-per-community [
     move-to one-of target-patches
-    set residence patch-here
-    set color 39 - random-float 3
-    set birth-year random-birth-year
-    set religion random-religion
-    set propensity sum-factors propensity-factors
+    set residence        patch-here
+    set color            39 - random-float 3
+    set birth-year       random-birth-year
+    set religion         random-religion
+    set propensity       sum-factors propensity-factors
+    set employer         nobody
+    set schedule         table:from-list (list (list 0 (list 8 residence [ -> sleep ])))
+    set current-activity nobody ; used to indicate "none"
+    set countdown        0
+  ]
+end
+
+to setup-jobs
+  ask locations [
+    foreach job-definitions [ def ->
+      if item 0 def = location-type [
+        ;location-type num-jobs start-time duration
+        let num-jobs   item 1 def
+        let start-time item 2 def
+        let duration   item 3 def
+        let activity   item 4 def
+        repeat num-jobs [
+          ask one-of citizens with [ age >= minimum-working-age and employer = nobody ] [
+            ; TODO: take distance into account
+            set employer myself
+            table:put schedule start-time (list duration employer activity)
+          ]
+        ]
+      ]
+    ]
+  ]
+end
+
+to setup-education
+  ; TODO: see if there is a way to do this without hardcoding everything
+  let schools locations with [ location-type = "school" ]
+  ask citizens with [ age >= school-starting-age and age <= school-finishing-age ] [
+    let target-school min-one-of schools [ distance myself ]
+    table:put schedule 8 (list 8 target-school [ -> study ])
   ]
 end
 
@@ -109,6 +165,13 @@ to-report sum-factors [ factors ]
   report sum map [ pair ->
     (first pair / sum-of-weights) * runresult last pair
   ] factors
+end
+
+to sleep
+  ; do nothing
+end
+
+to study
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -162,8 +225,8 @@ CHOOSER
 60
 num-communities
 num-communities
-9 25
-0
+1 9 25
+1
 
 SLIDER
 10
@@ -250,21 +313,6 @@ NIL
 NIL
 NIL
 1
-
-SLIDER
-10
-145
-290
-178
-walking-speed
-walking-speed
-0
-10
-5.0
-1
-1
-patches/tick
-HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

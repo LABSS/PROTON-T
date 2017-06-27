@@ -29,6 +29,16 @@ end
 
 to-report job-definitions
   report (list
-    ; location-type num-jobs start-time
-    )
+    ;     location-type num-jobs start-time duration activity
+    (list "workplace"   50       8          8        [ -> work ])
+    (list "cafe"         1       8          8        [ -> work ])
+    (list "cafe"         1      16          8        [ -> work ])
+  )
+end
+
+to-report minimum-working-age  report 18 end
+to-report school-starting-age  report  5 end
+to-report school-finishing-age report 18 end
+
+to work ; generic work activity
 end
