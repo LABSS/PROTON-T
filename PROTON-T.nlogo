@@ -21,23 +21,18 @@ citizens-own [
   countdown
 ]
 
-breed [ activities activity ]
-activities-own [
+undirected-link-breed [ mandatory-activity-links mandatory-activity-link ]
+mandatory-activity-links-own [
   is-job?
-  location-type
+  start-time
   duration
   task
 ]
 
-undirected-link-breed [ mandatory-activity-links mandatory-activity-link ]
-mandatory-activity-links-own [
-  start-time
-  activity-location
-]
-
 undirected-link-breed [ free-time-activity-links free-time-activity-link ]
 free-time-activity-links-own [
-  activity-location
+  duration
+  task
 ]
 
 to setup
@@ -48,16 +43,16 @@ to setup
   setup-jobs
   setup-mandatory-activities
   setup-free-time-activities
+  ; TODO: write some test code to make sure the schedule is consistent.
 end
 
 to go
   ask citizens [
     let new-activity one-of my-mandatory-activity-links with [ start-time = current-time ]
     if is-link? new-activity [
-      move-to [ activity-location ] of new-activity
-      let activity-definition [ other-end ] of new-activity
-      set countdown [ duration ] of activity-definition
-      set current-task [ task ] of activity-definition
+      move-to [ other-end ] of new-activity
+      set countdown [ duration ] of new-activity
+      set current-task [ task ] of new-activity
     ]
     if countdown <= 0 [
       set current-task nobody
@@ -149,28 +144,22 @@ end
 
 to setup-jobs
   foreach job-definitions [ def ->
-    create-activities 1 [
-      let the-activity   self
-      let num-jobs       item 0 def
-      let the-start-time item 1 def
-      set duration       item 2 def
-      set location-type  item 3 def
-      set task           item 4 def
-      set is-job?        true
-      set hidden?        true
-      ask locations with [ location-type = [ location-type ] of myself ] [
-        let the-location self
-        repeat num-jobs [
-          ask one-of citizens with [
-            ; TODO: take distance into account
-            age >= minimum-working-age and
-            not any? my-mandatory-activity-links with [ [ is-job? ] of other-end ]
-          ] [
-            create-mandatory-activity-link-with the-activity [
-              set start-time the-start-time
-              set activity-location the-location
-              set hidden? true
-            ]
+    let num-jobs item 0 def
+    let the-location-type item 3 def ; TODO: reorder?
+    ask locations with [ location-type = the-location-type ] [
+      let the-location self
+      repeat num-jobs [
+        ask one-of citizens with [
+          ; TODO: take distance into account
+          age >= minimum-working-age and
+          not any? my-mandatory-activity-links with [ is-job? ]
+        ] [
+          create-mandatory-activity-link-with the-location [
+            set start-time     item 1 def
+            set duration       item 2 def
+            set task           item 4 def
+            set is-job?        true
+            set hidden?        true
           ]
         ]
       ]
@@ -180,26 +169,20 @@ end
 
 to setup-mandatory-activities
   foreach mandatory-activities [ def ->
-    create-activities 1 [
-      let the-activity   self
-      let the-start-time item 0 def
-      set duration       item 1 def
-      set location-type  item 2 def
-      set task           item 3 def
-      let criteria       item 4 def
-      set is-job?        false
-      set hidden?        true
-      let get-location [ -> one-of locations-here ]
-      if location-type != "residence" [
-        let possible-locations locations with [ location-type = [ location-type ] of myself ]
-        set get-location [ -> min-one-of possible-locations [ distance myself ] ]
-      ]
-      ask citizens with [ (runresult criteria self) ] [
-        create-mandatory-activity-link-with the-activity [
-          set start-time the-start-time
-          set activity-location [ runresult get-location ] of myself
-          set hidden? true
-        ]
+    let target-location-type item 2 def
+    let criteria item 4 def
+    let get-location [ -> one-of locations-here ]
+    if target-location-type != "residence" [
+      let possible-locations locations with [ location-type = target-location-type ]
+      set get-location [ -> min-one-of possible-locations [ distance myself ] ]
+    ]
+    ask citizens with [ (runresult criteria self) ] [
+      create-mandatory-activity-link-with runresult get-location [
+        set start-time item 0 def
+        set duration   item 1 def
+        set task       item 3 def
+        set is-job?    false
+        set hidden?    true
       ]
     ]
   ]
@@ -261,11 +244,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1028
-739
+1088
+799
 -1
 -1
-8.0
+26.0
 1
 10
 1
@@ -276,9 +259,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-89
+29
 0
-89
+29
 1
 1
 1
@@ -310,7 +293,7 @@ CHOOSER
 num-communities
 num-communities
 1 9 25
-1
+0
 
 SLIDER
 10
@@ -424,7 +407,7 @@ activity-radius
 activity-radius
 0
 100
-52.0
+10.0
 1
 1
 NIL

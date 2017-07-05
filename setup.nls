@@ -57,7 +57,8 @@ to-report free-time-activities
   )
 end
 
-to-report minimum-working-age  report 18 end ; define with job?
+to-report minimum-working-age report 19 end ; define with job?
+; TODO: make sure work does not conflict with school!
 
 to work ; generic work activity
 end
