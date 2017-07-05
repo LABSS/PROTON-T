@@ -1,10 +1,14 @@
 __includes [ "setup.nls" ]
 
-extensions [ table ]
+extensions [ table profiler rnd ]
+
+patches-own [
+  location-here?
+]
 
 breed [ locations location ]
 locations-own [
-  location-type
+  location-type ; TODO: we could merge `shape` and `location-type`, save memory
 ]
 
 breed [ citizens citizen ]
@@ -12,11 +16,28 @@ citizens-own [
   birth-year
   religion
   propensity
-  residence
-  employer
-  schedule
-  current-activity
+  radicalization
+  current-task
   countdown
+]
+
+breed [ activities activity ]
+activities-own [
+  is-job?
+  location-type
+  duration
+  task
+]
+
+undirected-link-breed [ mandatory-activity-links mandatory-activity-link ]
+mandatory-activity-links-own [
+  start-time
+  activity-location
+]
+
+undirected-link-breed [ free-time-activity-links free-time-activity-link ]
+free-time-activity-links-own [
+  activity-location
 ]
 
 to setup
@@ -25,22 +46,24 @@ to setup
   set-default-shape citizens "person"
   setup-communities
   setup-jobs
-  setup-education
+  setup-mandatory-activities
+  setup-free-time-activities
 end
 
 to go
   ask citizens [
-    if table:has-key? schedule current-time [
-      let activity-def table:get schedule current-time
-      set countdown        item 0 activity-def
-      move-to              item 1 activity-def
-      set current-activity item 2 activity-def
+    let new-activity one-of my-mandatory-activity-links with [ start-time = current-time ]
+    if is-link? new-activity [
+      move-to [ activity-location ] of new-activity
+      let activity-definition [ other-end ] of new-activity
+      set countdown [ duration ] of activity-definition
+      set current-task [ task ] of activity-definition
     ]
     if countdown <= 0 [
-      set current-activity nobody
+      set current-task nobody
     ]
-    ifelse is-anonymous-command? current-activity [
-      run current-activity
+    ifelse is-anonymous-command? current-task [
+      run current-task
     ] [
       ; free time!
       ; TODO: select free time activity
@@ -53,61 +76,101 @@ end
 to setup-communities
   let world-side community-side-length * sqrt num-communities
   resize-world 0 (world-side - 1) 0 (world-side - 1)
+  ask patches [ set location-here? false ]
   set-patch-size floor (800 / world-side)
   let communities make-community-list
 
   (foreach communities range length communities [ [community-patches i] ->
     ask community-patches [ set pcolor 1 + i mod 2 + random-float 0.5 ]
     setup-locations community-patches
-    setup-citizens community-patches with [ not location-here? ]
+    let residences setup-residences community-patches with [ not location-here? ]
+    setup-citizens residences
   ])
 
 end
 
 to setup-locations [target-patches]
+  set target-patches target-patches with [ count neighbors = 8 ]
+  let center patchset-center target-patches
   foreach location-definitions [ definition ->
-    create-locations item 0 definition [
-      set size 3
-      set location-type item 1 definition
-      set shape         item 2 definition
-      set color         item 3 definition
-      move-to one-of target-patches with [
-        count neighbors = 8 and
-        not any? neighbors with [ location-here? ]
+    repeat item 0 definition [
+      ; location need to be created 1 by 1 so `territory` is initialized
+      create-locations 1 [
+        set size 3
+        set location-type item 1 definition
+        set shape         item 2 definition
+        set color         item 3 definition
+        let candidates target-patches with [
+          not any? neighbors with [ location-here? ]
+        ]
+        move-to rnd:weighted-one-of candidates [ 1 / (1 + distance center) ]
+        ask patches at-points moore-points ((size - 1) / 2) [
+          set location-here? true
+        ]
       ]
     ]
   ]
 end
 
-to setup-citizens [target-patches]
+to-report patchset-center [patchset]
+  let min-x min [ pxcor ] of patchset
+  let max-x max [ pxcor ] of patchset
+  let min-y min [ pycor ] of patchset
+  let max-y max [ pycor ] of patchset
+  report patch (min-x + ((max-x - min-x) / 2)) ((min-y + ((max-y - min-y) / 2)))
+end
+
+to-report setup-residences [target-patches]
+  let residences []
+  ask target-patches [
+    sprout-locations 1 [
+      set location-type  "residence"
+      set shape          "house"
+      set color          pcolor + 1
+      set location-here? true
+      set residences lput self residences
+    ]
+  ]
+  report turtle-set residences
+end
+
+to setup-citizens [residences]
   create-citizens citizens-per-community [
-    move-to one-of target-patches
-    set residence        patch-here
     set color            39 - random-float 3
     set birth-year       random-birth-year
     set religion         random-religion
+    set radicalization   random-radicalization
     set propensity       sum-factors propensity-factors
-    set employer         nobody
-    set schedule         table:from-list (list (list 0 (list 8 residence [ -> sleep ])))
-    set current-activity nobody ; used to indicate "none"
+    set current-task     nobody ; used to indicate "none"
     set countdown        0
+    move-to one-of residences ; each citizen's residence will be defined by "where they sleep"
   ]
 end
 
 to setup-jobs
-  ask locations [
-    foreach job-definitions [ def ->
-      if item 0 def = location-type [
-        ;location-type num-jobs start-time duration
-        let num-jobs   item 1 def
-        let start-time item 2 def
-        let duration   item 3 def
-        let activity   item 4 def
+  foreach job-definitions [ def ->
+    create-activities 1 [
+      let the-activity   self
+      let num-jobs       item 0 def
+      let the-start-time item 1 def
+      set duration       item 2 def
+      set location-type  item 3 def
+      set task           item 4 def
+      set is-job?        true
+      set hidden?        true
+      ask locations with [ location-type = [ location-type ] of myself ] [
+        let the-location self
         repeat num-jobs [
-          ask one-of citizens with [ age >= minimum-working-age and employer = nobody ] [
+          ask one-of citizens with [
             ; TODO: take distance into account
-            set employer myself
-            table:put schedule start-time (list duration employer activity)
+            age >= minimum-working-age and
+            not any? my-mandatory-activity-links with [ [ is-job? ] of other-end ]
+          ] [
+            create-mandatory-activity-link-with the-activity [
+              set start-time the-start-time
+              set activity-location the-location
+              set hidden? true
+            ]
           ]
         ]
       ]
@@ -115,29 +178,48 @@ to setup-jobs
   ]
 end
 
-to setup-education
-  ; TODO: see if there is a way to do this without hardcoding everything
-  let schools locations with [ location-type = "school" ]
-  ask citizens with [ age >= school-starting-age and age <= school-finishing-age ] [
-    let target-school min-one-of schools [ distance myself ]
-    table:put schedule 8 (list 8 target-school [ -> study ])
+to setup-mandatory-activities
+  foreach mandatory-activities [ def ->
+    create-activities 1 [
+      let the-activity   self
+      let the-start-time item 0 def
+      set duration       item 1 def
+      set location-type  item 2 def
+      set task           item 3 def
+      let criteria       item 4 def
+      set is-job?        false
+      set hidden?        true
+      let get-location [ -> one-of locations-here ]
+      if location-type != "residence" [
+        let possible-locations locations with [ location-type = [ location-type ] of myself ]
+        set get-location [ -> min-one-of possible-locations [ distance myself ] ]
+      ]
+      ask citizens with [ (runresult criteria self) ] [
+        create-mandatory-activity-link-with the-activity [
+          set start-time the-start-time
+          set activity-location [ runresult get-location ] of myself
+          set hidden? true
+        ]
+      ]
+    ]
   ]
 end
 
-to-report location-here? ; patch procedure
-  report any? locations with [ member? myself territory ]
-end
-
-to-report territory ; turtle procedure
-  report patches at-points moore-points [ (size - 1) / 2 ] of self
+to setup-free-time-activities
+  ask citizens [
+    ; look for possible free-time activities around mandatory activities
+  ]
 end
 
 to-report moore-points [ radius ]
+  ; TODO: extension candidate
   let r (range (- radius) (radius + 1))
   report reduce sentence map [ x -> map [ y -> list x y ] r ] r
 end
 
 to-report make-community-list
+  ; TODO: extension candidate? (in part, at least)
+  ; could potentially get rid of `table` extension
   let tbl table:make
   let n world-width / community-side-length
   foreach range n [ i -> foreach range n [ j -> table:put tbl i * 10 + j [] ] ]
@@ -151,6 +233,7 @@ to-report make-community-list
 end
 
 to-report intervals [ n the-range ]
+  ; TODO: extension candidate
   report n-values n [ i -> i * (the-range / n) ]
 end
 
@@ -161,6 +244,7 @@ to-report current-time   report ticks mod ticks-per-day      end
 to-report age            report current-year - birth-year    end
 
 to-report sum-factors [ factors ]
+  ; TODO: extension candidate?
   let sum-of-weights sum map first factors
   report sum map [ pair ->
     (first pair / sum-of-weights) * runresult last pair
@@ -305,6 +389,55 @@ BUTTON
 NIL
 go
 T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+20
+375
+140
+408
+profile 20
+setup                  ;; set up the model\nprofiler:start         ;; start profiling\nrepeat 20 [ go ]       ;; run something you want to measure\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+10
+145
+290
+178
+activity-radius
+activity-radius
+0
+100
+52.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+20
+410
+142
+443
+profile setup
+profiler:start         ;; start profiling\nsetup                  ;; set up the model\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
+NIL
 1
 T
 OBSERVER
@@ -505,6 +638,26 @@ Circle -7500403 true true 8 8 285
 Circle -16777216 true false 60 75 60
 Circle -16777216 true false 180 75 60
 Polygon -16777216 true false 150 168 90 184 62 210 47 232 67 244 90 220 109 205 150 198 192 205 210 220 227 242 251 229 236 206 212 183
+
+factory
+false
+0
+Rectangle -7500403 true true 76 194 285 270
+Rectangle -7500403 true true 36 95 59 231
+Rectangle -16777216 true false 90 210 270 240
+Line -7500403 true 90 195 90 255
+Line -7500403 true 120 195 120 255
+Line -7500403 true 150 195 150 240
+Line -7500403 true 180 195 180 255
+Line -7500403 true 210 210 210 240
+Line -7500403 true 240 210 240 240
+Line -7500403 true 90 225 270 225
+Circle -1 true false 37 73 32
+Circle -1 true false 55 38 54
+Circle -1 true false 96 21 42
+Circle -1 true false 105 40 32
+Circle -1 true false 129 19 42
+Rectangle -7500403 true true 14 228 78 270
 
 fish
 false

@@ -1,7 +1,9 @@
-to-report random-religion   report one-of ["a" "b" "c" "d"] end
-to-report random-birth-year report 0 - random 80            end
+to-report random-religion       report one-of ["a" "b" "c" "d"] end
+to-report random-birth-year     report 0 - random 80            end
+to-report random-radicalization report random-float 1.0         end
 
 to-report propensity-factors
+  ; first item is weight, second item is value (between 0 and 1)
   report (list
     (list 1 [ -> random-float 1 ]) ; stochastic factor
     (list 1 [ -> ifelse-value (religion = "a") [ 1 ] [ 0 ] ])
@@ -10,35 +12,55 @@ end
 
 to-report risk-factors
   report (list
+    ; weight, value (between 0 and 1)
     (list 1 [ -> propensity ])
     (list 1 [ -> 1 / ((abs (age - 18)) + 1) ])
+    (list 1 [ -> radicalization ])
   )
 end
 
 to-report location-definitions
   report (list
+    ; number, name, shape, color
     (list 1 "mosque"           "house bungalow"  red)
     (list 1 "school"           "house ranch"     brown)
     (list 1 "hospital"         "house colonial"  white)
     (list 1 "community center" "house two story" cyan)
     (list 2 "cafe"             "building store"  orange)
-    (list 5 "workplace"        "house"           blue)
+    (list 5 "workplace"        "factory"         blue)
     (list 2 "parc"             "square"          (green - 2))
   )
 end
 
 to-report job-definitions
   report (list
-    ;     location-type num-jobs start-time duration activity
-    (list "workplace"   50       8          8        [ -> work ])
-    (list "cafe"         1       8          8        [ -> work ])
-    (list "cafe"         1      16          8        [ -> work ])
+    ;     num-jobs  start-time duration location-type activity
+    (list 50        8          8        "workplace"   [ -> work ])
+    (list  1        8          8        "cafe"        [ -> work ])
+    (list  1       16          8        "cafe"        [ -> work ])
   )
 end
 
-to-report minimum-working-age  report 18 end
-to-report school-starting-age  report  5 end
-to-report school-finishing-age report 18 end
+to-report mandatory-activities
+  report (list
+    ; start-time duration location-type activity criteria
+    (list 0 8 "residence" [ -> sleep ] [ -> true ])
+    (list 8 8 "school"    [ -> study ] [ a -> [ age >= 5 and age <= 18 ] of a ])
+  )
+end
+
+to-report free-time-activities
+  report (list
+    (list "home" [ -> socialize ])
+    (list "cafe" [ -> socialize ])
+    (list "park" [ -> socialize ])
+  )
+end
+
+to-report minimum-working-age  report 18 end ; define with job?
 
 to work ; generic work activity
+end
+
+to socialize
 end
