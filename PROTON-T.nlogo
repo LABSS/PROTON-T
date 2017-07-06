@@ -21,16 +21,16 @@ citizens-own [
   countdown
 ]
 
-undirected-link-breed [ mandatory-activity-links mandatory-activity-link ]
-mandatory-activity-links-own [
+undirected-link-breed [ mandatory-activities mandatory-activity ]
+mandatory-activities-own [
   is-job?
   start-time
   duration
   task
 ]
 
-undirected-link-breed [ free-time-activity-links free-time-activity-link ]
-free-time-activity-links-own [
+undirected-link-breed [ free-time-activities free-time-activity ]
+free-time-activities-own [
   duration
   task
 ]
@@ -48,7 +48,7 @@ end
 
 to go
   ask citizens [
-    let new-activity one-of my-mandatory-activity-links with [ start-time = current-time ]
+    let new-activity one-of my-mandatory-activities with [ start-time = current-time ]
     if is-link? new-activity [
       move-to [ other-end ] of new-activity
       set countdown [ duration ] of new-activity
@@ -108,6 +108,7 @@ to setup-locations [target-patches]
 end
 
 to-report patchset-center [patchset]
+  ; TODO: extension candidate
   let min-x min [ pxcor ] of patchset
   let max-x max [ pxcor ] of patchset
   let min-y min [ pycor ] of patchset
@@ -152,9 +153,9 @@ to setup-jobs
         ask one-of citizens with [
           ; TODO: take distance into account
           age >= minimum-working-age and
-          not any? my-mandatory-activity-links with [ is-job? ]
+          not any? my-mandatory-activities with [ is-job? ]
         ] [
-          create-mandatory-activity-link-with the-location [
+          create-mandatory-activity-with the-location [
             set start-time     item 1 def
             set duration       item 2 def
             set task           item 4 def
@@ -168,7 +169,7 @@ to setup-jobs
 end
 
 to setup-mandatory-activities
-  foreach mandatory-activities [ def ->
+  foreach mandatory-activity-definitions [ def ->
     let target-location-type item 2 def
     let criteria item 4 def
     let get-location [ -> one-of locations-here ]
@@ -177,7 +178,7 @@ to setup-mandatory-activities
       set get-location [ -> min-one-of possible-locations [ distance myself ] ]
     ]
     ask citizens with [ (runresult criteria self) ] [
-      create-mandatory-activity-link-with runresult get-location [
+      create-mandatory-activity-with runresult get-location [
         set start-time item 0 def
         set duration   item 1 def
         set task       item 3 def
@@ -191,6 +192,7 @@ end
 to setup-free-time-activities
   ask citizens [
     ; look for possible free-time activities around mandatory activities
+    show sort my-mandatory-activities
   ]
 end
 

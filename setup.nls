@@ -41,7 +41,7 @@ to-report job-definitions
   )
 end
 
-to-report mandatory-activities
+to-report mandatory-activity-definitions
   report (list
     ; start-time duration location-type activity criteria
     (list 0 8 "residence" [ -> sleep ] [ -> true ])
@@ -49,7 +49,7 @@ to-report mandatory-activities
   )
 end
 
-to-report free-time-activities
+to-report free-time-activity-definitions
   report (list
     (list "home" [ -> socialize ])
     (list "cafe" [ -> socialize ])
