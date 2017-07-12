@@ -190,9 +190,17 @@ to setup-mandatory-activities
 end
 
 to setup-free-time-activities
+  let home-activities filter  [ def -> first def  = "residence" ] free-time-activity-definitions
+  let other-activities filter [ def -> first def != "residence" ] free-time-activity-definitions
+
   ask citizens [
+    foreach home-activities [ def ->
+      ;create-free-time-activity-with
+    ]
+
     ; look for possible free-time activities around mandatory activities
     show sort my-mandatory-activities
+
   ]
 end
 

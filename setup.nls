@@ -51,7 +51,7 @@ end
 
 to-report free-time-activity-definitions
   report (list
-    (list "home" [ -> socialize ])
+    (list "residence" [ -> socialize ])
     (list "cafe" [ -> socialize ])
     (list "park" [ -> socialize ])
   )
