@@ -13,6 +13,7 @@ locations-own [
 
 breed [ citizens citizen ]
 citizens-own [
+  residence
   birth-year
   religion
   propensity
@@ -21,51 +22,60 @@ citizens-own [
   countdown
 ]
 
-undirected-link-breed [ mandatory-activities mandatory-activity ]
-mandatory-activities-own [
+breed [ activity-definitions activity-definition ]
+activity-definitions-own [
   is-job?
+  is-mandatory?
+  location-type
+  max-agents
   start-time
   duration
+  criteria
   task
 ]
 
-undirected-link-breed [ free-time-activities free-time-activity ]
-free-time-activities-own [
-  duration
-  task
-]
+undirected-link-breed [ activities activity ] ; citizen <---> location
+activities-own [ definition ]
 
 to setup
   clear-all
   reset-ticks ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
   setup-communities
-  setup-jobs
+  setup-activity-definitions
   setup-mandatory-activities
+  setup-jobs
   setup-free-time-activities
+  ask links [ set hidden? true ]
+  ask activity-definitions [ set hidden? true ]
+  display
   ; TODO: write some test code to make sure the schedule is consistent.
 end
 
 to go
   ask citizens [
-    let new-activity one-of my-mandatory-activities with [ start-time = current-time ]
-    if is-link? new-activity [
-      move-to [ other-end ] of new-activity
-      set countdown [ duration ] of new-activity
-      set current-task [ task ] of new-activity
+    let new-activity one-of my-activities with [
+      [ start-time = current-time and is-mandatory? ] of definition
+    ]
+    if new-activity != nobody [
+      start-activity new-activity
     ]
     if countdown <= 0 [
       set current-task nobody
     ]
-    ifelse is-anonymous-command? current-task [
-      run current-task
-    ] [
-      ; free time!
-      ; TODO: select free time activity
+    if current-task = nobody [ ; free time!
+      start-activity one-of my-activities with [ [ not is-mandatory? ] of definition ]
     ]
+    run current-task
     set countdown countdown - 1
   ]
   tick
+end
+
+to start-activity [ new-activity ]
+  move-to [ other-end ] of new-activity
+  set countdown [ duration ] of [ definition ] of new-activity
+  set current-task [ task ] of [ definition ] of new-activity
 end
 
 to setup-communities
@@ -74,27 +84,27 @@ to setup-communities
   ask patches [ set location-here? false ]
   set-patch-size floor (800 / world-side)
   let communities make-community-list
-
+  let colors map [ c -> c - 4 ] [blue yellow]
   (foreach communities range length communities [ [community-patches i] ->
-    ask community-patches [ set pcolor 1 + i mod 2 + random-float 0.5 ]
+    let c item (i mod 2) colors
+    ask community-patches [ set pcolor c + random-float 0.5 ]
     setup-locations community-patches
     let residences setup-residences community-patches with [ not location-here? ]
     setup-citizens residences
   ])
-
 end
 
 to setup-locations [target-patches]
   set target-patches target-patches with [ count neighbors = 8 ]
   let center patchset-center target-patches
-  foreach location-definitions [ definition ->
-    repeat item 0 definition [
-      ; location need to be created 1 by 1 so `territory` is initialized
+  foreach location-definitions [ def ->
+    repeat item 0 def [
+      ; locations need to be created one at a time so `territory` is initialized
       create-locations 1 [
         set size 3
-        set location-type item 1 definition
-        set shape         item 2 definition
-        set color         item 3 definition
+        set location-type item 1 def
+        set shape         item 2 def
+        set color         item 3 def
         let candidates target-patches with [
           not any? neighbors with [ location-here? ]
         ]
@@ -139,28 +149,64 @@ to setup-citizens [residences]
     set propensity       sum-factors propensity-factors
     set current-task     nobody ; used to indicate "none"
     set countdown        0
-    move-to one-of residences ; each citizen's residence will be defined by "where they sleep"
+    set residence one-of residences
+    move-to residence
+  ]
+end
+
+to setup-activity-definitions
+  foreach job-definition-list [ def ->
+    create-activity-definitions 1 [
+      set is-job?       true
+      set is-mandatory? true
+      set max-agents    item 0 def
+      set start-time    item 1 def
+      set duration      item 2 def
+      set location-type item 3 def
+      set task          item 4 def
+      set criteria      item 5 def
+    ]
+  ]
+  foreach mandatory-activity-definition-list [ def ->
+    create-activity-definitions 1 [
+      set is-job?       false
+      set is-mandatory? true
+      set max-agents    nobody
+      set start-time    item 0 def
+      set duration      item 1 def
+      set location-type item 2 def
+      set task          item 3 def
+      set criteria      item 4 def
+    ]
+  ]
+  foreach free-time-activity-definition-list [ def ->
+    create-activity-definitions 1 [
+      set is-job?       false
+      set is-mandatory? false
+      set max-agents    nobody
+      set start-time    nobody
+      set duration      1
+      set location-type item 0 def
+      set task          item 1 def
+      set criteria      [ -> true ]
+    ]
   ]
 end
 
 to setup-jobs
-  foreach job-definitions [ def ->
-    let num-jobs item 0 def
-    let the-location-type item 3 def ; TODO: reorder?
-    ask locations with [ location-type = the-location-type ] [
+  ask activity-definitions with [ is-job? ] [
+    let the-criteria criteria
+    let the-definition self
+    ask locations with [ location-type = [ location-type ] of the-definition ] [
       let the-location self
-      repeat num-jobs [
+      repeat [ max-agents ] of the-definition [
         ask one-of citizens with [
           ; TODO: take distance into account
-          age >= minimum-working-age and
-          not any? my-mandatory-activities with [ is-job? ]
+          (runresult the-criteria self) and
+          not any? my-activities with [ [ is-job? ] of definition ] ; TODO this could be a schedule check instead
         ] [
-          create-mandatory-activity-with the-location [
-            set start-time     item 1 def
-            set duration       item 2 def
-            set task           item 4 def
-            set is-job?        true
-            set hidden?        true
+          create-activity-with the-location [
+            set definition the-definition
           ]
         ]
       ]
@@ -169,38 +215,40 @@ to setup-jobs
 end
 
 to setup-mandatory-activities
-  foreach mandatory-activity-definitions [ def ->
-    let target-location-type item 2 def
-    let criteria item 4 def
-    let get-location [ -> one-of locations-here ]
-    if target-location-type != "residence" [
-      let possible-locations locations with [ location-type = target-location-type ]
+  ask activity-definitions with [ is-mandatory? and not is-job? ] [
+    let the-definition self
+    let get-location [ -> residence ]
+    if location-type != "residence" [
+      let possible-locations locations with [ location-type = [ location-type ] of the-definition ]
       set get-location [ -> min-one-of possible-locations [ distance myself ] ]
     ]
-    ask citizens with [ (runresult criteria self) ] [
-      create-mandatory-activity-with runresult get-location [
-        set start-time item 0 def
-        set duration   item 1 def
-        set task       item 3 def
-        set is-job?    false
-        set hidden?    true
+    ask citizens with [ (runresult ([ criteria ] of the-definition) self) ] [
+      create-activity-with runresult get-location [
+        set definition the-definition
       ]
     ]
   ]
 end
 
 to setup-free-time-activities
-  let home-activities filter  [ def -> first def  = "residence" ] free-time-activity-definitions
-  let other-activities filter [ def -> first def != "residence" ] free-time-activity-definitions
-
   ask citizens [
-    foreach home-activities [ def ->
-      ;create-free-time-activity-with
-    ]
-
+    let the-citizen self
     ; look for possible free-time activities around mandatory activities
-    show sort my-mandatory-activities
-
+    let mandatory-locations [ other-end ] of my-activities with [ [ is-mandatory? ] of definition ]
+    let nearby-locations (turtle-set
+      residence
+      locations in-radius activity-radius with [ location-type != "residence" ]
+    )
+    ask activity-definitions with [ not is-mandatory? and (runresult criteria the-citizen) ] [
+      let the-definition self
+      let the-location-type location-type
+      ask the-citizen [
+        let possible-locations nearby-locations with [ location-type = the-location-type ]
+        create-activities-with possible-locations [
+          set definition the-definition
+        ]
+      ]
+    ]
   ]
 end
 
@@ -254,11 +302,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1088
-799
+1028
+739
 -1
 -1
-26.0
+8.0
 1
 10
 1
@@ -269,9 +317,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-29
+89
 0
-29
+89
 1
 1
 1
@@ -303,7 +351,7 @@ CHOOSER
 num-communities
 num-communities
 1 9 25
-0
+1
 
 SLIDER
 10

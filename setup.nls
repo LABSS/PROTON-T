@@ -28,20 +28,20 @@ to-report location-definitions
     (list 1 "community center" "house two story" cyan)
     (list 2 "cafe"             "building store"  orange)
     (list 5 "workplace"        "factory"         blue)
-    (list 2 "parc"             "square"          (green - 2))
+    (list 2 "park"             "square"          (green - 2))
   )
 end
 
-to-report job-definitions
+to-report job-definition-list
   report (list
     ;     num-jobs  start-time duration location-type activity
-    (list 50        8          8        "workplace"   [ -> work ])
-    (list  1        8          8        "cafe"        [ -> work ])
-    (list  1       16          8        "cafe"        [ -> work ])
+    (list 50        8          8        "workplace"   [ -> work ] [ a -> age > 18 ])
+    (list  1        8          8        "cafe"        [ -> work ] [ a -> age > 18 ])
+    (list  1       16          8        "cafe"        [ -> work ] [ a -> age > 18 ])
   )
 end
 
-to-report mandatory-activity-definitions
+to-report mandatory-activity-definition-list
   report (list
     ; start-time duration location-type activity criteria
     (list 0 8 "residence" [ -> sleep ] [ -> true ])
@@ -49,16 +49,13 @@ to-report mandatory-activity-definitions
   )
 end
 
-to-report free-time-activity-definitions
+to-report free-time-activity-definition-list
   report (list
     (list "residence" [ -> socialize ])
     (list "cafe" [ -> socialize ])
     (list "park" [ -> socialize ])
   )
 end
-
-to-report minimum-working-age report 19 end ; define with job?
-; TODO: make sure work does not conflict with school!
 
 to work ; generic work activity
 end
