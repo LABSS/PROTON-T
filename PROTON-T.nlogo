@@ -3,7 +3,7 @@ __includes [ "setup.nls" ]
 extensions [ table profiler rnd ]
 
 patches-own [
-  location-here?
+  location-here
 ]
 
 breed [ locations location ]
@@ -34,8 +34,10 @@ activity-definitions-own [
   task
 ]
 
-undirected-link-breed [ activities activity ] ; citizen <---> location
+breed [ activities activity ]
 activities-own [ definition ]
+
+undirected-link-breed [ activity-links activity-link ] ; citizen <---> activity
 
 to setup
   clear-all
@@ -47,6 +49,7 @@ to setup
   setup-jobs
   setup-free-time-activities
   ask links [ set hidden? true ]
+  ask activities [ set hidden? true ]
   ask activity-definitions [ set hidden? true ]
   display
   ; TODO: write some test code to make sure the schedule is consistent.
@@ -54,7 +57,7 @@ end
 
 to go
   ask citizens [
-    let new-activity one-of my-activities with [
+    let new-activity one-of activity-link-neighbors with [
       [ start-time = current-time and is-mandatory? ] of definition
     ]
     if new-activity != nobody [
@@ -64,7 +67,7 @@ to go
       set current-task nobody
     ]
     if current-task = nobody [ ; free time!
-      start-activity one-of my-activities with [ [ not is-mandatory? ] of definition ]
+      start-activity one-of activity-link-neighbors with [ [ not is-mandatory? ] of definition ]
     ]
     run current-task
     set countdown countdown - 1
@@ -73,7 +76,7 @@ to go
 end
 
 to start-activity [ new-activity ]
-  move-to [ other-end ] of new-activity
+  move-to new-activity
   set countdown [ duration ] of [ definition ] of new-activity
   set current-task [ task ] of [ definition ] of new-activity
 end
@@ -81,7 +84,7 @@ end
 to setup-communities
   let world-side community-side-length * sqrt num-communities
   resize-world 0 (world-side - 1) 0 (world-side - 1)
-  ask patches [ set location-here? false ]
+  ask patches [ set location-here nobody ]
   set-patch-size floor (800 / world-side)
   let communities make-community-list
   let colors map [ c -> c - 4 ] [blue yellow]
@@ -89,7 +92,7 @@ to setup-communities
     let c item (i mod 2) colors
     ask community-patches [ set pcolor c + random-float 0.5 ]
     setup-locations community-patches
-    let residences setup-residences community-patches with [ not location-here? ]
+    let residences setup-residences community-patches with [ location-here = nobody ]
     setup-citizens residences
   ])
 end
@@ -106,11 +109,11 @@ to setup-locations [target-patches]
         set shape         item 2 def
         set color         item 3 def
         let candidates target-patches with [
-          not any? neighbors with [ location-here? ]
+          not any? neighbors with [ location-here != nobody ]
         ]
         move-to rnd:weighted-one-of candidates [ 1 / (1 + distance center) ]
         ask patches at-points moore-points ((size - 1) / 2) [
-          set location-here? true
+          set location-here myself
         ]
       ]
     ]
@@ -133,7 +136,7 @@ to-report setup-residences [target-patches]
       set location-type  "residence"
       set shape          "house"
       set color          pcolor + 1
-      set location-here? true
+      set location-here  self
       set residences lput self residences
     ]
   ]
@@ -191,63 +194,46 @@ to setup-activity-definitions
       set criteria      [ -> true ]
     ]
   ]
+  ask locations [
+    foreach [ self ] of activity-definitions with [
+      location-type = [ location-type ] of myself
+    ] [ def ->
+      hatch-activities 1 [ set definition def ]
+    ]
+  ]
 end
 
 to setup-jobs
-  ask activity-definitions with [ is-job? ] [
-    let the-criteria criteria
-    let the-definition self
-    ask locations with [ location-type = [ location-type ] of the-definition ] [
-      let the-location self
-      repeat [ max-agents ] of the-definition [
-        ask one-of citizens with [
-          ; TODO: take distance into account
-          (runresult the-criteria self) and
-          not any? my-activities with [ [ is-job? ] of definition ] ; TODO this could be a schedule check instead
-        ] [
-          create-activity-with the-location [
-            set definition the-definition
-          ]
-        ]
+  ask activities with [ [ is-job? ] of definition ] [
+    let the-criteria [ criteria ] of definition
+    repeat [ max-agents ] of definition [
+      ask one-of citizens with [
+        ; TODO: take distance into account
+        (runresult the-criteria self myself) and
+        not any? activity-link-neighbors with [ [ is-job? ] of definition ] ; TODO this should be a schedule check instead
+      ] [
+        create-activity-link-with myself
       ]
     ]
   ]
 end
 
 to setup-mandatory-activities
-  ask activity-definitions with [ is-mandatory? and not is-job? ] [
-    let the-definition self
-    let get-location [ -> residence ]
-    if location-type != "residence" [
-      let possible-locations locations with [ location-type = [ location-type ] of the-definition ]
-      set get-location [ -> min-one-of possible-locations [ distance myself ] ]
-    ]
-    ask citizens with [ (runresult ([ criteria ] of the-definition) self) ] [
-      create-activity-with runresult get-location [
-        set definition the-definition
-      ]
+  ask activities with [ [ is-mandatory? and not is-job? ] of definition ] [
+    let the-criteria [ criteria ] of definition
+    ask citizens with [ (runresult the-criteria self myself) ] [
+      create-activity-link-with myself
     ]
   ]
 end
 
 to setup-free-time-activities
   ask citizens [
-    let the-citizen self
-    ; look for possible free-time activities around mandatory activities
-    let mandatory-locations [ other-end ] of my-activities with [ [ is-mandatory? ] of definition ]
-    let nearby-locations (turtle-set
-      residence
-      locations in-radius activity-radius with [ location-type != "residence" ]
-    )
-    ask activity-definitions with [ not is-mandatory? and (runresult criteria the-citizen) ] [
-      let the-definition self
-      let the-location-type location-type
-      ask the-citizen [
-        let possible-locations nearby-locations with [ location-type = the-location-type ]
-        create-activities-with possible-locations [
-          set definition the-definition
-        ]
-      ]
+    ; look for possible free-time activities around current activities
+    let nearby-activities turtle-set [ activities in-radius activity-radius ] of activity-link-neighbors
+    create-activity-links-with nearby-activities with [
+      [ not is-mandatory? ] of definition and
+      (runresult ([ criteria ] of definition) myself self)
     ]
   ]
 end
@@ -302,11 +288,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1028
-739
+1088
+799
 -1
 -1
-8.0
+26.0
 1
 10
 1
@@ -317,9 +303,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-89
+29
 0
-89
+29
 1
 1
 1
@@ -351,7 +337,7 @@ CHOOSER
 num-communities
 num-communities
 1 9 25
-1
+0
 
 SLIDER
 10
