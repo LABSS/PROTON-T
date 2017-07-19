@@ -204,25 +204,38 @@ to setup-activity-definitions
 end
 
 to setup-jobs
-  ask activities with [ [ is-job? ] of definition ] [
-    let the-criteria [ criteria ] of definition
-    repeat [ max-agents ] of definition [
-      ask one-of citizens with [
-        ; TODO: take distance into account
-        (runresult the-criteria self myself) and
-        not any? activity-link-neighbors with [ [ is-job? ] of definition ] ; TODO this should be a schedule check instead
-      ] [
-        create-activity-link-with myself
+  ask activity-definitions with [ is-job? ] [
+    let the-definition self
+    let the-criteria criteria
+    let candidates citizens with [ (runresult the-criteria self) ]
+    ask activities with [ definition = the-definition ] [
+      repeat [ max-agents ] of definition [
+        let free-candidates candidates with [
+          ; TODO: take distance into account
+          not any? activity-link-neighbors with [ [ is-job? ] of definition ] ; TODO this should be a schedule check instead
+        ]
+        if any? candidates [
+          ask one-of candidates [
+            create-activity-link-with myself
+          ]
+        ]
       ]
     ]
   ]
 end
 
 to setup-mandatory-activities
-  ask activities with [ [ is-mandatory? and not is-job? ] of definition ] [
-    let the-criteria [ criteria ] of definition
-    ask citizens with [ (runresult the-criteria self myself) ] [
-      create-activity-link-with myself
+  ask activity-definitions with [ is-mandatory? ] [
+    let the-definition self
+    let get-activity [ ->
+      one-of ([ activities-here ] of residence) with [ definition = the-definition ]
+    ]
+    if location-type != "residence" [
+      let possible-activities activities with [ definition = the-definition ]
+      set get-activity [ -> min-one-of possible-activities [ distance myself] ]
+    ]
+    ask citizens with [ (runresult ([ criteria ] of myself) self) ] [
+      create-activity-link-with runresult get-activity
     ]
   ]
 end
@@ -230,12 +243,29 @@ end
 to setup-free-time-activities
   ask citizens [
     ; look for possible free-time activities around current activities
-    let nearby-activities turtle-set [ activities in-radius activity-radius ] of activity-link-neighbors
+    let nearby-activities my-nearby-activities
+    let the-citizen self
     create-activity-links-with nearby-activities with [
-      [ not is-mandatory? ] of definition and
-      (runresult ([ criteria ] of definition) myself self)
+      [ not is-mandatory? ] of definition and [ can-do? myself ] of the-citizen
     ]
   ]
+end
+
+to-report my-nearby-activities ; citizen reporter
+  report turtle-set [ other activities in-radius activity-radius ] of activity-link-neighbors
+end
+
+to-report can-do? [ the-activity ] ; citizen reporter
+  let the-location-type [ location-type ] of [ definition ] of the-activity
+  if the-location-type = "residence" and not is-at-my-residence? the-activity [
+    report false
+  ]
+  let the-criteria [ criteria ] of [ definition ] of the-activity
+  report (runresult the-criteria self)
+end
+
+to-report is-at-my-residence? [ the-turtle ] ; citizen reporter
+  report [ patch-here ] of the-turtle = [ patch-here ] of residence
 end
 
 to-report moore-points [ radius ]
@@ -288,11 +318,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1088
-799
+1028
+739
 -1
 -1
-26.0
+8.0
 1
 10
 1
@@ -303,9 +333,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-29
+89
 0
-29
+89
 1
 1
 1
@@ -337,7 +367,7 @@ CHOOSER
 num-communities
 num-communities
 1 9 25
-0
+1
 
 SLIDER
 10

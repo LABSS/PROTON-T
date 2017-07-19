@@ -35,23 +35,23 @@ end
 to-report job-definition-list
   report (list
     ;     num-jobs  start-time duration location-type task
-    (list 50        8          8        "workplace"   [ -> work ] [ [cit act] -> [ age ] of cit > 18 ])
-    (list  1        8          8        "cafe"        [ -> work ] [ [cit act] -> [ age ] of cit > 18 ])
-    (list  1       16          8        "cafe"        [ -> work ] [ [cit act] -> [ age ] of cit > 18 ])
+    (list 50        8          8        "workplace"   [ -> work ] [ a -> [ age ] of a > 18 ])
+    (list  1        8          8        "cafe"        [ -> work ] [ a -> [ age ] of a > 18 ])
+    (list  1       16          8        "cafe"        [ -> work ] [ a -> [ age ] of a > 18 ])
   )
 end
 
 to-report mandatory-activity-definition-list
   report (list
     ; start-time duration location-type task criteria
-    (list 0 8 "residence" [ -> sleep ] [ [cit act] -> [ residence ] of cit = [ location-here ] of act ] )
-    (list 8 8 "school"    [ -> study ] [ [cit act] -> [ age >= 5 and age <= 18 ] of cit ])
+    (list 0 8 "residence" [ -> sleep ] [ -> true ] )
+    (list 8 8 "school"    [ -> study ] [ a -> [ age >= 5 and age <= 18 ] of a ])
   )
 end
 
 to-report free-time-activity-definition-list
   report (list
-    (list "residence" [ -> socialize ] [ [cit act] -> [ residence ] of cit = [ location-here ] of act ])
+    (list "residence" [ -> socialize ] [ -> true ])
     (list "cafe"      [ -> socialize ] [ -> true ])
     (list "park"      [ -> socialize ] [ -> true ])
   )
