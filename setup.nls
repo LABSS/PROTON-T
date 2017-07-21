@@ -35,9 +35,13 @@ end
 to-report job-definition-list
   report (list
     ;     num-jobs  start-time duration location-type task
-    (list 50        8          8        "workplace"   [ -> work ] [ a -> [ age ] of a > 18 ])
-    (list  1        8          8        "cafe"        [ -> work ] [ a -> [ age ] of a > 18 ])
-    (list  1       16          8        "cafe"        [ -> work ] [ a -> [ age ] of a > 18 ])
+    (list  1        8          16       "mosque"      [ -> preach ] [ a -> 
+      [ age ] of a > 25 and
+      [ value ] of [ opinion-with one-of topics with [ topic-name = "r" ] ] of a > 0.9
+    ])
+    (list 50        8          8        "workplace"   [ -> work ]   [ a -> [ age ] of a > 18 ])
+    (list  1        8          8        "cafe"        [ -> work ]   [ a -> [ age ] of a > 18 ])
+    (list  1       16          8        "cafe"        [ -> work ]   [ a -> [ age ] of a > 18 ])
   )
 end
 
@@ -58,7 +62,12 @@ to-report free-time-activity-definition-list
 end
 
 to work ; generic work activity
-  
+  ; small chance to socialize (TODO revisit that)
+  if random-float 1 < 0.1 [ socialize ]
+end
+
+to preach
+  talk-to citizens-here one-of topics with [ topic-name = "r" ]
 end
 
 to-report topic-definitions

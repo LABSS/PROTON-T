@@ -50,11 +50,11 @@ to setup
   set-default-shape citizens "person"
   setup-communities
   setup-activity-definitions
+  setup-topics
+  setup-opinions
   setup-mandatory-activities
   setup-jobs
   setup-free-time-activities
-  setup-topics
-  setup-opinions
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
   ask activity-definitions [ set hidden? true ]
@@ -110,7 +110,7 @@ to setup-communities
   ask patches [ set location-here nobody ]
   set-patch-size floor (800 / world-side)
   let communities make-community-list
-  let colors map [ c -> c - 4 ] [blue yellow]
+  let colors map [ c -> c - 4 ] [turquoise cyan]
   (foreach communities range length communities [ [community-patches i] ->
     let c item (i mod 2) colors
     ask community-patches [ set pcolor c + random-float 0.5 ]
@@ -356,11 +356,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1058
-769
+1088
+799
 -1
 -1
-5.0
+26.0
 1
 10
 1
@@ -371,9 +371,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-149
+29
 0
-149
+29
 1
 1
 1
@@ -405,7 +405,7 @@ CHOOSER
 num-communities
 num-communities
 1 9 25
-1
+0
 
 SLIDER
 10
@@ -416,7 +416,7 @@ citizens-per-community
 citizens-per-community
 1
 2000
-1600.0
+800.0
 1
 1
 NIL
@@ -522,7 +522,7 @@ activity-radius
 10.0
 1
 1
-NIL
+patches
 HORIZONTAL
 
 BUTTON
@@ -584,7 +584,7 @@ true
 false
 "" ""
 PENS
-"p" 1.0 2 -2674135 true "" "if ticks > 0 [\n  ask [ n-of 100 my-opinions ] of one-of topics with [ topic-name = topic-to-plot ] [\n    plotxy ticks value\n  ]\n]"
+"p" 1.0 2 -2674135 true "" "if ticks > 0 [\n  ask [ my-opinions ] of one-of topics with [ topic-name = topic-to-plot ] [\n    plotxy ticks value\n  ]\n]"
 
 CHOOSER
 1235
@@ -594,7 +594,7 @@ CHOOSER
 topic-to-plot
 topic-to-plot
 "p" "q" "r"
-0
+2
 
 @#$#@#$#@
 ## WHAT IS IT?
