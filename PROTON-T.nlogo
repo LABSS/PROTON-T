@@ -39,8 +39,8 @@ activities-own [ definition ]
 
 undirected-link-breed [ activity-links activity-link ] ; citizen <---> activity
 
-breed [ statements statement ]
-statements-own  [ text ]
+breed [ topics a-topic ]
+topics-own  [ topic-name ]
 undirected-link-breed [ opinions opinion ]
 opinions-own [ value ]
 
@@ -53,7 +53,7 @@ to setup
   setup-mandatory-activities
   setup-jobs
   setup-free-time-activities
-  setup-statements
+  setup-topics
   setup-opinions
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
@@ -88,17 +88,17 @@ to start-activity [ new-activity ]
   set current-task [ task ] of [ definition ] of new-activity
 end
 
-to setup-statements
-  foreach statement-definitions [ txt ->
-    create-statements 1 [
-      set text txt
+to setup-topics
+  foreach topic-definitions [ name ->
+    create-topics 1 [
+      set topic-name name
     ]
   ]
 end
 
 to setup-opinions
   ask citizens [
-    create-opinions-with statements [
+    create-opinions-with topics [
       set value -1 + random-float 2
     ]
   ]
@@ -233,11 +233,12 @@ to setup-jobs
     let candidates citizens with [ (runresult the-criteria self) ]
     ask activities with [ definition = the-definition ] [
       let free-candidates candidates with [
-        ; TODO: take distance into account
         not any? activity-link-neighbors with [ [ is-job? ] of definition ] ; TODO this should be a schedule check instead
       ]
       let n min (list (count free-candidates) ([ max-agents ] of definition))
-      ask n-of n free-candidates [ create-activity-link-with myself ]
+      ask rnd:weighted-n-of n free-candidates [ distance myself ^ 2 ] [
+        create-activity-link-with myself
+      ]
     ]
   ]
 end
@@ -332,6 +333,25 @@ end
 
 to study
 end
+
+to socialize
+  let the-topic [ other-end ] of rnd:weighted-one-of my-opinions [ abs value ]
+  let partner turtle-set one-of other citizens-here
+  talk-to partner the-topic
+end
+
+to talk-to [ recipients the-topic ]
+  let o1 opinion-with the-topic
+  let v1 [ value ] of o1
+  ask recipients [
+    let o2 opinion-with the-topic
+    let v2 [ value ] of o2
+    let t 1 - tolerance-rate * abs v2
+    if abs (v1 - v2) < t [
+      ask o2 [ set value v2 + t * (v1 - v2) / 2 ]
+    ]
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 300
@@ -362,9 +382,9 @@ ticks
 
 BUTTON
 20
-260
+300
 93
-293
+333
 NIL
 setup
 NIL
@@ -385,7 +405,7 @@ CHOOSER
 num-communities
 num-communities
 1 9 25
-2
+1
 
 SLIDER
 10
@@ -404,9 +424,9 @@ HORIZONTAL
 
 MONITOR
 10
-190
+230
 87
-235
+275
 population
 count citizens
 17
@@ -430,9 +450,9 @@ HORIZONTAL
 
 MONITOR
 90
-190
+230
 165
-235
+275
 density
 count citizens / count patches
 2
@@ -441,9 +461,9 @@ count citizens / count patches
 
 BUTTON
 110
-260
+300
 173
-293
+333
 NIL
 go
 NIL
@@ -458,9 +478,9 @@ NIL
 
 BUTTON
 180
-260
+300
 243
-293
+333
 NIL
 go
 T
@@ -475,9 +495,9 @@ NIL
 
 BUTTON
 20
-375
+415
 140
-408
+448
 profile 20
 setup                  ;; set up the model\nprofiler:start         ;; start profiling\nrepeat 20 [ go ]       ;; run something you want to measure\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
 NIL
@@ -507,9 +527,9 @@ HORIZONTAL
 
 BUTTON
 20
-410
+450
 142
-443
+483
 profile setup
 profiler:start         ;; start profiling\nsetup                  ;; set up the model\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
 NIL
@@ -524,14 +544,57 @@ NIL
 
 MONITOR
 170
-190
+230
 232
-235
+275
 time
 (word (ticks mod 24) \":00\")
 17
 1
 11
+
+SLIDER
+10
+185
+290
+218
+tolerance-rate
+tolerance-rate
+0
+1
+0.5
+0.1
+1
+NIL
+HORIZONTAL
+
+PLOT
+1165
+305
+1640
+690
+Opinions
+NIL
+NIL
+0.0
+10.0
+-1.0
+1.0
+true
+false
+"" ""
+PENS
+"p" 1.0 2 -2674135 true "" "if ticks > 0 [\n  ask [ n-of 100 my-opinions ] of one-of topics with [ topic-name = topic-to-plot ] [\n    plotxy ticks value\n  ]\n]"
+
+CHOOSER
+1235
+160
+1373
+205
+topic-to-plot
+topic-to-plot
+"p" "q" "r"
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
