@@ -336,11 +336,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1028
-739
+1058
+769
 -1
 -1
-8.0
+5.0
 1
 10
 1
@@ -351,9 +351,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-89
+149
 0
-89
+149
 1
 1
 1
@@ -385,7 +385,7 @@ CHOOSER
 num-communities
 num-communities
 1 9 25
-1
+2
 
 SLIDER
 10
@@ -521,6 +521,17 @@ NIL
 NIL
 NIL
 1
+
+MONITOR
+170
+190
+232
+235
+time
+(word (ticks mod 24) \":00\")
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
