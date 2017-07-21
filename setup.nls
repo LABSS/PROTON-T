@@ -58,7 +58,17 @@ to-report free-time-activity-definition-list
 end
 
 to work ; generic work activity
+  
 end
 
 to socialize
+  
+end
+
+to-report statement-definitions
+  report (list
+    "p"
+    "q"
+    "r"
+  )
 end

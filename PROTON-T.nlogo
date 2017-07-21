@@ -39,6 +39,11 @@ activities-own [ definition ]
 
 undirected-link-breed [ activity-links activity-link ] ; citizen <---> activity
 
+breed [ statements statement ]
+statements-own  [ text ]
+undirected-link-breed [ opinions opinion ]
+opinions-own [ value ]
+
 to setup
   clear-all
   reset-ticks ; we need the tick counter started for `age` to work
@@ -48,6 +53,8 @@ to setup
   setup-mandatory-activities
   setup-jobs
   setup-free-time-activities
+  setup-statements
+  setup-opinions
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
   ask activity-definitions [ set hidden? true ]
@@ -79,6 +86,22 @@ to start-activity [ new-activity ]
   move-to new-activity
   set countdown [ duration ] of [ definition ] of new-activity
   set current-task [ task ] of [ definition ] of new-activity
+end
+
+to setup-statements
+  foreach statement-definitions [ txt ->
+    create-statements 1 [
+      set text txt
+    ]
+  ]
+end
+
+to setup-opinions
+  ask citizens [
+    create-opinions-with statements [
+      set value -1 + random-float 2
+    ]
+  ]
 end
 
 to setup-communities
@@ -209,17 +232,12 @@ to setup-jobs
     let the-criteria criteria
     let candidates citizens with [ (runresult the-criteria self) ]
     ask activities with [ definition = the-definition ] [
-      repeat [ max-agents ] of definition [
-        let free-candidates candidates with [
-          ; TODO: take distance into account
-          not any? activity-link-neighbors with [ [ is-job? ] of definition ] ; TODO this should be a schedule check instead
-        ]
-        if any? candidates [
-          ask one-of candidates [
-            create-activity-link-with myself
-          ]
-        ]
+      let free-candidates candidates with [
+        ; TODO: take distance into account
+        not any? activity-link-neighbors with [ [ is-job? ] of definition ] ; TODO this should be a schedule check instead
       ]
+      let n min (list (count free-candidates) ([ max-agents ] of definition))
+      ask n-of n free-candidates [ create-activity-link-with myself ]
     ]
   ]
 end
