@@ -35,10 +35,7 @@ end
 to-report job-definition-list
   report (list
     ;     num-jobs  start-time duration location-type task
-    (list  1        8          16       "mosque"      [ -> preach ] [ a -> 
-      [ age ] of a > 25 and
-      [ value ] of [ opinion-with one-of topics with [ topic-name = "r" ] ] of a > 0.9
-    ])
+    (list  1        8          16       "mosque"      [ -> preach ] [ a -> [ age ] of a > 25 ])
     (list 50        8          8        "workplace"   [ -> work ]   [ a -> [ age ] of a > 18 ])
     (list  1        8          8        "cafe"        [ -> work ]   [ a -> [ age ] of a > 18 ])
     (list  1       16          8        "cafe"        [ -> work ]   [ a -> [ age ] of a > 18 ])
@@ -72,8 +69,8 @@ end
 
 to-report topic-definitions
   report (list
-    "p"
-    "q"
-    "r"
+    (list "p" [ -> clipped-random-normal 0 0.3 -1 1 ])
+    (list "q" [ -> -1 + random-float 2 ])
+    (list "r" [ -> one-of [1 -1] * (1 - abs clipped-random-normal 0 0.3 -1 1) ])
   )
 end

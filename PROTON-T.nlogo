@@ -35,14 +35,21 @@ activity-definitions-own [
 ]
 
 breed [ activities activity ]
-activities-own [ definition ]
-
-undirected-link-breed [ activity-links activity-link ] ; citizen <---> activity
+activities-own [
+  definition
+]
 
 breed [ topics a-topic ]
-topics-own  [ topic-name ]
-undirected-link-breed [ opinions opinion ]
-opinions-own [ value ]
+topics-own  [
+  topic-name
+  new-value
+]
+
+undirected-link-breed [ activity-links activity-link ]
+activity-links-own [ value ]
+
+undirected-link-breed [ topic-links topic-link ]
+topic-links-own [ value ]
 
 to setup
   clear-all
@@ -74,7 +81,8 @@ to go
       set current-task nobody
     ]
     if current-task = nobody [ ; free time!
-      start-activity one-of activity-link-neighbors with [ [ not is-mandatory? ] of definition ]
+      let candidate-links my-activity-links with [ [ not is-mandatory? ] of [ definition ] of other-end ]
+      start-activity [ other-end ] of rnd:weighted-one-of candidate-links [ (1 + value) ^ 2 ]
     ]
     run current-task
     set countdown countdown - 1
@@ -89,19 +97,29 @@ to start-activity [ new-activity ]
 end
 
 to setup-topics
-  foreach topic-definitions [ name ->
+  foreach topic-definitions [ def ->
     create-topics 1 [
-      set topic-name name
+      set topic-name item 0 def
+      set new-value  item 1 def
     ]
   ]
 end
 
 to setup-opinions
   ask citizens [
-    create-opinions-with topics [
-      set value -1 + random-float 2
+    create-topic-links-with topics [
+      set value [ runresult new-value ] of other-end
     ]
   ]
+end
+
+to-report clipped-random-normal [ the-mean the-std-dev the-min the-max ]
+  ; TODO: extension candidate
+  let result random-normal the-mean the-std-dev
+  while [ not (result >= the-min and result <= the-max) ] [
+    set result random-normal the-mean the-std-dev
+  ]
+  report result
 end
 
 to setup-communities
@@ -266,6 +284,8 @@ to setup-free-time-activities
     let the-citizen self
     create-activity-links-with nearby-activities with [
       [ not is-mandatory? ] of definition and [ can-do? myself ] of the-citizen
+    ] [
+      set value -1 + random-float 2 ; TODO: how should this be initialized?
     ]
   ]
 end
@@ -334,23 +354,45 @@ end
 to study
 end
 
-to socialize
-  let the-topic [ other-end ] of rnd:weighted-one-of my-opinions [ abs value ]
+to socialize ; citizen procedure
+  let the-object [ other-end ] of rnd:weighted-one-of my-opinions [ abs value ]
   let partner turtle-set one-of other citizens-here
-  talk-to partner the-topic
+  talk-to partner the-object
 end
 
-to talk-to [ recipients the-topic ]
-  let o1 opinion-with the-topic
-  let v1 [ value ] of o1
+to-report my-opinions ; citizen reporter
+  report (link-set
+    my-topic-links
+    my-activity-links with [
+      [ not is-mandatory? and location-type != "residence" ] of [ definition ] of other-end
+    ]
+  )
+end
+
+to talk-to [ recipients the-object ] ; citizen procedure
+  let l1 link-with the-object
+  let v1 [ value ] of l1
   ask recipients [
-    let o2 opinion-with the-topic
-    let v2 [ value ] of o2
+    let l2 get-or-create-link-with the-object
+    let v2 [ value ] of l2
     let t 1 - tolerance-rate * abs v2
     if abs (v1 - v2) < t [
-      ask o2 [ set value v2 + t * (v1 - v2) / 2 ]
+      ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
     ]
   ]
+end
+
+to-report get-or-create-link-with [ the-object ] ; citizen reporter
+  let the-link link-with the-object
+  if the-link = nobody [
+    if is-activity? the-object [ create-activity-link-with the-object [ set the-link self ] ]
+    if is-a-topic?  the-object [ create-topic-link-with    the-object [ set the-link self ] ]
+    ask the-link [
+      hide-link
+      set value 0
+    ]
+  ]
+  report the-link
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -594,7 +636,25 @@ CHOOSER
 topic-to-plot
 topic-to-plot
 "p" "q" "r"
-2
+0
+
+PLOT
+1430
+135
+1630
+285
+plot 1
+NIL
+NIL
+-1.0
+1.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 0.01 1 -16777216 true "" "if ticks > 0 [\n  histogram [ value ] of [ my-opinions ] of one-of topics with [ topic-name = topic-to-plot ]\n]"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1082,7 +1142,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2-RC1
+NetLogo 6.0.2-RC2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
