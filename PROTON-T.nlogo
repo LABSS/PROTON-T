@@ -44,10 +44,10 @@ topics-own  [
   new-value
 ]
 
-undirected-link-breed [ activity-links activity-link ]
+directed-link-breed [ activity-links activity-link ]
 activity-links-own [ value ]
 
-undirected-link-breed [ topic-links topic-link ]
+directed-link-breed [ topic-links topic-link ]
 topic-links-own [ value ]
 
 to setup
@@ -106,7 +106,7 @@ end
 
 to setup-opinions
   ask citizens [
-    create-topic-links-with topics [
+    create-topic-links-to topics [
       set value [ runresult new-value ] of other-end
     ]
   ]
@@ -253,7 +253,7 @@ to setup-jobs
       ]
       let n min (list (count free-candidates) ([ max-agents ] of definition))
       ask rnd:weighted-n-of n free-candidates [ distance myself ^ 2 ] [
-        create-activity-link-with myself
+        create-activity-link-to myself
       ]
     ]
   ]
@@ -270,7 +270,7 @@ to setup-mandatory-activities
       set get-activity [ -> min-one-of possible-activities [ distance myself] ]
     ]
     ask citizens with [ (runresult ([ criteria ] of myself) self) ] [
-      create-activity-link-with runresult get-activity
+      create-activity-link-to runresult get-activity
     ]
   ]
 end
@@ -280,7 +280,7 @@ to setup-free-time-activities
     ; look for possible free-time activities around current activities
     let nearby-activities my-nearby-activities
     let the-citizen self
-    create-activity-links-with nearby-activities with [
+    create-activity-links-to nearby-activities with [
       [ not is-mandatory? ] of definition and [ can-do? myself ] of the-citizen
     ] [
       set value -1 + random-float 2 ; TODO: how should this be initialized?
@@ -383,8 +383,8 @@ end
 to-report get-or-create-link-with [ the-object ] ; citizen reporter
   let the-link link-with the-object
   if the-link = nobody [
-    if is-activity? the-object [ create-activity-link-with the-object [ set the-link self ] ]
-    if is-a-topic?  the-object [ create-topic-link-with    the-object [ set the-link self ] ]
+    if is-activity? the-object [ create-activity-link-to the-object [ set the-link self ] ]
+    if is-a-topic?  the-object [ create-topic-link-to    the-object [ set the-link self ] ]
     ask the-link [
       hide-link
       set value 0
