@@ -17,7 +17,6 @@ citizens-own [
   birth-year
   religion
   propensity
-  radicalization
   current-task
   countdown
 ]
@@ -189,7 +188,6 @@ to setup-citizens [residences]
     set color            39 - random-float 3
     set birth-year       random-birth-year
     set religion         random-religion
-    set radicalization   random-radicalization
     set propensity       sum-factors propensity-factors
     set current-task     nobody ; used to indicate "none"
     set countdown        0

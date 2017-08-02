@@ -1,6 +1,5 @@
 to-report random-religion       report one-of ["a" "b" "c" "d"] end
 to-report random-birth-year     report 0 - random 80            end
-to-report random-radicalization report random-float 1.0         end
 
 to-report propensity-factors
   ; first item is weight, second item is value (between 0 and 1)
@@ -15,7 +14,6 @@ to-report risk-factors
     ; weight, value (between 0 and 1)
     (list 1 [ -> propensity ])
     (list 1 [ -> 1 / ((abs (age - 18)) + 1) ])
-    (list 1 [ -> radicalization ])
   )
 end
 
@@ -24,11 +22,8 @@ to-report location-definitions
     ; number, name, shape, color
     (list 1 "mosque"           "house bungalow"  red)
     (list 1 "school"           "house ranch"     brown)
-    (list 1 "hospital"         "house colonial"  white)
-    (list 1 "community center" "house two story" cyan)
-    (list 2 "cafe"             "building store"  orange)
+    (list 5 "cafe"             "building store"  orange)
     (list 5 "workplace"        "factory"         blue)
-    (list 2 "park"             "square"          (green - 2))
   )
 end
 
