@@ -1,4 +1,4 @@
-__includes [ "setup.nls" ]
+__includes [ "scenario.nls" ]
 
 extensions [ table profiler rnd ]
 
