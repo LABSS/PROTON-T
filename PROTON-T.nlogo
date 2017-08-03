@@ -445,7 +445,7 @@ CHOOSER
 num-communities
 num-communities
 1 9 25
-0
+1
 
 SLIDER
 10
@@ -459,7 +459,7 @@ citizens-per-community
 800.0
 1
 1
-NIL
+citizens
 HORIZONTAL
 
 MONITOR
@@ -557,7 +557,7 @@ SLIDER
 178
 activity-radius
 activity-radius
-0
+1
 100
 10.0
 1
