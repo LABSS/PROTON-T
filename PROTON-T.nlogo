@@ -15,14 +15,14 @@ breed [ citizens citizen ]
 citizens-own [
   residence
   birth-year
-  religion
   propensity
+  attributes
   current-task
   countdown
 ]
 
-breed [ activity-definitions activity-definition ]
-activity-definitions-own [
+breed [ activity-types activity-type ]
+activity-types-own [
   is-job?
   is-mandatory?
   location-type
@@ -35,7 +35,7 @@ activity-definitions-own [
 
 breed [ activities activity ]
 activities-own [
-  definition
+  my-activity-type
 ]
 
 breed [ topics a-topic ]
@@ -55,15 +55,15 @@ to setup
   reset-ticks ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
   setup-communities
-  setup-activity-definitions
-  setup-topics
-  setup-opinions
+  setup-activity-types
   setup-mandatory-activities
   setup-jobs
   setup-free-time-activities
+  setup-topics
+  setup-opinions
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
-  ask activity-definitions [ set hidden? true ]
+  ask activity-types [ set hidden? true ]
   display
   ; TODO: write some test code to make sure the schedule is consistent.
 end
@@ -71,7 +71,7 @@ end
 to go
   ask citizens [
     let new-activity one-of activity-link-neighbors with [
-      [ start-time = current-time and is-mandatory? ] of definition
+      [ start-time = current-time and is-mandatory? ] of my-activity-type
     ]
     if new-activity != nobody [
       start-activity new-activity
@@ -80,7 +80,7 @@ to go
       set current-task nobody
     ]
     if current-task = nobody [ ; free time!
-      let candidate-links my-activity-links with [ [ not is-mandatory? ] of [ definition ] of other-end ]
+      let candidate-links my-activity-links with [ [ not is-mandatory? ] of [ my-activity-type ] of other-end ]
       start-activity [ other-end ] of rnd:weighted-one-of candidate-links [ (1 + value) ^ 2 ]
     ]
     run current-task
@@ -91,8 +91,8 @@ end
 
 to start-activity [ new-activity ]
   move-to new-activity
-  set countdown [ duration ] of [ definition ] of new-activity
-  set current-task [ task ] of [ definition ] of new-activity
+  set countdown [ duration ] of [ my-activity-type ] of new-activity
+  set current-task [ task ] of [ my-activity-type ] of new-activity
 end
 
 to setup-topics
@@ -100,6 +100,7 @@ to setup-topics
     create-topics 1 [
       set topic-name item 0 def
       set new-value  item 1 def
+      set hidden? true
     ]
   ]
 end
@@ -185,9 +186,12 @@ end
 
 to setup-citizens [residences]
   create-citizens citizens-per-community [
-    set color            39 - random-float 3
+    set attributes table:make
+    foreach attribute-definitions [ def ->
+      table:put attributes first def runresult last def
+    ]
+    set color            lput 150 extract-rgb (39 - random-float 3)
     set birth-year       random-birth-year
-    set religion         random-religion
     set propensity       sum-factors propensity-factors
     set current-task     nobody ; used to indicate "none"
     set countdown        0
@@ -196,9 +200,9 @@ to setup-citizens [residences]
   ]
 end
 
-to setup-activity-definitions
+to setup-activity-types
   foreach job-definition-list [ def ->
-    create-activity-definitions 1 [
+    create-activity-types 1 [
       set is-job?       true
       set is-mandatory? true
       set max-agents    item 0 def
@@ -210,7 +214,7 @@ to setup-activity-definitions
     ]
   ]
   foreach mandatory-activity-definition-list [ def ->
-    create-activity-definitions 1 [
+    create-activity-types 1 [
       set is-job?       false
       set is-mandatory? true
       set max-agents    nobody
@@ -222,7 +226,7 @@ to setup-activity-definitions
     ]
   ]
   foreach free-time-activity-definition-list [ def ->
-    create-activity-definitions 1 [
+    create-activity-types 1 [
       set is-job?       false
       set is-mandatory? false
       set max-agents    nobody
@@ -234,24 +238,24 @@ to setup-activity-definitions
     ]
   ]
   ask locations [
-    foreach [ self ] of activity-definitions with [
+    foreach [ self ] of activity-types with [
       location-type = [ location-type ] of myself
-    ] [ def ->
-      hatch-activities 1 [ set definition def ]
+    ] [ t ->
+      hatch-activities 1 [ set my-activity-type t ]
     ]
   ]
 end
 
 to setup-jobs
-  ask activity-definitions with [ is-job? ] [
-    let the-definition self
+  ask activity-types with [ is-job? ] [
+    let the-type self
     let the-criteria criteria
     let candidates citizens with [ (runresult the-criteria self) ]
-    ask activities with [ definition = the-definition ] [
+    ask activities with [ my-activity-type = the-type ] [
       let free-candidates candidates with [
-        not any? activity-link-neighbors with [ [ is-job? ] of definition ] ; TODO this should be a schedule check instead
+        not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead
       ]
-      let n min (list (count free-candidates) ([ max-agents ] of definition))
+      let n min (list (count free-candidates) ([ max-agents ] of my-activity-type))
       ask rnd:weighted-n-of n free-candidates [ distance myself ^ 2 ] [
         create-activity-link-to myself
       ]
@@ -260,13 +264,13 @@ to setup-jobs
 end
 
 to setup-mandatory-activities
-  ask activity-definitions with [ is-mandatory? ] [
-    let the-definition self
+  ask activity-types with [ is-mandatory? ] [
+    let the-type self
     let get-activity [ ->
-      one-of ([ activities-here ] of residence) with [ definition = the-definition ]
+      one-of ([ activities-here ] of residence) with [ my-activity-type = the-type ]
     ]
     if location-type != "residence" [
-      let possible-activities activities with [ definition = the-definition ]
+      let possible-activities activities with [ my-activity-type = the-type ]
       set get-activity [ -> min-one-of possible-activities [ distance myself] ]
     ]
     ask citizens with [ (runresult ([ criteria ] of myself) self) ] [
@@ -281,7 +285,7 @@ to setup-free-time-activities
     let nearby-activities my-nearby-activities
     let the-citizen self
     create-activity-links-to nearby-activities with [
-      [ not is-mandatory? ] of definition and [ can-do? myself ] of the-citizen
+      [ not is-mandatory? ] of my-activity-type and [ can-do? myself ] of the-citizen
     ] [
       set value -1 + random-float 2 ; TODO: how should this be initialized?
     ]
@@ -293,11 +297,11 @@ to-report my-nearby-activities ; citizen reporter
 end
 
 to-report can-do? [ the-activity ] ; citizen reporter
-  let the-location-type [ location-type ] of [ definition ] of the-activity
+  let the-location-type [ location-type ] of [ my-activity-type ] of the-activity
   if the-location-type = "residence" and not is-at-my-residence? the-activity [
     report false
   ]
-  let the-criteria [ criteria ] of [ definition ] of the-activity
+  let the-criteria [ criteria ] of [ my-activity-type ] of the-activity
   report (runresult the-criteria self)
 end
 
@@ -362,7 +366,7 @@ to-report my-opinions ; citizen reporter
   report (link-set
     my-topic-links
     my-activity-links with [
-      [ not is-mandatory? and location-type != "residence" ] of [ definition ] of other-end
+      [ not is-mandatory? and location-type != "residence" ] of [ my-activity-type ] of other-end
     ]
   )
 end
@@ -391,6 +395,10 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
     ]
   ]
   report the-link
+end
+
+to-report attr [ attribute-name ]
+  report table:get attributes attribute-name
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -445,7 +453,7 @@ CHOOSER
 num-communities
 num-communities
 1 9 25
-1
+0
 
 SLIDER
 10
@@ -456,7 +464,7 @@ citizens-per-community
 citizens-per-community
 1
 2000
-800.0
+1600.0
 1
 1
 citizens

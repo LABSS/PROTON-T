@@ -1,11 +1,10 @@
-to-report random-religion       report one-of ["a" "b" "c" "d"] end
-to-report random-birth-year     report 0 - random 80            end
-
+to-report random-birth-year report 0 - random 80 end
+  
 to-report propensity-factors
   ; first item is weight, second item is value (between 0 and 1)
   report (list
     (list 1 [ -> random-float 1 ]) ; stochastic factor
-    (list 1 [ -> ifelse-value (religion = "a") [ 1 ] [ 0 ] ])
+    (list 1 [ -> ifelse-value (attr "religion" = "R1") [ 1 ] [ 0 ] ])
   )
 end
 
@@ -17,10 +16,19 @@ to-report risk-factors
   )
 end
 
+to-report attribute-definitions
+  report (list
+    (list "ethnicity" [ -> one-of ["E1" "E2" "E3" "E4"] ])
+    (list "religion"  [ ->
+      ifelse-value (attr "ethnicity" = "E1") [ "R1" ] [ one-of ["R2" "R3" "R4"] ] ]
+    )
+  )
+end
+
 to-report location-definitions
   report (list
     ; number, name, shape, color
-    (list 1 "mosque"           "house bungalow"  red)
+    (list 1 "mosque"           "house two story" red)
     (list 1 "school"           "house ranch"     brown)
     (list 5 "cafe"             "building store"  orange)
     (list 5 "workplace"        "factory"         blue)
@@ -59,13 +67,13 @@ to work ; generic work activity
 end
 
 to preach
-  talk-to citizens-here one-of topics with [ topic-name = "r" ]
+  talk-to citizens-here one-of topics with [ topic-name = "T1" ]
 end
 
 to-report topic-definitions
   report (list
-    (list "p" [ -> clipped-random-normal 0 0.3 -1 1 ])
-    (list "q" [ -> -1 + random-float 2 ])
-    (list "r" [ -> one-of [1 -1] * (1 - abs clipped-random-normal 0 0.3 -1 1) ])
+    (list "T1" [ -> one-of [1 -1] * (1 - abs clipped-random-normal 0 0.3 -1 1) ])
+    (list "T2" [ -> clipped-random-normal 0 0.3 -1 1 ])
+    (list "T3" [ -> -1 + random-float 2 ])
   )
 end
