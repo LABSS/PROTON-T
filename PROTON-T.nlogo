@@ -2,10 +2,6 @@ __includes [ "scenario.nls" ]
 
 extensions [ table profiler rnd ]
 
-patches-own [
-  location-here
-]
-
 breed [ locations location ]
 locations-own [
   location-type ; TODO: we could merge `shape` and `location-type`, save memory
@@ -16,6 +12,7 @@ citizens-own [
   residence
   birth-year
   propensity
+  radicalized?
   attributes
   current-task
   countdown
@@ -55,15 +52,17 @@ to setup
   reset-ticks ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
   setup-communities
+  setup-topics
+  setup-opinions
+  post-opinions-setup
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
   setup-free-time-activities
-  setup-topics
-  setup-opinions
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
   ask activity-types [ set hidden? true ]
+  update-plots
   display
   ; TODO: write some test code to make sure the schedule is consistent.
 end
@@ -80,11 +79,20 @@ to go
       set current-task nobody
     ]
     if current-task = nobody [ ; free time!
-      let candidate-links my-activity-links with [ [ not is-mandatory? ] of [ my-activity-type ] of other-end ]
+      let the-citizen self
+      let candidate-links my-activity-links with [
+        [ not is-mandatory? ] of [ my-activity-type ] of other-end and
+        [ can-do? [ other-end ] of myself ] of the-citizen
+      ]
+      ; TODO: weight by closeness to current location too.
       start-activity [ other-end ] of rnd:weighted-one-of candidate-links [ (1 + value) ^ 2 ]
     ]
     run current-task
     set countdown countdown - 1
+    if radicalization > radicalization-threshold [
+      set radicalized? true
+      set color lput 150 hsb 360 100 (item 2 extract-hsb color)
+    ]
   ]
   tick
 end
@@ -125,7 +133,6 @@ end
 to setup-communities
   let world-side community-side-length * sqrt num-communities
   resize-world 0 (world-side - 1) 0 (world-side - 1)
-  ask patches [ set location-here nobody ]
   set-patch-size floor (800 / world-side)
   let communities make-community-list
   let colors map [ c -> c - 4 ] [turquoise cyan]
@@ -133,7 +140,9 @@ to setup-communities
     let c item (i mod 2) colors
     ask community-patches [ set pcolor c + random-float 0.5 ]
     setup-locations community-patches
-    let residences setup-residences community-patches with [ location-here = nobody ]
+    let residences setup-residences community-patches with [
+      not any? locations in-radius 1.75 with [ location-type != "residence" ]
+    ]
     setup-citizens residences
   ])
 end
@@ -149,13 +158,8 @@ to setup-locations [target-patches]
         set location-type item 1 def
         set shape         item 2 def
         set color         item 3 def
-        let candidates target-patches with [
-          not any? neighbors with [ location-here != nobody ]
-        ]
-        move-to rnd:weighted-one-of candidates [ 1 / (1 + distance center) ]
-        ask patches at-points moore-points ((size - 1) / 2) [
-          set location-here myself
-        ]
+        let candidates target-patches with [ not any? locations in-radius 2.5 ]
+        move-to rnd:weighted-one-of candidates [ 1 / (1 + (distance center ^ 2)) ]
       ]
     ]
   ]
@@ -177,7 +181,6 @@ to-report setup-residences [target-patches]
       set location-type  "residence"
       set shape          "house"
       set color          pcolor + 1
-      set location-here  self
       set residences lput self residences
     ]
   ]
@@ -234,7 +237,7 @@ to setup-activity-types
       set duration      1
       set location-type item 0 def
       set task          item 1 def
-      set criteria      [ -> true ]
+      set criteria      item 2 def
     ]
   ]
   ask locations [
@@ -250,7 +253,7 @@ to setup-jobs
   ask activity-types with [ is-job? ] [
     let the-type self
     let the-criteria criteria
-    let candidates citizens with [ (runresult the-criteria self) ]
+    let candidates citizens with [ runresult the-criteria ]
     ask activities with [ my-activity-type = the-type ] [
       let free-candidates candidates with [
         not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead
@@ -264,7 +267,7 @@ to setup-jobs
 end
 
 to setup-mandatory-activities
-  ask activity-types with [ is-mandatory? ] [
+  ask activity-types with [ is-mandatory? and not is-job? ] [
     let the-type self
     let get-activity [ ->
       one-of ([ activities-here ] of residence) with [ my-activity-type = the-type ]
@@ -273,7 +276,7 @@ to setup-mandatory-activities
       let possible-activities activities with [ my-activity-type = the-type ]
       set get-activity [ -> min-one-of possible-activities [ distance myself] ]
     ]
-    ask citizens with [ (runresult ([ criteria ] of myself) self) ] [
+    ask citizens with [ runresult [ criteria ] of myself ] [
       create-activity-link-to runresult get-activity
     ]
   ]
@@ -302,17 +305,11 @@ to-report can-do? [ the-activity ] ; citizen reporter
     report false
   ]
   let the-criteria [ criteria ] of [ my-activity-type ] of the-activity
-  report (runresult the-criteria self)
+  report runresult the-criteria
 end
 
 to-report is-at-my-residence? [ the-turtle ] ; citizen reporter
   report [ patch-here ] of the-turtle = [ patch-here ] of residence
-end
-
-to-report moore-points [ radius ]
-  ; TODO: extension candidate
-  let r (range (- radius) (radius + 1))
-  report reduce sentence map [ x -> map [ y -> list x y ] r ] r
 end
 
 to-report make-community-list
@@ -349,6 +346,11 @@ to-report sum-factors [ factors ]
   ] factors
 end
 
+to-report radicalization ; citizen reporter
+  report sum-factors risk-factors
+end
+
+
 to sleep
   ; do nothing
 end
@@ -372,14 +374,16 @@ to-report my-opinions ; citizen reporter
 end
 
 to talk-to [ recipients the-object ] ; citizen procedure
-  let l1 link-with the-object
-  let v1 [ value ] of l1
-  ask recipients [
-    let l2 get-or-create-link-with the-object
-    let v2 [ value ] of l2
-    let t 1 - tolerance-rate * abs v2
-    if abs (v1 - v2) < t [
-      ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
+  if any? recipients [
+    let l1 link-with the-object
+    let v1 [ value ] of l1
+    ask recipients [
+      let l2 get-or-create-link-with the-object
+      let v2 [ value ] of l2
+      let t 1 - alpha * abs v2
+      if abs (v1 - v2) < t [
+        ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
+      ]
     ]
   ]
 end
@@ -397,18 +401,22 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
   report the-link
 end
 
-to-report attr [ attribute-name ]
+to-report get [ attribute-name ]
   report table:get attributes attribute-name
+end
+
+to-report opinion-on-topic [ the-topic-name ] ; citizen reporter
+  report out-topic-link-to one-of topics with [ topic-name = the-topic-name ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 300
 10
-1088
-799
+1058
+769
 -1
 -1
-26.0
+5.0
 1
 10
 1
@@ -419,9 +427,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-29
+149
 0
-29
+149
 1
 1
 1
@@ -430,9 +438,9 @@ ticks
 
 BUTTON
 20
-300
+350
 93
-333
+383
 NIL
 setup
 NIL
@@ -453,7 +461,7 @@ CHOOSER
 num-communities
 num-communities
 1 9 25
-0
+2
 
 SLIDER
 10
@@ -472,9 +480,9 @@ HORIZONTAL
 
 MONITOR
 10
-230
+280
 87
-275
+325
 population
 count citizens
 17
@@ -498,9 +506,9 @@ HORIZONTAL
 
 MONITOR
 90
-230
+280
 165
-275
+325
 density
 count citizens / count patches
 2
@@ -509,9 +517,9 @@ count citizens / count patches
 
 BUTTON
 110
-300
+350
 173
-333
+383
 NIL
 go
 NIL
@@ -526,9 +534,9 @@ NIL
 
 BUTTON
 180
-300
+350
 243
-333
+383
 NIL
 go
 T
@@ -543,9 +551,9 @@ NIL
 
 BUTTON
 20
-415
+465
 140
-448
+498
 profile 20
 setup                  ;; set up the model\nprofiler:start         ;; start profiling\nrepeat 20 [ go ]       ;; run something you want to measure\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
 NIL
@@ -575,9 +583,9 @@ HORIZONTAL
 
 BUTTON
 20
-450
+500
 142
-483
+533
 profile setup
 profiler:start         ;; start profiling\nsetup                  ;; set up the model\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
 NIL
@@ -592,9 +600,9 @@ NIL
 
 MONITOR
 170
-230
+280
 232
-275
+325
 time
 (word (ticks mod 24) \":00\")
 17
@@ -606,8 +614,8 @@ SLIDER
 185
 290
 218
-tolerance-rate
-tolerance-rate
+alpha
+alpha
 0
 1
 0.5
@@ -616,51 +624,164 @@ tolerance-rate
 NIL
 HORIZONTAL
 
-PLOT
-1165
-305
-1640
-690
-Opinions
-NIL
-NIL
-0.0
-10.0
--1.0
-1.0
-true
-false
-"" ""
-PENS
-"p" 1.0 2 -2674135 true "" "if ticks > 0 [\n  ask [ my-opinions ] of one-of topics with [ topic-name = topic-to-plot ] [\n    plotxy ticks value\n  ]\n]"
-
-CHOOSER
-1235
-160
-1373
-205
-topic-to-plot
-topic-to-plot
-"p" "q" "r"
+SLIDER
+10
+225
+290
+258
+radicalization-threshold
+radicalization-threshold
 0
+1
+0.9
+.1
+1
+NIL
+HORIZONTAL
 
 PLOT
-1430
-135
-1630
-285
-plot 1
+1098
+12
+1388
+252
+T1
 NIL
 NIL
+0.0
+1.0
 -1.0
 1.0
+false
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"T1\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
+
+PLOT
+1393
+12
+1683
+252
+T2
+NIL
+NIL
+0.0
+1.0
+-1.0
+1.0
+false
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"T2\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
+
+PLOT
+1688
+12
+1978
+252
+T3
+NIL
+NIL
+0.0
+1.0
+-1.0
+1.0
+false
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"T3\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
+
+PLOT
+1098
+484
+1387
+732
+mean [radicalization] of citizens
+NIL
+NIL
 0.0
 10.0
+0.0
+1.0
 true
 false
 "" ""
 PENS
-"default" 0.01 1 -16777216 true "" "if ticks > 0 [\n  histogram [ value ] of [ my-opinions ] of one-of topics with [ topic-name = topic-to-plot ]\n]"
+"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [radicalization] of citizens ]"
+
+PLOT
+1443
+277
+1643
+427
+Mean opinion on T2
+NIL
+NIL
+0.0
+10.0
+-1.0
+1.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [value] of [my-in-topic-links] of one-of topics with [topic-name = \"T2\"] ]"
+
+PLOT
+1158
+277
+1358
+427
+Mean opinion on T1
+NIL
+NIL
+0.0
+10.0
+-1.0
+1.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [value] of [my-in-topic-links] of one-of topics with [topic-name = \"T1\"] ]"
+
+PLOT
+1737
+270
+1937
+420
+Mean opinion on T3
+NIL
+NIL
+0.0
+10.0
+-1.0
+1.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [value] of [my-in-topic-links] of one-of topics with [topic-name = \"T3\"] ]"
+
+PLOT
+1445
+442
+1645
+592
+StdDev on T2
+NIL
+NIL
+0.0
+10.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks standard-deviation [value] of [my-in-topic-links] of one-of topics with [topic-name = \"T2\"] ]"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1009,6 +1130,41 @@ true
 0
 Line -7500403 true 150 0 150 150
 
+office
+false
+0
+Rectangle -7500403 true true 60 30 240 300
+Rectangle -16777216 true false 75 45 90 75
+Rectangle -16777216 true false 105 45 120 75
+Rectangle -16777216 true false 180 45 195 75
+Rectangle -16777216 true false 210 45 225 75
+Rectangle -16777216 true false 135 255 165 300
+Rectangle -16777216 true false 75 90 90 120
+Rectangle -16777216 true false 75 135 90 165
+Rectangle -16777216 true false 75 180 90 210
+Rectangle -16777216 true false 75 225 90 255
+Rectangle -16777216 true false 105 90 120 120
+Rectangle -16777216 true false 105 135 120 165
+Rectangle -16777216 true false 105 180 120 210
+Rectangle -16777216 true false 105 225 120 255
+Rectangle -16777216 true false 180 90 195 120
+Rectangle -16777216 true false 180 135 195 165
+Rectangle -16777216 true false 180 180 195 210
+Rectangle -16777216 true false 180 225 195 255
+Rectangle -16777216 true false 180 225 195 255
+Rectangle -16777216 true false 210 90 225 120
+Rectangle -16777216 true false 210 135 225 165
+Rectangle -16777216 true false 210 180 225 210
+Rectangle -16777216 true false 210 225 225 255
+Rectangle -16777216 true false 135 225 165 240
+Rectangle -16777216 true false 135 180 165 195
+Rectangle -16777216 true false 135 135 165 150
+Rectangle -16777216 true false 135 90 165 105
+Rectangle -16777216 true false 135 45 165 60
+Rectangle -7500403 true true 45 15 255 30
+Rectangle -7500403 true true 45 210 60 300
+Rectangle -7500403 true true 240 210 255 300
+
 pentagon
 false
 0
@@ -1148,7 +1304,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2-RC2
+NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

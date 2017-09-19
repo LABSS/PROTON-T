@@ -4,7 +4,7 @@ to-report propensity-factors
   ; first item is weight, second item is value (between 0 and 1)
   report (list
     (list 1 [ -> random-float 1 ]) ; stochastic factor
-    (list 1 [ -> ifelse-value (attr "religion" = "R1") [ 1 ] [ 0 ] ])
+    (list 1 [ -> ifelse-value (get "religion" = "R1") [ 1 ] [ 0 ] ])
   )
 end
 
@@ -20,60 +20,80 @@ to-report attribute-definitions
   report (list
     (list "ethnicity" [ -> one-of ["E1" "E2" "E3" "E4"] ])
     (list "religion"  [ ->
-      ifelse-value (attr "ethnicity" = "E1") [ "R1" ] [ one-of ["R2" "R3" "R4"] ] ]
+      ifelse-value (get "ethnicity" = "E1") [ "R1" ] [ one-of ["R2" "R3" "R4"] ] ]
     )
   )
 end
 
 to-report location-definitions
   report (list
-    ; number, name, shape, color
-    (list 1 "mosque"           "house two story" red)
-    (list 1 "school"           "house ranch"     brown)
-    (list 5 "cafe"             "building store"  orange)
-    (list 5 "workplace"        "factory"         blue)
-  )
-end
-
-to-report job-definition-list
-  report (list
-    ;     num-jobs  start-time duration location-type task
-    (list  1        8          16       "mosque"      [ -> preach ] [ a -> [ age ] of a > 25 ])
-    (list 50        8          8        "workplace"   [ -> work ]   [ a -> [ age ] of a > 18 ])
-    (list  1        8          8        "cafe"        [ -> work ]   [ a -> [ age ] of a > 18 ])
-    (list  1       16          8        "cafe"        [ -> work ]   [ a -> [ age ] of a > 18 ])
+    ;     number name        shape             color
+    (list      1 "mosque"    "house two story" red)
+    (list      1 "school"    "house ranch"     brown)
+    (list      5 "bar"       "building store"  orange)
+    (list      5 "factory"   "factory"         blue)
+    (list      5 "office"    "office"          grey)
   )
 end
 
 to-report mandatory-activity-definition-list
   report (list
-    ; start-time duration location-type task criteria
-    (list 0 8 "residence" [ -> sleep ] [ -> true ] )
-    (list 8 8 "school"    [ -> study ] [ a -> [ age >= 5 and age <= 18 ] of a ])
+    ;     start-time duration location-type task         criteria
+    (list          0        8 "residence"   [ -> sleep ] [ -> true ] )
+    (list          8        8 "school"      [ -> study ] [ -> age >= 5 and age <= 18 ])
+  )
+end
+
+to-report job-definition-list
+  report (list
+    ;     num-jobs start-time duration location-type task          criteria
+    (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
+      get "religion" = "R1" and
+      [ value ] of opinion-on-topic "T1" > 0.9 ]
+    )
+    (list        1          8        8 "school"      [ -> teach  ] [ -> age >= 21 ])
+    (list       50          8        8 "factory"     [ -> work   ] [ -> age >= 18 ])
+    (list       50          8        8 "office"      [ -> work   ] [ -> age >= 18 ])
+    (list        1         12        8 "bar"         [ -> work   ] [ -> age >= 18 ])
+    (list        1         16        8 "bar"         [ -> work   ] [ -> age >= 18 ])
   )
 end
 
 to-report free-time-activity-definition-list
   report (list
-    (list "residence" [ -> socialize ] [ -> true ])
-    (list "cafe"      [ -> socialize ] [ -> true ])
-    (list "park"      [ -> socialize ] [ -> true ])
+    ;     location-type task             criteria
+    (list "residence"   [ -> socialize ] [ -> true ])
+    (list "bar"         [ -> socialize ] [ -> age >= 18 ])
+    (list "mosque"      [ -> socialize ] [ -> get "religion" = "R1" ])
   )
 end
 
 to work ; generic work activity
-  ; small chance to socialize (TODO revisit that)
   if random-float 1 < 0.1 [ socialize ]
 end
 
 to preach
-  talk-to citizens-here one-of topics with [ topic-name = "T1" ]
+  show citizens-here
+  talk-to other citizens-here one-of topics with [ member? topic-name ["T1"] ]
+end
+
+to teach
+  talk-to other citizens-here one-of topics with [ member? topic-name ["T2" "T3"] ]
 end
 
 to-report topic-definitions
   report (list
-    (list "T1" [ -> one-of [1 -1] * (1 - abs clipped-random-normal 0 0.3 -1 1) ])
+    (list "T1" [ -> -1 + random-float 2 ])
     (list "T2" [ -> clipped-random-normal 0 0.3 -1 1 ])
-    (list "T3" [ -> -1 + random-float 2 ])
+    (list "T3" [ -> one-of [1 -1] * (1 - abs clipped-random-normal 0 0.3 -1 1) ])
   )
+end
+
+to post-opinions-setup
+  let n count locations with [ location-type = "mosque" ]
+  ask n-of n citizens with [ get "religion" = "R1" ] [
+    ask out-topic-link-to one-of topics with [ topic-name = "T1" ] [
+      set value 1
+    ]
+  ]
 end
