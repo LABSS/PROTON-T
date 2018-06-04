@@ -3,15 +3,11 @@ __includes [ "scenario.nls" ]
 extensions [ table profiler rnd ]
 
 breed [ locations location ]
-locations-own [
-  location-type ; TODO: we could merge `shape` and `location-type`, save memory
-]
 
 breed [ citizens citizen ]
 citizens-own [
   residence
   birth-year
-  propensity
   radicalized?
   attributes
   current-task
@@ -38,7 +34,7 @@ activities-own [
 breed [ topics a-topic ]
 topics-own  [
   topic-name
-  new-value
+  new-value   ; the initialisation function
 ]
 
 directed-link-breed [ activity-links activity-link ]
@@ -62,6 +58,7 @@ to setup
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
   ask activity-types [ set hidden? true ]
+  reset-ticks
   update-plots
   display
   ; TODO: write some test code to make sure the schedule is consistent.
@@ -89,7 +86,7 @@ to go
     ]
     run current-task
     set countdown countdown - 1
-    if radicalization > radicalization-threshold [
+    if risk > radicalization-threshold [
       set radicalized? true
       set color lput 150 hsb 360 100 (item 2 extract-hsb color)
     ]
@@ -134,17 +131,20 @@ to setup-communities
   let world-side community-side-length * sqrt num-communities
   resize-world 0 (world-side - 1) 0 (world-side - 1)
   set-patch-size floor (800 / world-side)
-  let communities make-community-list
-  let colors map [ c -> c - 4 ] [turquoise cyan]
-  (foreach communities range length communities [ [community-patches i] ->
-    let c item (i mod 2) colors
-    ask community-patches [ set pcolor c + random-float 0.5 ]
-    setup-locations community-patches
-    let residences setup-residences community-patches with [
-      not any? locations in-radius 1.75 with [ location-type != "residence" ]
+  let colors [7.4 9.4]; map [ c -> c - 4 ] [turquoise cyan]
+  let community-table make-community-table
+  foreach table:keys community-table [ row ->
+    foreach table:keys table:get community-table row [ col ->
+      let community-patches table:get table:get community-table row col
+      let c ifelse-value (row mod 2 = col mod 2) [ 7.4 ] [ 9.4 ]
+      ask community-patches [ set pcolor c + random-float 0.5 ]
+      setup-locations community-patches
+      let residences setup-residences community-patches with [
+        not any? locations in-radius 1.75 with [ shape != "residence" ]
+      ]
+      setup-citizens residences
     ]
-    setup-citizens residences
-  ])
+  ]
 end
 
 to setup-locations [target-patches]
@@ -155,10 +155,13 @@ to setup-locations [target-patches]
       ; locations need to be created one at a time so `territory` is initialized
       create-locations 1 [
         set size 3
-        set location-type item 1 def
-        set shape         item 2 def
-        set color         item 3 def
-        let candidates target-patches with [ not any? locations in-radius 2.5 ]
+        set shape         item 1 def
+        set color         change-brightness peach random 10
+        let candidates target-patches with [
+          not any? other locations with [
+            abs (pxcor - [pxcor] of myself) < 3 and abs (pycor - [pycor] of myself) < 3
+          ]
+        ]
         move-to rnd:weighted-one-of candidates [ 1 / (1 + (distance center ^ 2)) ]
       ]
     ]
@@ -178,9 +181,8 @@ to-report setup-residences [target-patches]
   let residences []
   ask target-patches [
     sprout-locations 1 [
-      set location-type  "residence"
-      set shape          "house"
-      set color          pcolor + 1
+      set shape          "residence"
+      set color          pcolor - 2
       set residences lput self residences
     ]
   ]
@@ -193,9 +195,8 @@ to setup-citizens [residences]
     foreach attribute-definitions [ def ->
       table:put attributes first def runresult last def
     ]
-    set color            lput 150 extract-rgb (39 - random-float 3)
+    set color            lput 150 one-of teals
     set birth-year       random-birth-year
-    set propensity       sum-factors propensity-factors
     set current-task     nobody ; used to indicate "none"
     set countdown        0
     set residence one-of residences
@@ -242,7 +243,7 @@ to setup-activity-types
   ]
   ask locations [
     foreach [ self ] of activity-types with [
-      location-type = [ location-type ] of myself
+      location-type = [ shape ] of myself
     ] [ t ->
       hatch-activities 1 [ set my-activity-type t ]
     ]
@@ -272,7 +273,7 @@ to setup-mandatory-activities
     let get-activity [ ->
       one-of ([ activities-here ] of residence) with [ my-activity-type = the-type ]
     ]
-    if location-type != "residence" [
+    if shape != "residence" [
       let possible-activities activities with [ my-activity-type = the-type ]
       set get-activity [ -> min-one-of possible-activities [ distance myself] ]
     ]
@@ -312,19 +313,19 @@ to-report is-at-my-residence? [ the-turtle ] ; citizen reporter
   report [ patch-here ] of the-turtle = [ patch-here ] of residence
 end
 
-to-report make-community-list
-  ; TODO: extension candidate? (in part, at least)
-  ; could potentially get rid of `table` extension
-  let tbl table:make
+to-report make-community-table
   let n world-width / community-side-length
-  foreach range n [ i -> foreach range n [ j -> table:put tbl i * 10 + j [] ] ]
-  ask patches [
-    let i floor (pxcor / community-side-length)
-    let j floor (pycor / community-side-length)
-    let key i * 10 + j
-    table:put tbl key lput self table:get tbl key
+  let tbl table:make
+  foreach range n [ row ->
+    table:put tbl row table:make
+    foreach range n [ col ->
+      table:put (table:get tbl row) col patches with [
+        floor (pxcor / community-side-length) = row and
+        floor (pycor / community-side-length) = col
+      ]
+    ]
   ]
-  report map patch-set map last table:to-list tbl
+  report tbl
 end
 
 to-report intervals [ n the-range ]
@@ -346,10 +347,13 @@ to-report sum-factors [ factors ]
   ] factors
 end
 
-to-report radicalization ; citizen reporter
+to-report risk ; citizen reporter
   report sum-factors risk-factors
 end
 
+to-report propensity
+  report sum-factors propensity-factors
+end
 
 to sleep
   ; do nothing
@@ -408,15 +412,28 @@ end
 to-report opinion-on-topic [ the-topic-name ] ; citizen reporter
   report out-topic-link-to one-of topics with [ topic-name = the-topic-name ]
 end
+
+to-report teals
+  report [[0 62 63] [0 98 100] [0 129 132] [65 182 185]]
+end
+
+to-report peach
+  report [245 157 101]
+end
+
+to-report change-brightness [ c delta-b ]
+  let hsb-list extract-hsb c
+  report hsb (item 0 hsb-list) (item 1 hsb-list) (item 2 hsb-list + delta-b)
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 300
 10
-1058
-769
+1088
+799
 -1
 -1
-5.0
+13.0
 1
 10
 1
@@ -427,9 +444,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-149
+59
 0
-149
+59
 1
 1
 1
@@ -437,10 +454,10 @@ ticks
 30.0
 
 BUTTON
-20
-350
-93
-383
+25
+335
+98
+368
 NIL
 setup
 NIL
@@ -460,8 +477,8 @@ CHOOSER
 60
 num-communities
 num-communities
-1 9 25
-2
+1 4 9 16 25
+1
 
 SLIDER
 10
@@ -472,17 +489,17 @@ citizens-per-community
 citizens-per-community
 1
 2000
-1600.0
+500.0
 1
 1
 citizens
 HORIZONTAL
 
 MONITOR
-10
-280
-87
-325
+40
+275
+117
+320
 population
 count citizens
 17
@@ -505,10 +522,10 @@ patches
 HORIZONTAL
 
 MONITOR
-90
-280
-165
-325
+120
+275
+195
+320
 density
 count citizens / count patches
 2
@@ -516,44 +533,44 @@ count citizens / count patches
 11
 
 BUTTON
-110
-350
-173
-383
-NIL
-go
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-180
-350
-243
-383
-NIL
-go
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-20
-465
 140
-498
+335
+203
+368
+NIL
+go
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+210
+335
+273
+368
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+25
+375
+145
+408
 profile 20
 setup                  ;; set up the model\nprofiler:start         ;; start profiling\nrepeat 20 [ go ]       ;; run something you want to measure\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
 NIL
@@ -582,10 +599,10 @@ patches
 HORIZONTAL
 
 BUTTON
-20
-500
-142
-533
+150
+375
+272
+408
 profile setup
 profiler:start         ;; start profiling\nsetup                  ;; set up the model\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
 NIL
@@ -599,10 +616,10 @@ NIL
 1
 
 MONITOR
-170
-280
-232
-325
+200
+275
+262
+320
 time
 (word (ticks mod 24) \":00\")
 17
@@ -640,10 +657,10 @@ NIL
 HORIZONTAL
 
 PLOT
-1098
-12
-1388
-252
+25
+415
+275
+535
 T1
 NIL
 NIL
@@ -655,50 +672,14 @@ false
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"T1\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
-
-PLOT
-1393
-12
-1683
-252
-T2
-NIL
-NIL
-0.0
-1.0
--1.0
-1.0
-false
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"T2\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
-
-PLOT
-1688
-12
-1978
-252
-T3
-NIL
-NIL
-0.0
-1.0
--1.0
-1.0
-false
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"T3\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
+"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Fundamentalism\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
 
 PLOT
 1098
-484
+550
 1387
-732
-mean [radicalization] of citizens
+798
+Propensity and risk
 NIL
 NIL
 0.0
@@ -709,14 +690,15 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [radicalization] of citizens ]"
+"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [ propensity ] of citizens ]"
+"pen-1" 1.0 0 -7500403 true "" "if ticks > 0 [ plotxy ticks mean [ risk ] of citizens ]"
 
 PLOT
-1443
-277
-1643
-427
-Mean opinion on T2
+1110
+95
+1639
+388
+Mean opinions
 NIL
 NIL
 0.0
@@ -724,64 +706,9 @@ NIL
 -1.0
 1.0
 true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [value] of [my-in-topic-links] of one-of topics with [topic-name = \"T2\"] ]"
-
-PLOT
-1158
-277
-1358
-427
-Mean opinion on T1
-NIL
-NIL
-0.0
-10.0
--1.0
-1.0
 true
-false
-"" ""
+"let n count topics\n(foreach sort topics range n [ [t i] ->\n  ask t [ create-temporary-plot-pen topic-name ]\n  set-plot-pen-color hsb (i * 360 / n) 50 50\n])" "if ticks > 0 [\n  ask topics [\n    set-current-plot-pen topic-name\n    plotxy ticks mean [value] of my-in-topic-links\n  ]\n]"
 PENS
-"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [value] of [my-in-topic-links] of one-of topics with [topic-name = \"T1\"] ]"
-
-PLOT
-1737
-270
-1937
-420
-Mean opinion on T3
-NIL
-NIL
-0.0
-10.0
--1.0
-1.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [value] of [my-in-topic-links] of one-of topics with [topic-name = \"T3\"] ]"
-
-PLOT
-1445
-442
-1645
-592
-StdDev on T2
-NIL
-NIL
-0.0
-10.0
-0.0
-1.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks standard-deviation [value] of [my-in-topic-links] of one-of topics with [topic-name = \"T2\"] ]"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -934,6 +861,23 @@ false
 Circle -7500403 true true 0 0 300
 Circle -16777216 true false 30 30 240
 
+community center
+false
+0
+Rectangle -7500403 true true 270 75 285 255
+Rectangle -7500403 true true 45 135 270 255
+Rectangle -16777216 true false 124 195 187 256
+Rectangle -16777216 true false 60 195 105 240
+Rectangle -16777216 true false 60 150 105 180
+Rectangle -16777216 true false 210 150 255 180
+Line -16777216 false 270 135 270 255
+Polygon -7500403 true true 30 135 285 135 240 90 75 90
+Line -16777216 false 30 135 285 135
+Line -16777216 false 255 105 285 135
+Line -7500403 true 154 195 154 255
+Rectangle -16777216 true false 210 195 255 240
+Rectangle -16777216 true false 135 150 180 180
+
 cow
 false
 0
@@ -1051,23 +995,6 @@ Line -16777216 false 195 120 225 150
 Polygon -16777216 false false 165 195 150 195 180 165 210 195
 Rectangle -16777216 true false 135 105 165 135
 
-house colonial
-false
-0
-Rectangle -7500403 true true 270 75 285 255
-Rectangle -7500403 true true 45 135 270 255
-Rectangle -16777216 true false 124 195 187 256
-Rectangle -16777216 true false 60 195 105 240
-Rectangle -16777216 true false 60 150 105 180
-Rectangle -16777216 true false 210 150 255 180
-Line -16777216 false 270 135 270 255
-Polygon -7500403 true true 30 135 285 135 240 90 75 90
-Line -16777216 false 30 135 285 135
-Line -16777216 false 255 105 285 135
-Line -7500403 true 154 195 154 255
-Rectangle -16777216 true false 210 195 255 240
-Rectangle -16777216 true false 135 150 180 180
-
 house efficiency
 false
 0
@@ -1130,40 +1057,31 @@ true
 0
 Line -7500403 true 150 0 150 150
 
-office
+mosque
 false
 0
-Rectangle -7500403 true true 60 30 240 300
-Rectangle -16777216 true false 75 45 90 75
-Rectangle -16777216 true false 105 45 120 75
-Rectangle -16777216 true false 180 45 195 75
-Rectangle -16777216 true false 210 45 225 75
-Rectangle -16777216 true false 135 255 165 300
-Rectangle -16777216 true false 75 90 90 120
-Rectangle -16777216 true false 75 135 90 165
-Rectangle -16777216 true false 75 180 90 210
-Rectangle -16777216 true false 75 225 90 255
-Rectangle -16777216 true false 105 90 120 120
-Rectangle -16777216 true false 105 135 120 165
-Rectangle -16777216 true false 105 180 120 210
-Rectangle -16777216 true false 105 225 120 255
-Rectangle -16777216 true false 180 90 195 120
-Rectangle -16777216 true false 180 135 195 165
-Rectangle -16777216 true false 180 180 195 210
-Rectangle -16777216 true false 180 225 195 255
-Rectangle -16777216 true false 180 225 195 255
-Rectangle -16777216 true false 210 90 225 120
-Rectangle -16777216 true false 210 135 225 165
-Rectangle -16777216 true false 210 180 225 210
-Rectangle -16777216 true false 210 225 225 255
-Rectangle -16777216 true false 135 225 165 240
-Rectangle -16777216 true false 135 180 165 195
-Rectangle -16777216 true false 135 135 165 150
-Rectangle -16777216 true false 135 90 165 105
-Rectangle -16777216 true false 135 45 165 60
-Rectangle -7500403 true true 45 15 255 30
-Rectangle -7500403 true true 45 210 60 300
-Rectangle -7500403 true true 240 210 255 300
+Rectangle -7500403 true true 105 210 195 300
+Rectangle -7500403 true true 15 195 30 300
+Rectangle -7500403 true true 270 195 285 300
+Rectangle -7500403 true true 30 240 105 300
+Rectangle -7500403 true true 195 240 270 300
+Circle -7500403 true true 105 165 90
+Circle -7500403 true true 12 182 20
+Circle -7500403 true true 268 182 20
+Polygon -7500403 true true 143 174 150 144 158 174
+Polygon -7500403 true true 15 196 22 166 30 196
+Polygon -7500403 true true 270 198 277 168 285 198
+Rectangle -16777216 true false 128 242 173 300
+Rectangle -16777216 true false 30 270 60 300
+Rectangle -16777216 true false 75 270 105 300
+Rectangle -16777216 true false 195 270 225 300
+Rectangle -16777216 true false 240 270 270 300
+Circle -16777216 true false 30 255 30
+Circle -16777216 true false 75 255 30
+Circle -16777216 true false 195 255 30
+Circle -16777216 true false 240 255 30
+Circle -16777216 true false 127 219 46
+Polygon -16777216 true false 143 240 150 210 158 240
 
 pentagon
 false
@@ -1190,6 +1108,44 @@ Polygon -7500403 true true 165 180 165 210 225 180 255 120 210 135
 Polygon -7500403 true true 135 105 90 60 45 45 75 105 135 135
 Polygon -7500403 true true 165 105 165 135 225 105 255 45 210 60
 Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
+
+public space
+false
+0
+Rectangle -7500403 true true 30 45 45 240
+Rectangle -16777216 false false 30 45 45 165
+Rectangle -7500403 true true 15 165 285 255
+Rectangle -16777216 true false 120 195 180 255
+Line -7500403 true 150 195 150 255
+Rectangle -16777216 true false 30 180 105 240
+Rectangle -16777216 true false 195 180 270 240
+Line -16777216 false 0 165 300 165
+Polygon -7500403 true true 0 165 45 135 60 90 240 90 255 135 300 165
+Rectangle -7500403 true true 0 0 75 45
+Rectangle -16777216 false false 0 0 75 45
+
+residence
+false
+13
+Rectangle -2064490 true true 45 120 255 285
+Rectangle -7500403 true false 120 210 180 285
+Polygon -2064490 true true 15 120 150 15 285 120
+Line -7500403 false 30 120 270 120
+
+school
+false
+0
+Rectangle -7500403 true true 270 120 285 255
+Rectangle -7500403 true true 15 180 270 255
+Polygon -7500403 true true 0 180 300 180 240 135 60 135 0 180
+Rectangle -16777216 true false 120 195 180 255
+Line -7500403 true 150 195 150 255
+Rectangle -16777216 true false 45 195 105 240
+Rectangle -16777216 true false 195 195 255 240
+Line -7500403 true 75 195 75 240
+Line -7500403 true 225 195 225 240
+Line -16777216 false 270 180 270 255
+Line -16777216 false 0 180 300 180
 
 sheep
 false
@@ -1298,13 +1254,48 @@ Polygon -16777216 true false 253 133 245 131 245 133
 Polygon -7500403 true true 2 194 13 197 30 191 38 193 38 205 20 226 20 257 27 265 38 266 40 260 31 253 31 230 60 206 68 198 75 209 66 228 65 243 82 261 84 268 100 267 103 261 77 239 79 231 100 207 98 196 119 201 143 202 160 195 166 210 172 213 173 238 167 251 160 248 154 265 169 264 178 247 186 240 198 260 200 271 217 271 219 262 207 258 195 230 192 198 210 184 227 164 242 144 259 145 284 151 277 141 293 140 299 134 297 127 273 119 270 105
 Polygon -7500403 true true -1 195 14 180 36 166 40 153 53 140 82 131 134 133 159 126 188 115 227 108 236 102 238 98 268 86 269 92 281 87 269 103 269 113
 
+workplace
+false
+0
+Rectangle -7500403 true true 60 30 240 300
+Rectangle -16777216 true false 75 45 90 75
+Rectangle -16777216 true false 105 45 120 75
+Rectangle -16777216 true false 180 45 195 75
+Rectangle -16777216 true false 210 45 225 75
+Rectangle -16777216 true false 135 255 165 300
+Rectangle -16777216 true false 75 90 90 120
+Rectangle -16777216 true false 75 135 90 165
+Rectangle -16777216 true false 75 180 90 210
+Rectangle -16777216 true false 75 225 90 255
+Rectangle -16777216 true false 105 90 120 120
+Rectangle -16777216 true false 105 135 120 165
+Rectangle -16777216 true false 105 180 120 210
+Rectangle -16777216 true false 105 225 120 255
+Rectangle -16777216 true false 180 90 195 120
+Rectangle -16777216 true false 180 135 195 165
+Rectangle -16777216 true false 180 180 195 210
+Rectangle -16777216 true false 180 225 195 255
+Rectangle -16777216 true false 180 225 195 255
+Rectangle -16777216 true false 210 90 225 120
+Rectangle -16777216 true false 210 135 225 165
+Rectangle -16777216 true false 210 180 225 210
+Rectangle -16777216 true false 210 225 225 255
+Rectangle -16777216 true false 135 225 165 240
+Rectangle -16777216 true false 135 180 165 195
+Rectangle -16777216 true false 135 135 165 150
+Rectangle -16777216 true false 135 90 165 105
+Rectangle -16777216 true false 135 45 165 60
+Rectangle -7500403 true true 45 15 255 30
+Rectangle -7500403 true true 45 210 60 300
+Rectangle -7500403 true true 240 210 255 300
+
 x
 false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.0.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

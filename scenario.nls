@@ -1,38 +1,46 @@
 to-report random-birth-year report 0 - random 80 end
   
 to-report propensity-factors
-  ; first item is weight, second item is value (between 0 and 1)
+  ; first item is weight (in R+), second item is value (in [-1, 1])
+  ; todo: confirm weight for attribute factors
+  ; todo: figure out the best way to convert odds ratio to weights
+  
   report (list
-    (list 1 [ -> random-float 1 ]) ; stochastic factor
-    (list 1 [ -> ifelse-value (get "religion" = "R1") [ 1 ] [ 0 ] ])
+    (list 1     [ -> ifelse-value (get "male?") [ 1 ] [ 0 ] ])
+    (list 1     [ -> ifelse-value (get "muslim?") [ 1 ] [ 0 ] ])
+    (list 1     [ -> ifelse-value (get "immigrant?") [ 1 ] [ 0 ] ])
+    (list 1.647 [ -> [ value ] of opinion-on-topic "Fundamentalism" ])
+    (list 1.555 [ -> [ value ] of opinion-on-topic "Non integration" ])
+    (list 1.381 [ -> [ value ] of opinion-on-topic "Institutional distrust" ])
+    (list 1.475 [ -> [ value ] of opinion-on-topic "Collective relative deprivation" ])
   )
 end
 
 to-report risk-factors
   report (list
-    ; weight, value (between 0 and 1)
-    (list 1 [ -> propensity ])
-    (list 1 [ -> 1 / ((abs (age - 18)) + 1) ])
+    (list 3.670 [ -> [ value ] of opinion-on-topic "Fundamentalism" ])
+    (list 3.626 [ -> [ value ] of opinion-on-topic "Non integration" ])
+    (list 2.417 [ -> [ value ] of opinion-on-topic "Institutional distrust" ])
+    (list 3.609 [ -> [ value ] of opinion-on-topic "Collective relative deprivation" ])
   )
 end
 
 to-report attribute-definitions
   report (list
-    (list "ethnicity" [ -> one-of ["E1" "E2" "E3" "E4"] ])
-    (list "religion"  [ ->
-      ifelse-value (get "ethnicity" = "E1") [ "R1" ] [ one-of ["R2" "R3" "R4"] ] ]
-    )
+    (list "male?"      [ -> one-of [true false] ])
+    (list "muslim?"    [ -> one-of [true false] ])
+    (list "immigrant?" [ -> one-of [true false] ])
   )
 end
 
 to-report location-definitions
   report (list
-    ;     number name        shape             color
-    (list      1 "mosque"    "house two story" red)
-    (list      1 "school"    "house ranch"     brown)
-    (list      5 "bar"       "building store"  orange)
-    (list      5 "factory"   "factory"         blue)
-    (list      5 "office"    "office"          grey)
+    ;     number name/shape color
+    (list      1 "mosque")
+    (list      1 "school")
+    (list      5 "public space")
+    (list      5 "workplace")
+    (list      5 "community center")
   )
 end
 
@@ -48,8 +56,7 @@ to-report job-definition-list
   report (list
     ;     num-jobs start-time duration location-type task          criteria
     (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
-      get "religion" = "R1" and
-      [ value ] of opinion-on-topic "T1" > 0.9 ]
+      get "muslim?" and [ value ] of opinion-on-topic "Fundamentalism" = 1 ]
     )
     (list        1          8        8 "school"      [ -> teach  ] [ -> age >= 21 ])
     (list       50          8        8 "factory"     [ -> work   ] [ -> age >= 18 ])
@@ -62,9 +69,9 @@ end
 to-report free-time-activity-definition-list
   report (list
     ;     location-type task             criteria
-    (list "residence"   [ -> socialize ] [ -> true ])
-    (list "bar"         [ -> socialize ] [ -> age >= 18 ])
-    (list "mosque"      [ -> socialize ] [ -> get "religion" = "R1" ])
+    (list "residence"    [ -> socialize ] [ -> true ])
+    (list "public space" [ -> socialize ] [ -> true ])
+    (list "mosque"       [ -> socialize ] [ -> get "muslim?" ])
   )
 end
 
@@ -74,25 +81,27 @@ end
 
 to preach
   show citizens-here
-  talk-to other citizens-here one-of topics with [ member? topic-name ["T1"] ]
+  talk-to other citizens-here one-of topics
 end
 
 to teach
-  talk-to other citizens-here one-of topics with [ member? topic-name ["T2" "T3"] ]
+  talk-to other citizens-here one-of topics
 end
 
 to-report topic-definitions
+  let uniform [ -> -1 + random-float 2 ]
   report (list
-    (list "T1" [ -> -1 + random-float 2 ])
-    (list "T2" [ -> clipped-random-normal 0 0.3 -1 1 ])
-    (list "T3" [ -> one-of [1 -1] * (1 - abs clipped-random-normal 0 0.3 -1 1) ])
+    (list "Fundamentalism" uniform)
+    (list "Non integration" uniform)
+    (list "Institutional distrust" uniform)
+    (list "Collective relative deprivation" uniform)
   )
 end
 
 to post-opinions-setup
-  let n count locations with [ location-type = "mosque" ]
-  ask n-of n citizens with [ get "religion" = "R1" ] [
-    ask out-topic-link-to one-of topics with [ topic-name = "T1" ] [
+  let n count locations with [ shape = "mosque" ]
+  ask n-of n citizens with [ get "muslim?" ] [
+    ask out-topic-link-to one-of topics with [ topic-name = "Fundamentalism" ] [
       set value 1
     ]
   ]
