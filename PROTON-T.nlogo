@@ -37,10 +37,10 @@ topics-own  [
   new-value   ; the initialisation function
 ]
 
-directed-link-breed [ activity-links activity-link ]
+directed-link-breed [ activity-links activity-link ] ;links from citizens to activities
 activity-links-own [ value ]
 
-directed-link-breed [ topic-links topic-link ]
+directed-link-breed [ topic-links topic-link ]  ;links from citizens to topics
 topic-links-own [ value ]
 
 to setup
@@ -1295,7 +1295,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.3
+NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
