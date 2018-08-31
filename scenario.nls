@@ -28,7 +28,7 @@ end
 to-report attribute-definitions
   report (list
     (list "male?"      [ -> one-of [true false] ])
-    (list "muslim?"    [ -> one-of [true false] ])
+    (list "muslim?"    [ -> random-float 1 < 0.1 ])
     (list "immigrant?" [ -> one-of [true false] ])
   )
 end
