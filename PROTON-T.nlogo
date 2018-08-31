@@ -200,6 +200,7 @@ to setup-citizens [residences]
     set current-task     nobody ; used to indicate "none"
     set countdown        0
     set residence one-of residences
+    set radicalized? false
     move-to residence
   ]
 end
