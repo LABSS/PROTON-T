@@ -12,6 +12,7 @@ citizens-own [
   attributes
   current-task
   countdown
+  propensity
 ]
 
 breed [ activity-types activity-type ]
@@ -200,6 +201,8 @@ to setup-citizens [residences]
     set current-task     nobody ; used to indicate "none"
     set countdown        0
     set residence one-of residences
+    set propensity sum-factors propensity-factors
+    ; set propensity 0.1
     move-to residence
   ]
 end
@@ -341,19 +344,21 @@ to-report age            report current-year - birth-year    end
 
 to-report sum-factors [ factors ]
   ; TODO: extension candidate?
+  ; the propensity-factors report from scenarion is not working
+  ; 2018,09-11 we return an uniform distribution for propensity
+
   let sum-of-weights sum map first factors
-  report sum map [ pair ->
-    (first pair / sum-of-weights) * runresult last pair
-  ] factors
+  ; report  sum map [ pair ->
+  ;  (first pair / sum-of-weights) * runresult last pair
+  ; ] factors
+  report random-float 1
+
 end
 
 to-report risk ; citizen reporter
   report sum-factors risk-factors
 end
 
-to-report propensity
-  report sum-factors propensity-factors
-end
 
 to sleep
   ; do nothing
@@ -1295,7 +1300,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.3
+NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
