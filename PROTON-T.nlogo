@@ -202,7 +202,6 @@ to setup-citizens [residences]
     set countdown        0
     set residence one-of residences
     set propensity sum-factors propensity-factors
-    ; set propensity 0.1
     move-to residence
   ]
 end
@@ -343,15 +342,11 @@ to-report current-time   report ticks mod ticks-per-day      end
 to-report age            report current-year - birth-year    end
 
 to-report sum-factors [ factors ]
-  ; TODO: extension candidate?
-  ; the propensity-factors report from scenarion is not working
-  ; 2018,09-11 we return an uniform distribution for propensity
 
   let sum-of-weights sum map first factors
-  ; report  sum map [ pair ->
-  ;  (first pair / sum-of-weights) * runresult last pair
-  ; ] factors
-  report random-float 1
+  report  sum map [ pair ->
+    (first pair / sum-of-weights) * runresult last pair
+   ] factors
 
 end
 
@@ -494,7 +489,7 @@ citizens-per-community
 citizens-per-community
 1
 2000
-500.0
+122.0
 1
 1
 citizens
@@ -1300,7 +1295,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
