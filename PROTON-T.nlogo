@@ -12,6 +12,7 @@ citizens-own [
   attributes
   current-task
   countdown
+  propensity
 ]
 
 breed [ activity-types activity-type ]
@@ -200,6 +201,7 @@ to setup-citizens [residences]
     set current-task     nobody ; used to indicate "none"
     set countdown        0
     set residence one-of residences
+    set propensity sum-factors propensity-factors
     set radicalized? false
     move-to residence
   ]
@@ -341,20 +343,18 @@ to-report current-time   report ticks mod ticks-per-day      end
 to-report age            report current-year - birth-year    end
 
 to-report sum-factors [ factors ]
-  ; TODO: extension candidate?
+
   let sum-of-weights sum map first factors
   report sum map [ pair ->
     (first pair / sum-of-weights) * runresult last pair
   ] factors
+
 end
 
 to-report risk ; citizen reporter
   report sum-factors risk-factors
 end
 
-to-report propensity
-  report sum-factors propensity-factors
-end
 
 to sleep
   ; do nothing
@@ -490,7 +490,7 @@ citizens-per-community
 citizens-per-community
 1
 2000
-500.0
+122.0
 1
 1
 citizens

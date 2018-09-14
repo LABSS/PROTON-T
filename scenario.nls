@@ -9,10 +9,6 @@ to-report propensity-factors
     (list 1     [ -> ifelse-value (get "male?") [ 1 ] [ 0 ] ])
     (list 1     [ -> ifelse-value (get "muslim?") [ 1 ] [ 0 ] ])
     (list 1     [ -> ifelse-value (get "immigrant?") [ 1 ] [ 0 ] ])
-    (list 1.647 [ -> [ value ] of opinion-on-topic "Fundamentalism" ])
-    (list 1.555 [ -> [ value ] of opinion-on-topic "Non integration" ])
-    (list 1.381 [ -> [ value ] of opinion-on-topic "Institutional distrust" ])
-    (list 1.475 [ -> [ value ] of opinion-on-topic "Collective relative deprivation" ])
   )
 end
 
