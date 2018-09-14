@@ -344,9 +344,9 @@ to-report age            report current-year - birth-year    end
 to-report sum-factors [ factors ]
 
   let sum-of-weights sum map first factors
-  report  sum map [ pair ->
+  report sum map [ pair ->
     (first pair / sum-of-weights) * runresult last pair
-   ] factors
+  ] factors
 
 end
 
