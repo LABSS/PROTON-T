@@ -38,10 +38,10 @@ topics-own  [
   new-value   ; the initialisation function
 ]
 
-directed-link-breed [ activity-links activity-link ]
+directed-link-breed [ activity-links activity-link ] ;links from citizens to activities
 activity-links-own [ value ]
 
-directed-link-breed [ topic-links topic-link ]
+directed-link-breed [ topic-links topic-link ]  ;links from citizens to topics
 topic-links-own [ value ]
 
 to setup
@@ -202,6 +202,7 @@ to setup-citizens [residences]
     set countdown        0
     set residence one-of residences
     set propensity sum-factors propensity-factors
+    set radicalized? false
     move-to residence
   ]
 end
