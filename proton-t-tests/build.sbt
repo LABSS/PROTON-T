@@ -17,21 +17,20 @@ libraryDependencies ++= Seq(
 lazy val downloadFromZip = taskKey[Unit]("Download zipped extensions and extract them to ./extensions")
 
 downloadFromZip := {
-  // This will download extensions only if the `extensions` directory
-  // does not exist. If you need to add a new extension, remove
-  // the `extensions` directory to cause sbt to re-download everything
-  if (java.nio.file.Files.notExists(new File("extensions").toPath())) {
-    println("Downloading extensions...")
-    val baseURL = "https://raw.githubusercontent.com/NetLogo/NetLogo-Libraries/6.0/extensions/"
-    val extensions = List(
-      "table" -> "table-1.3.0.zip",
-      "profiler" -> "profiler-1.1.0.zip",
-      "rnd" -> "rnd-3.0.0.zip"
-    )
-    for ((extension, file) <- extensions) {
-      println("Downloading " + baseURL + file)
-      IO.unzipURL(new URL(baseURL + file), new File("extensions/" + extension))
-    }
+  val baseURL = "https://raw.githubusercontent.com/NetLogo/NetLogo-Libraries/6.0/extensions/"
+  val extensions = List(
+    "table" -> "table-1.3.0.zip",
+    "profiler" -> "profiler-1.1.0.zip",
+    "rnd" -> "rnd-3.0.0.zip"
+  )
+  for {
+    (extension, file) <- extensions
+    path = new File("extensions/" + extension)
+    if java.nio.file.Files.notExists(path.toPath)
+    url = new URL(baseURL + file)
+  } {
+    println("Downloading " + url)
+    IO.unzipURL(url, path)
   }
 }
 
