@@ -8,7 +8,7 @@ breed [ citizens citizen ]
 citizens-own [
   residence
   birth-year
-  radicalized?
+  recruited?
   attributes
   current-task
   countdown
@@ -89,10 +89,6 @@ to go
     ]
     run current-task
     set countdown countdown - 1
-    if risk > radicalization-threshold [
-      set radicalized? true
-      set color lput 150 hsb 360 100 (item 2 extract-hsb color)
-    ]
   ]
   tick
 end
@@ -204,7 +200,7 @@ to setup-citizens [residences]
     set countdown        0
     set residence one-of residences
     set propensity sum-factors propensity-factors
-    set radicalized? false
+    set recruited? false
     move-to residence
   ]
 end
@@ -390,6 +386,7 @@ to talk-to [ recipients the-object ] ; citizen procedure
       let t 1 - alpha * abs v2
       if abs (v1 - v2) < t [
         ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
+        check-recruitment
       ]
     ]
   ]
@@ -406,6 +403,16 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
     ]
   ]
   report the-link
+end
+
+to check-recruitment ; citizen procedure
+  ; Self is the receiver in the opinion dynamic. Myself is the speaker.
+  if [ recruited? ] of myself [
+    if risk > radicalization-threshold [
+      set recruited? true
+      set color lput 150 hsb 360 100 (item 2 extract-hsb color)
+    ]
+  ]
 end
 
 to-report get [ attribute-name ]
