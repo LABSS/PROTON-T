@@ -405,7 +405,8 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
   report the-link
 end
 
-to check-recruitment
+to check-recruitment ; citizen procedure
+  ; Self is the receiver in the opinion dynamic. Myself is the speaker.
   if [ recruited? ] of myself [
     if risk > radicalization-threshold [
       set recruited? true
