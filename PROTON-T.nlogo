@@ -35,7 +35,8 @@ activities-own [
 breed [ topics a-topic ]
 topics-own  [
   topic-name
-  new-value   ; the initialisation function
+  new-value ; the initialisation function
+  criteria  ; a boolean reporter taking a speaker and a listener
 ]
 
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
@@ -104,6 +105,7 @@ to setup-topics
     create-topics 1 [
       set topic-name item 0 def
       set new-value  item 1 def
+      set criteria   item 2 def
       set hidden? true
     ]
   ]
@@ -362,9 +364,26 @@ to study
 end
 
 to socialize ; citizen procedure
-  let the-object [ other-end ] of rnd:weighted-one-of my-opinions [ abs value ]
-  let partner turtle-set one-of other citizens-here
-  talk-to partner the-object
+  let receiver turtle-set one-of other citizens-here
+  if any? receiver [
+    let speaker self
+    let candidate-opinions my-opinions with [ meets-criteria? speaker receiver ]
+    let the-object [ other-end ] of rnd:weighted-one-of candidate-opinions [ abs value ]
+    talk-to receiver the-object
+  ]
+end
+
+to-report find-criteria-by-breed ; link reporter
+  report ifelse-value (breed = activity-links) [
+    [ criteria ] of [ my-activity-type ] of other-end
+  ] [
+    [ criteria ] of other-end
+  ]
+end
+
+to-report meets-criteria? [ speaker receiver ]; link reporter
+  let the-criteria find-criteria-by-breed
+  report reduce and [ [ runresult the-criteria ] of receiver ] of speaker
 end
 
 to-report my-opinions ; citizen reporter
@@ -504,6 +523,7 @@ citizens-per-community
 1
 2000
 122.0
+200.0
 1
 1
 citizens

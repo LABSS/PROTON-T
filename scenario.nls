@@ -84,14 +84,33 @@ to teach
   talk-to other citizens-here one-of topics
 end
 
+;to-report topic-definitions
+;  let uniform [ -> -1 + random-float 2 ]
+;  report (list
+;    (list "Fundamentalism" uniform)
+;    (list "Non integration" uniform)
+;    (list "Institutional distrust" uniform)
+;    (list "Collective relative deprivation" uniform)
+;  )
+;end
+
 to-report topic-definitions
   let uniform [ -> -1 + random-float 2 ]
+  ; Criteria are reporters with one speaker (myself) and one listener (self). 
+  ; This makes the criteria compatible with the ones in activities.
   report (list
-    (list "Fundamentalism" uniform)
-    (list "Non integration" uniform)
-    (list "Institutional distrust" uniform)
-    (list "Collective relative deprivation" uniform)
+    ;      type                             value     criteria
+    (list "Fundamentalism"                  uniform   both-muslims?)
+    (list "Non integration"                 uniform   [ -> true ])
+    (list "Institutional distrust"          uniform   [ -> true ])
+    (list "Collective relative deprivation" uniform   both-muslims?)
   )
+end
+
+to-report both-muslims?
+  report [  -> 
+    [ get "muslim?" ] of myself and get "muslim?"  
+  ]
 end
 
 to post-opinions-setup
