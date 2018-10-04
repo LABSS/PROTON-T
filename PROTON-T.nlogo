@@ -38,11 +38,11 @@ topics-own  [
   new-value   ; the initialisation function
 ]
 
-directed-link-breed [ activity-links activity-link ] ;links from citizens to activities
-activity-links-own [ value ]
+directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
+activity-links-own [ value ]                         ; value of activity for the citizen
 
-directed-link-breed [ topic-links topic-link ]  ;links from citizens to topics
-topic-links-own [ value ]
+directed-link-breed [ topic-links topic-link ]  ; links from citizens to topics
+topic-links-own [ value ]                       ; opinion dynamics score from -1 to 1
 
 to setup
   clear-all
@@ -73,17 +73,19 @@ to go
     if new-activity != nobody [
       start-activity new-activity
     ]
-    if countdown <= 0 [
+    assert [ -> countdown >= 0 ]
+    if countdown = 0 [
       set current-task nobody
     ]
     if current-task = nobody [ ; free time!
       let the-citizen self
       let candidate-links my-activity-links with [
         [ not is-mandatory? ] of [ my-activity-type ] of other-end and
-        [ can-do? [ other-end ] of myself ] of the-citizen
+        [ can-do? other-end ] of the-citizen
       ]
-      ; TODO: weight by closeness to current location too.
-      start-activity [ other-end ] of rnd:weighted-one-of candidate-links [ (1 + value) ^ 2 ]
+      start-activity [ other-end ] of rnd:weighted-one-of candidate-links [
+        ((value + 1) / 2) + (1 / (1 + [ distance other-end ] of myself)) ; this weights value the same as inverse distance.
+      ]
     ]
     run current-task
     set countdown countdown - 1
@@ -425,6 +427,10 @@ end
 to-report change-brightness [ c delta-b ]
   let hsb-list extract-hsb c
   report hsb (item 0 hsb-list) (item 1 hsb-list) (item 2 hsb-list + delta-b)
+end
+
+to assert [ f ]
+  if not runresult f [ error (word "Assertion failed: " f) ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
