@@ -112,8 +112,16 @@ end
 
 to post-opinions-setup
   let n count locations with [ shape = "mosque" ]
+  let the-topic one-of topics with [ topic-name = "Fundamentalism" ]
+  let the-websites websites with [
+    out-topic-link-to the-topic != nobody and
+    [ value ] of out-topic-link-to the-topic = 1
+  ]
   ask n-of n citizens with [ get "muslim?" ] [
-    ask out-topic-link-to one-of topics with [ topic-name = "Fundamentalism" ] [
+    ask out-topic-link-to the-topic [
+      set value 1
+    ]
+    create-website-links-to the-websites [
       set value 1
     ]
   ]
