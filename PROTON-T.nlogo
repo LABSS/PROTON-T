@@ -39,11 +39,16 @@ topics-own  [
   criteria  ; a boolean reporter taking a speaker and a listener
 ]
 
+breed [ websites website ]
+
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
 activity-links-own [ value ]                         ; value of activity for the citizen
 
-directed-link-breed [ topic-links topic-link ]  ; links from citizens to topics
-topic-links-own [ value ]                       ; opinion dynamics score from -1 to 1
+directed-link-breed [ website-links website-link ]   ; links from citizens to websites
+website-links-own [ value ]                          ; value of website for the citizen
+
+directed-link-breed [ topic-links topic-link ]       ; links from citizens to topics
+topic-links-own [ value ]                            ; opinion dynamics score from -1 to 1
 
 to setup
   clear-all
@@ -57,10 +62,10 @@ to setup
   setup-mandatory-activities
   setup-jobs
   setup-free-time-activities
+  setup-websites
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
   ask activity-types [ set hidden? true ]
-  reset-ticks
   update-plots
   display
   ; TODO: write some test code to make sure the schedule is consistent.
@@ -106,6 +111,17 @@ to setup-topics
       set topic-name item 0 def
       set new-value  item 1 def
       set criteria   item 2 def
+      set hidden? true
+    ]
+  ]
+end
+
+to setup-websites
+  foreach website-definitions [ def ->
+    create-websites 1 [
+      create-topic-link-to one-of topics with [ topic-name = item 0 def ] [
+        set value item 1 def
+      ]
       set hidden? true
     ]
   ]

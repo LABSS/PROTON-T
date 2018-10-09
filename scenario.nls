@@ -40,6 +40,13 @@ to-report location-definitions
   )
 end
 
+to-report website-definitions
+  report (list
+    (list "Fundamentalism" -1)
+    (list "Fundamentalism"  1) 
+  )
+end
+
 to-report mandatory-activity-definition-list
   report (list
     ;     start-time duration location-type task         criteria
@@ -83,16 +90,6 @@ end
 to teach
   talk-to other citizens-here one-of topics
 end
-
-;to-report topic-definitions
-;  let uniform [ -> -1 + random-float 2 ]
-;  report (list
-;    (list "Fundamentalism" uniform)
-;    (list "Non integration" uniform)
-;    (list "Institutional distrust" uniform)
-;    (list "Collective relative deprivation" uniform)
-;  )
-;end
 
 to-report topic-definitions
   let uniform [ -> -1 + random-float 2 ]
