@@ -523,7 +523,6 @@ citizens-per-community
 1
 2000
 122.0
-200.0
 1
 1
 citizens
