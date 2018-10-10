@@ -59,7 +59,7 @@ to-report job-definition-list
   report (list
     ;     num-jobs start-time duration location-type task          criteria
     (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
-      get "muslim?" and [ value ] of opinion-on-topic "Fundamentalism" = 1 ]
+      get "muslim?" and get "male?" and [ value ] of opinion-on-topic "Fundamentalism" = 1 ]
     )
     (list        1          8        8 "school"      [ -> teach  ] [ -> age >= 21 ])
     (list       50          8        8 "factory"     [ -> work   ] [ -> age >= 18 ])
@@ -83,12 +83,11 @@ to work ; generic work activity
 end
 
 to preach
-  show citizens-here
-  talk-to other citizens-here one-of topics
+  let result talk-to other citizens-here one-of topics ; calling talk-to for its side effects
 end
 
 to teach
-  talk-to other citizens-here one-of topics
+  let result talk-to other citizens-here one-of topics ; calling talk-to for its side effects
 end
 
 to-report topic-definitions
