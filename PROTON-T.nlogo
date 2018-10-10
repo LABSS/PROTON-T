@@ -390,10 +390,14 @@ to socialize ; citizen procedure
 end
 
 to-report find-criteria-by-breed ; link reporter
-  report ifelse-value (breed = activity-links) [
-    [ criteria ] of [ my-activity-type ] of other-end
-  ] [
-    [ criteria ] of other-end
+  if breed = activity-links [
+    report [ criteria ] of [ my-activity-type ] of other-end
+  ]
+  if breed = website-links [
+    report [ -> true ]
+  ]
+  if breed = topic-links [
+    report [ criteria ] of other-end
   ]
 end
 
@@ -408,6 +412,7 @@ to-report my-opinions ; citizen reporter
     my-activity-links with [
       [ not is-mandatory? and location-type != "residence" ] of [ my-activity-type ] of other-end
     ]
+    my-website-links
   )
 end
 
