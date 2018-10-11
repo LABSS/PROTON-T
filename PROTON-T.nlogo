@@ -32,24 +32,31 @@ activities-own [
   my-activity-type
 ]
 
-breed [ topics a-topic ]
+breed [ topics topic ]
 topics-own  [
   topic-name
-  new-value   ; the initialisation function
+  new-value ; the initialisation function
+  criteria  ; a boolean reporter taking a speaker and a listener
 ]
+
+breed [ websites website ]
 
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
 activity-links-own [ value ]                         ; value of activity for the citizen
 
-directed-link-breed [ topic-links topic-link ]  ; links from citizens to topics
-topic-links-own [ value ]                       ; opinion dynamics score from -1 to 1
+directed-link-breed [ website-links website-link ]   ; links from citizens to websites
+website-links-own [ value ]                          ; value of website for the citizen
+
+directed-link-breed [ topic-links topic-link ]       ; links from citizens to topics
+topic-links-own [ value ]                            ; opinion dynamics score from -1 to 1
 
 to setup
   clear-all
-  reset-ticks ; we need the tick counter started for `age` to work
+  setup-topics ; topic names are needed for plots
+  reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
   setup-communities
-  setup-topics
+  setup-websites
   setup-opinions
   post-opinions-setup
   setup-activity-types
@@ -59,7 +66,6 @@ to setup
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
   ask activity-types [ set hidden? true ]
-  reset-ticks
   update-plots
   display
   ; TODO: write some test code to make sure the schedule is consistent.
@@ -86,6 +92,10 @@ to go
       start-activity [ other-end ] of rnd:weighted-one-of candidate-links [
         ((value + 1) / 2) + (1 / (1 + [ distance other-end ] of myself)) ; this weights value the same as inverse distance.
       ]
+      ; here the citizen is on free time so he has a probability to browse the web.
+      if random-float 1 < website-access-probability [
+        access-website
+      ]
     ]
     run current-task
     set countdown countdown - 1
@@ -99,11 +109,32 @@ to start-activity [ new-activity ]
   set current-task [ task ] of [ my-activity-type ] of new-activity
 end
 
+to access-website ; citizen context
+  let the-citizen self
+  ask link-set rnd:weighted-one-of my-website-links with [ value >= 0 ] [ value ] [
+    ask other-end [ ; the other end is the website.
+      let result talk-to turtle-set the-citizen one-of out-topic-link-neighbors
+    ]
+  ]
+end
+
 to setup-topics
   foreach topic-definitions [ def ->
     create-topics 1 [
       set topic-name item 0 def
       set new-value  item 1 def
+      set criteria   item 2 def
+      set hidden? true
+    ]
+  ]
+end
+
+to setup-websites
+  foreach website-definitions [ def ->
+    create-websites 1 [
+      create-topic-link-to one-of topics with [ topic-name = item 0 def ] [
+        set value item 1 def
+      ]
       set hidden? true
     ]
   ]
@@ -362,9 +393,32 @@ to study
 end
 
 to socialize ; citizen procedure
-  let the-object [ other-end ] of rnd:weighted-one-of my-opinions [ abs value ]
-  let partner turtle-set one-of other citizens-here
-  talk-to partner the-object
+  let receiver turtle-set one-of other citizens-here
+  if any? receiver [
+    let speaker self
+    let candidate-opinions my-opinions with [ meets-criteria? speaker receiver ]
+    let the-object [ other-end ] of rnd:weighted-one-of candidate-opinions [ abs value ]
+    if talk-to receiver the-object [ ; if the interaction is successful
+      ask receiver [ check-recruitment ]
+    ]
+  ]
+end
+
+to-report find-criteria-by-breed ; link reporter
+  if breed = activity-links [
+    report [ criteria ] of [ my-activity-type ] of other-end
+  ]
+  if breed = website-links [
+    report [ -> true ]
+  ]
+  if breed = topic-links [
+    report [ criteria ] of other-end
+  ]
+end
+
+to-report meets-criteria? [ speaker receiver ]; link reporter
+  let the-criteria find-criteria-by-breed
+  report reduce and [ [ runresult the-criteria ] of receiver ] of speaker
 end
 
 to-report my-opinions ; citizen reporter
@@ -373,10 +427,12 @@ to-report my-opinions ; citizen reporter
     my-activity-links with [
       [ not is-mandatory? and location-type != "residence" ] of [ my-activity-type ] of other-end
     ]
+    my-website-links
   )
 end
 
-to talk-to [ recipients the-object ] ; citizen procedure
+to-report talk-to [ recipients the-object ] ; citizen procedure
+  let success? false
   if any? recipients [
     let l1 link-with the-object
     let v1 [ value ] of l1
@@ -386,17 +442,19 @@ to talk-to [ recipients the-object ] ; citizen procedure
       let t 1 - alpha * abs v2
       if abs (v1 - v2) < t [
         ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
-        check-recruitment
+        set success? true
       ]
     ]
   ]
+  report success?
 end
 
 to-report get-or-create-link-with [ the-object ] ; citizen reporter
   let the-link link-with the-object
   if the-link = nobody [
     if is-activity? the-object [ create-activity-link-to the-object [ set the-link self ] ]
-    if is-a-topic?  the-object [ create-topic-link-to    the-object [ set the-link self ] ]
+    if is-topic?    the-object [ create-topic-link-to    the-object [ set the-link self ] ]
+    if is-website?  the-object [ create-website-link-to  the-object [ set the-link self ] ]
     ask the-link [
       hide-link
       set value 0
@@ -723,6 +781,21 @@ true
 true
 "let n count topics\n(foreach sort topics range n [ [t i] ->\n  ask t [ create-temporary-plot-pen topic-name ]\n  set-plot-pen-color hsb (i * 360 / n) 50 50\n])" "if ticks > 0 [\n  ask topics [\n    set-current-plot-pen topic-name\n    plotxy ticks mean [value] of my-in-topic-links\n  ]\n]"
 PENS
+
+SLIDER
+15
+545
+285
+578
+website-access-probability
+website-access-probability
+0
+1
+1.0
+0.001
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
