@@ -61,20 +61,23 @@ to-report job-definition-list
     (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" and [ value ] of opinion-on-topic "Fundamentalism" = 1 ]
     )
-    (list        1          8        8 "school"      [ -> teach  ] [ -> age >= 21 ])
-    (list       50          8        8 "factory"     [ -> work   ] [ -> age >= 18 ])
-    (list       50          8        8 "office"      [ -> work   ] [ -> age >= 18 ])
-    (list        1         12        8 "bar"         [ -> work   ] [ -> age >= 18 ])
-    (list        1         16        8 "bar"         [ -> work   ] [ -> age >= 18 ])
+    (list        1          8        8 "school"           [ -> teach  ] [ -> age >= 21 ])
+    (list       50          8        8 "factory"          [ -> work   ] [ -> age >= 18 ])
+    (list       50          8        8 "office"           [ -> work   ] [ -> age >= 18 ])
+    (list        1         12        8 "bar"              [ -> work   ] [ -> age >= 18 ])
+    (list        1         16        8 "bar"              [ -> work   ] [ -> age >= 18 ])
+    (list        1          5        8 "community center" [ -> preach ] [ -> age >= 18 and [ value ] of opinion-on-topic "Fundamentalism" = -1])
+    
   )
 end
 
 to-report free-time-activity-definition-list
   report (list
     ;     location-type task             criteria
-    (list "residence"    [ -> socialize ] [ -> true ])
-    (list "public space" [ -> socialize ] [ -> true ])
-    (list "mosque"       [ -> socialize ] [ -> get "muslim?" ])
+    (list "residence"        [ -> socialize ] [ -> true ])
+    (list "public space"     [ -> socialize ] [ -> true ])
+    (list "mosque"           [ -> socialize ] [ -> get "muslim?" ])
+    (list "community center" [ -> socialize ] [ -> true ])
   )
 end
 
@@ -109,19 +112,26 @@ to-report both-muslims?
   ]
 end
 
-to post-opinions-setup
-  let n count locations with [ shape = "mosque" ]
-  let the-topic one-of topics with [ topic-name = "Fundamentalism" ]
+
+to make-special-citizens
+  post-opinions-setup "mosque" "Fundamentalism" 1 [ -> get "muslim?" ]
+end
+  
+
+to post-opinions-setup [ the-shape the-topic-name the-value the-criteria ]
+  let n count locations with [ shape = the-shape ]
+  let the-topic one-of topics with [ topic-name = the-topic-name ]
+  ; initialize opinions about extremist websites
   let the-websites websites with [
     out-topic-link-to the-topic != nobody and
-    [ value ] of out-topic-link-to the-topic = 1
+    [ value ] of out-topic-link-to the-topic = the-value
   ]
-  ask n-of n citizens with [ get "muslim?" ] [
+  ask n-of n citizens with [ the-criteria ] [
     ask out-topic-link-to the-topic [
-      set value 1
+      set value the-value
     ]
     create-website-links-to the-websites [
-      set value 1
+      set value the-value
     ]
   ]
 end
