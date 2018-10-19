@@ -56,7 +56,8 @@ to-report mandatory-activity-definition-list
 end
 
 to-report job-definition-list
-  ; critical jobs must be listed first so that they are allocated with priority.
+  ; critical jobs must be listed first so that they are allocated with priority. 
+  ; note that the program fails if not enough workers at setup
   report (list
     ;     num-jobs start-time duration location-type task          criteria
     (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
@@ -69,7 +70,6 @@ to-report job-definition-list
     (list       50          8        8 "factory"          [ -> work   ] [ -> age >= 18 ])
     (list       50          8        8 "office"           [ -> work   ] [ -> age >= 18 ])
     (list        1         12        8 "bar"              [ -> work   ] [ -> age >= 18 ])
-    (list        1         16        8 "bar"              [ -> work   ] [ -> age >= 18 ])
     
   )
 end
