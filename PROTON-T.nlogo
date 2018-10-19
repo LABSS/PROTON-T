@@ -58,7 +58,7 @@ to setup
   setup-communities
   setup-websites
   setup-opinions
-  post-opinions-setup
+  make-special-citizens
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
@@ -292,6 +292,7 @@ to setup-jobs
         not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead
       ]
       let n min (list (count free-candidates) ([ max-agents ] of my-activity-type))
+      if n = 0 [ print word "no candidates for " the-type ]
       ask rnd:weighted-n-of n free-candidates [ distance myself ^ 2 ] [
         create-activity-link-to myself
       ]
