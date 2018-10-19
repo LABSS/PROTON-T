@@ -1,4 +1,4 @@
-package it.cnr.istc.labss.proton.oc.tests
+package it.cnr.istc.labss.proton.t.tests
 
 import org.nlogo.headless.HeadlessWorkspace
 import org.nlogo.core.LogoList
@@ -22,6 +22,6 @@ class TJobsTests extends TModelSuite {
       ] [ 
         any? activity-link-neighbors 
       ] 
-      """) shouldBe True
+      """) shouldBe true
   }
 }
