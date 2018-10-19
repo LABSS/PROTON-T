@@ -56,17 +56,20 @@ to-report mandatory-activity-definition-list
 end
 
 to-report job-definition-list
+  ; critical jobs must be listed first so that they are allocated with priority.
   report (list
     ;     num-jobs start-time duration location-type task          criteria
     (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" and [ value ] of opinion-on-topic "Fundamentalism" = 1 ]
+    )
+    (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
+      [ value ] of opinion-on-topic "Fundamentalism" = -1]
     )
     (list        1          8        8 "school"           [ -> teach  ] [ -> age >= 21 ])
     (list       50          8        8 "factory"          [ -> work   ] [ -> age >= 18 ])
     (list       50          8        8 "office"           [ -> work   ] [ -> age >= 18 ])
     (list        1         12        8 "bar"              [ -> work   ] [ -> age >= 18 ])
     (list        1         16        8 "bar"              [ -> work   ] [ -> age >= 18 ])
-    (list        1          5        8 "community center" [ -> preach ] [ -> age >= 18 and [ value ] of opinion-on-topic "Fundamentalism" = -1])
     
   )
 end
@@ -114,7 +117,10 @@ end
 
 
 to make-special-citizens
-  post-opinions-setup "mosque" "Fundamentalism" 1 [ -> get "muslim?" ]
+  post-opinions-setup "mosque" "Fundamentalism" 1 [
+    -> age >= 21 and get "muslim?" and get "male?" and get "muslim?" 
+  ]
+  post-opinions-setup "community center" "Fundamentalism" -1 [ -> age >= 18 ]
 end
   
 
@@ -126,7 +132,7 @@ to post-opinions-setup [ the-shape the-topic-name the-value the-criteria ]
     out-topic-link-to the-topic != nobody and
     [ value ] of out-topic-link-to the-topic = the-value
   ]
-  ask n-of n citizens with [ the-criteria ] [
+  ask n-of n citizens with [ runresult the-criteria ] [
     ask out-topic-link-to the-topic [
       set value the-value
     ]

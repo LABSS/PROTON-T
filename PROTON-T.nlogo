@@ -292,7 +292,7 @@ to setup-jobs
         not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead
       ]
       let n min (list (count free-candidates) ([ max-agents ] of my-activity-type))
-      if n = 0 [ print word "no candidates for " the-type ]
+      assert [ -> n > 0 ]
       ask rnd:weighted-n-of n free-candidates [ distance myself ^ 2 ] [
         create-activity-link-to myself
       ]
@@ -551,7 +551,7 @@ CHOOSER
 num-communities
 num-communities
 1 4 9 16 25
-1
+3
 
 SLIDER
 10
@@ -560,9 +560,9 @@ SLIDER
 98
 citizens-per-community
 citizens-per-community
-1
+10
 2000
-100.0
+50.0
 10
 1
 citizens
