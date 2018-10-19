@@ -19,17 +19,18 @@ breed [ activity-types activity-type ]
 activity-types-own [
   is-job?
   is-mandatory?
-  location-type
+  location-type ; string with the name of the location (ex. community center)
   max-agents
   start-time
   duration
   criteria
   task
+  priority
 ]
 
 breed [ activities activity ]
 activities-own [
-  my-activity-type
+  my-activity-type ; turtle of breed activity-type
 ]
 
 breed [ topics topic ]
@@ -58,7 +59,7 @@ to setup
   setup-communities
   setup-websites
   setup-opinions
-  make-special-citizens
+  make-special-citizens ; extreme opinions as needed
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
@@ -247,6 +248,7 @@ to setup-activity-types
       set location-type item 3 def
       set task          item 4 def
       set criteria      item 5 def
+      set priority      item 6 def
     ]
   ]
   foreach mandatory-activity-definition-list [ def ->
@@ -283,16 +285,14 @@ to setup-activity-types
 end
 
 to setup-jobs
-  ask activity-types with [ is-job? ] [
-    let the-type self
-    let the-criteria criteria
+  foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type ->
+    let the-criteria [ criteria ] of the-type
     let candidates citizens with [ runresult the-criteria ]
     ask activities with [ my-activity-type = the-type ] [
       let free-candidates candidates with [
         not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead
       ]
       let n min (list (count free-candidates) ([ max-agents ] of my-activity-type))
-      assert [ -> n > 0 ]
       ask rnd:weighted-n-of n free-candidates [ distance myself ^ 2 ] [
         create-activity-link-to myself
       ]
@@ -551,7 +551,7 @@ CHOOSER
 num-communities
 num-communities
 1 4 9 16 25
-3
+1
 
 SLIDER
 10
@@ -562,7 +562,7 @@ citizens-per-community
 citizens-per-community
 10
 2000
-50.0
+30.0
 10
 1
 citizens
