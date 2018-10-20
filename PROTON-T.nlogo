@@ -13,6 +13,7 @@ citizens-own [
   current-task
   countdown
   propensity
+  current-activity
 ]
 
 breed [ activity-types activity-type ]
@@ -83,8 +84,9 @@ to go
     assert [ -> countdown >= 0 ]
     if countdown = 0 [
       set current-task nobody
+      set current-activity nobody
     ]
-    if current-task = nobody [ ; free time!
+    if current-activity = nobody [ ; free time!
       let the-citizen self
       let candidate-links my-activity-links with [
         [ not is-mandatory? ] of [ my-activity-type ] of other-end and
@@ -104,9 +106,10 @@ to go
   tick
 end
 
-to start-activity [ new-activity ]
+to start-activity [ new-activity ] ; citizen procedure
   move-to new-activity
   set countdown [ duration ] of [ my-activity-type ] of new-activity
+  set current-activity new-activity
   set current-task [ task ] of [ my-activity-type ] of new-activity
 end
 
@@ -229,6 +232,7 @@ to setup-citizens [residences]
     set color            lput 150 one-of teals
     set birth-year       random-birth-year
     set current-task     nobody ; used to indicate "none"
+    set current-activity nobody
     set countdown        0
     set residence one-of residences
     set propensity sum-factors propensity-factors
