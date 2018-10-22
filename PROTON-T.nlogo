@@ -403,10 +403,28 @@ to socialize ; citizen procedure
     let speaker self
     let candidate-opinions my-opinions with [ meets-criteria? speaker receiver ]
     let the-object [ other-end ] of rnd:weighted-one-of candidate-opinions [ abs value ]
-    if talk-to receiver the-object [ ; if the interaction is successful
+    let success? talk-to receiver the-object
+    if success? [ ; if the interaction is successful
       ask receiver [ check-recruitment ]
     ]
+    update-activity-value success? self receiver
   ]
+end
+
+to update-activity-value [ success? sender receiver ]; to do
+  let theActivity 1
+    let v1 [ value ] of l1
+    ask recipients [
+      let l2 get-or-create-link-with the-object
+      let v2 [ value ] of l2
+      let t 1 - alpha * abs v2
+      if abs (v1 - v2) < t [
+        ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
+        set success? true
+      ]
+    ]
+  ]
+
 end
 
 to-report find-criteria-by-breed ; link reporter
