@@ -377,18 +377,15 @@ to-report current-time   report ticks mod ticks-per-day      end
 to-report age            report current-year - birth-year    end
 
 to-report sum-factors [ factors ]
-
   let sum-of-weights sum map first factors
   report sum map [ pair ->
     (first pair / sum-of-weights) * runresult last pair
   ] factors
-
 end
 
 to-report risk ; citizen reporter
   report sum-factors risk-factors
 end
-
 
 to sleep
   ; do nothing
@@ -407,24 +404,19 @@ to socialize ; citizen procedure
     if success? [ ; if the interaction is successful
       ask receiver [ check-recruitment ]
     ]
-    update-activity-value success? self receiver
+    update-activity-value success? self
+    update-activity-value success? receiver
   ]
 end
 
-to update-activity-value [ success? sender receiver ]; to do
-  let theActivity 1
-    let v1 [ value ] of l1
-    ask recipients [
-      let l2 get-or-create-link-with the-object
-      let v2 [ value ] of l2
-      let t 1 - alpha * abs v2
-      if abs (v1 - v2) < t [
-        ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
-        set success? true
-      ]
-    ]
+to update-activity-value [ success? socialite ] ; citizen procedure
+  let the-link nobody
+  ask socialite [
+    set the-link link-with current-activity
   ]
-
+  ask the-link [
+    set value value + activity-value-update * (ifelse-value success? [ 1 ][ -1 ] - value)
+  ]
 end
 
 to-report find-criteria-by-breed ; link reporter
@@ -584,7 +576,7 @@ citizens-per-community
 citizens-per-community
 10
 2000
-30.0
+100.0
 10
 1
 citizens
@@ -730,7 +722,7 @@ alpha
 alpha
 0
 1
-0.5
+0.1
 0.1
 1
 NIL
@@ -827,6 +819,21 @@ SLIDER
 618
 work-socialization-probability
 work-socialization-probability
+0
+1
+0.1
+0.05
+1
+NIL
+HORIZONTAL
+
+SLIDER
+15
+625
+285
+658
+activity-value-update
+activity-value-update
 0
 1
 0.1
