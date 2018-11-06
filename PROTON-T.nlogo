@@ -377,18 +377,15 @@ to-report current-time   report ticks mod ticks-per-day      end
 to-report age            report current-year - birth-year    end
 
 to-report sum-factors [ factors ]
-
   let sum-of-weights sum map first factors
   report sum map [ pair ->
     (first pair / sum-of-weights) * runresult last pair
   ] factors
-
 end
 
 to-report risk ; citizen reporter
   report sum-factors risk-factors
 end
-
 
 to sleep
   ; do nothing
@@ -403,9 +400,22 @@ to socialize ; citizen procedure
     let speaker self
     let candidate-opinions my-opinions with [ meets-criteria? speaker receiver ]
     let the-object [ other-end ] of rnd:weighted-one-of candidate-opinions [ abs value ]
-    if talk-to receiver the-object [ ; if the interaction is successful
+    let success? talk-to receiver the-object
+    if success? [ ; if the interaction is successful
       ask receiver [ check-recruitment ]
     ]
+    update-activity-value success? self
+    update-activity-value success? receiver
+  ]
+end
+
+to update-activity-value [ success? socialite ] ; citizen procedure
+  let the-link nobody
+  ask socialite [
+    set the-link link-with current-activity
+  ]
+  ask the-link [
+    set value value + activity-value-update * (ifelse-value success? [ 1 ][ -1 ] - value)
   ]
 end
 
@@ -566,7 +576,7 @@ citizens-per-community
 citizens-per-community
 10
 2000
-30.0
+100.0
 10
 1
 citizens
@@ -712,7 +722,7 @@ alpha
 alpha
 0
 1
-0.5
+0.1
 0.1
 1
 NIL
@@ -809,6 +819,21 @@ SLIDER
 618
 work-socialization-probability
 work-socialization-probability
+0
+1
+0.1
+0.05
+1
+NIL
+HORIZONTAL
+
+SLIDER
+15
+625
+285
+658
+activity-value-update
+activity-value-update
 0
 1
 0.1

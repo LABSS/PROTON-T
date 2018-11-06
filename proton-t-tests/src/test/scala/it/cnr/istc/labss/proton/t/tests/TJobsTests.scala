@@ -28,7 +28,7 @@ class TJobsTests extends TModelSuite {
   test("Community workers preach to an effect") { ws =>
     setup4x300(ws)
     ws.cmd("""
-      repeat 24 * 10 + 10 [ go ] ; 10AM on the third day
+      repeat 24 * 10 + 10 [ go ] ; 10AM on the tenth day
     """)
     val meanFundamentalism = """
       mean [ value ] of link-set [
