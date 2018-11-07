@@ -375,6 +375,13 @@ to-report ticks-per-year report ticks-per-day * 365          end
 to-report current-year   report floor ticks / ticks-per-year end
 to-report current-time   report ticks mod ticks-per-day      end
 to-report age            report current-year - birth-year    end
+; days are already there in the rest of the division by seven. I'd keep them that way. It won't be done too often; if it does, it should be cached;
+; a routine could set all the reporters at the beginning of the step, making them into globals. To do in the optimization phase.
+; so we could say 0 = Sunday, 1 = Monday, .. , 6 = Friday, 7 = Saturday.
+to-report week-num          report (floor (ticks / ticks-per-day)) mod 7                                                    end
+to-report workday-catholic? report member? week-num (range 1 6)                                                             end
+to-report weekday           report item week-num [ "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" ] end
+to-report workday-muslim?   report member? week-num (range 0 5)                                                             end
 
 to-report sum-factors [ factors ]
   let sum-of-weights sum map first factors
@@ -841,6 +848,17 @@ activity-value-update
 1
 NIL
 HORIZONTAL
+
+MONITOR
+95
+690
+157
+735
+NIL
+weekday
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
