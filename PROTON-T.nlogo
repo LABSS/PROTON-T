@@ -382,6 +382,7 @@ to-report week-num          report (floor (ticks / ticks-per-day)) mod 7        
 to-report workday-catholic? report member? week-num (range 1 6)                                                             end
 to-report weekday           report item week-num [ "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" ] end
 to-report workday-muslim?   report member? week-num (range 0 5)                                                             end
+to-report workday?          report ifelse-value get "muslim?" [ workday-muslim? ] [ workday-catholic? ]                     end ; citizen reporter
 
 to-report sum-factors [ factors ]
   let sum-of-weights sum map first factors
