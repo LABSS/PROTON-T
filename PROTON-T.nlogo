@@ -304,7 +304,7 @@ to setup-jobs
   ]
 end
 
-to setup-mandatory-activities
+to setup-mandatory-activities ; citizen procedire
   ask activity-types with [ is-mandatory? and not is-job? ] [
     let the-type self
     let get-activity [ ->
@@ -312,7 +312,7 @@ to setup-mandatory-activities
     ]
     if shape != "residence" [
       let possible-activities activities with [ my-activity-type = the-type ]
-      set get-activity [ -> min-one-of possible-activities [ distance myself] ]
+      set get-activity [ -> min-one-of possible-activities [ distance myself ] ]
     ]
     ask citizens with [ runresult [ criteria ] of myself ] [
       create-activity-link-to runresult get-activity
@@ -857,6 +857,17 @@ MONITOR
 735
 NIL
 weekday
+17
+1
+11
+
+MONITOR
+95
+740
+165
+785
+mandatory
+count citizens with  [ [ [is-mandatory?] of my-activity-type ] of current-activity ]
 17
 1
 11

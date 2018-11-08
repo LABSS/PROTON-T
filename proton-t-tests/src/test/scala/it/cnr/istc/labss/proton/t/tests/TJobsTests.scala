@@ -47,4 +47,31 @@ class TJobsTests extends TModelSuite {
     val after = ws.rpt(meanFundamentalism).asInstanceOf[Number].floatValue
     after - before < 0 shouldBe true
   }
+
+  test("The activity system should be coherent") { ws =>
+    setup4x300(ws)
+    1 to 500 foreach { _ => 
+      ws.cmd("go")
+      ws.rpt("""
+        count activities with [  
+            [is-mandatory?] of my-activity-type and any? citizens with [ current-activity = myself ]
+          ] - count citizens with  [ [ [is-mandatory? ] of my-activity-type ] of current-activity ]
+      """) shouldBe 0 
+    }
+  }
 }
+
+// 
+
+//show count activities with [[is-mandatory?] of my-activity-type and count citizens with [ current-activity = myself ] > 1]
+/*
+Why there are 20 people using the same sleep activity?
+
+observer> show count citizens with  [ [ [is-mandatory?] of my-activity-type ] of current-activity ]
+observer: 400
+observer> show count activities with [[is-mandatory?] of my-activity-type and any? citizens with [ current-activity = myself ]]
+observer: 380
+observer> show count activities with [[is-mandatory?] of my-activity-type and count citizens with [ current-activity = myself ] > 1]
+observer: 20
+
+*/

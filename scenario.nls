@@ -64,11 +64,11 @@ to-report job-definition-list
     (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
       [ value ] of opinion-on-topic "Fundamentalism" = -1]                                   0
     )
-    (list        1          8        8 "school"           [ -> teach  ] [ -> age >= 21 ]     1)      
-    (list       50          8        8 "factory"          [ -> work   ] [ -> age >= 18 and workday?]     1)
-    (list       50          8        8 "office"           [ -> work   ] [ -> age >= 18 ]     1)
-    (list        1         12        8 "bar"              [ -> work   ] [ -> age >= 18 ]     1)
-    (list        1         16        8 "bar"              [ -> work   ] [ -> age >= 18 ]     1)
+    (list        1          8        8 "school"           [ -> teach  ] [ -> age >= 21 and workday? ]     1)      
+    (list       50          8        8 "factory"          [ -> work   ] [ -> age >= 18 and workday? ]     1)
+    (list       50          8        8 "office"           [ -> work   ] [ -> age >= 18 and workday? ]     1)
+    (list        1         12        8 "bar"              [ -> work   ] [ -> age >= 18 and workday? ]     1)
+    (list        1         16        8 "bar"              [ -> work   ] [ -> age >= 18 and workday? ]     1)
     
   )
 end
