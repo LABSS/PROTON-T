@@ -591,10 +591,10 @@ citizens
 HORIZONTAL
 
 MONITOR
-40
-275
-117
-320
+10
+265
+80
+310
 population
 count citizens
 17
@@ -617,10 +617,10 @@ patches
 HORIZONTAL
 
 MONITOR
-120
-275
-195
-320
+80
+265
+135
+310
 density
 count citizens / count patches
 2
@@ -711,10 +711,10 @@ NIL
 1
 
 MONITOR
-200
-275
-262
-320
+195
+265
+250
+310
 time
 (word (ticks mod 24) \":00\")
 17
@@ -851,23 +851,12 @@ NIL
 HORIZONTAL
 
 MONITOR
-95
-690
-157
-735
+135
+265
+195
+310
 NIL
 weekday
-17
-1
-11
-
-MONITOR
-95
-740
-165
-785
-mandatory
-count citizens with  [ [ [is-mandatory?] of my-activity-type ] of current-activity ]
 17
 1
 11
