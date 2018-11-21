@@ -861,6 +861,21 @@ weekday
 1
 11
 
+SLIDER
+15
+665
+285
+698
+initial-radicalized
+initial-radicalized
+0
+20
+10.0
+1
+1
+NIL
+HORIZONTAL
+
 @#$#@#$#@
 ## WHAT IS IT?
 
