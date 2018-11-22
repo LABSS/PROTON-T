@@ -76,7 +76,9 @@ end
 to go
   ask citizens [
     let new-activity one-of activity-link-neighbors with [
-      [ start-time = current-time and is-mandatory? ] of my-activity-type
+      [ start-time = current-time and is-mandatory? ] of my-activity-type and
+      ([ workday? ] of myself and [ is-job?] of my-activity-type or
+      [ not is-job? ] of my-activity-type)
     ]
     if new-activity != nobody [
       start-activity new-activity
@@ -517,6 +519,22 @@ to-report change-brightness [ c delta-b ]
   report hsb (item 0 hsb-list) (item 1 hsb-list) (item 2 hsb-list + delta-b)
 end
 
+to-report citizens-occupations
+  report reduce sentence list [
+    (list location-type "job" count citizens with [ [ my-activity-type ] of current-activity = myself ])
+  ] of activity-types with [ is-job? ] [
+    (list location-type "notjob" count citizens with [ [ my-activity-type ] of current-activity = myself ])
+  ] of activity-types with [ not is-job? ]
+end
+
+to-report mean-opinion-on-location [ the-topic-name location-name ]
+      report  mean [ value ] of link-set [
+        out-topic-link-to ( one-of topics with [ topic-name = the-topic-name ])
+      ] of (citizens-on locations with [ shape = location-name ]) with [
+        [ not (is-job? and location-type = location-name) ] of [ my-activity-type ] of current-activity
+      ]
+end
+
 to assert [ f ]
   if not runresult f [ error (word "Assertion failed: " f) ]
 end
@@ -767,7 +785,7 @@ false
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Fundamentalism\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
+"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Institutional distrust\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
 
 PLOT
 1098
@@ -1474,6 +1492,7 @@ NetLogo 6.0.4
     <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
     <metric>[ risk ] of citizens</metric>
     <metric>[ [ value ] of  opinion-on-topic "Non integration" ] of citizens</metric>
+    <metric>citizens-opinions</metric>
     <enumeratedValueSet variable="citizens-per-community">
       <value value="100"/>
     </enumeratedValueSet>
