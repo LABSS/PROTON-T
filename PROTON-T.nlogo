@@ -521,9 +521,9 @@ end
 
 to-report citizens-occupations
   report reduce sentence list [
-    (list location-type "job" count citizens with [ [ my-activity-type ] of current-activity = myself ])
+    (list location-type "job" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
   ] of activity-types with [ is-job? ] [
-    (list location-type "notjob" count citizens with [ [ my-activity-type ] of current-activity = myself ])
+    (list location-type "notjob" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
   ] of activity-types with [ not is-job? ]
 end
 
@@ -1492,7 +1492,7 @@ NetLogo 6.0.4
     <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
     <metric>[ risk ] of citizens</metric>
     <metric>[ [ value ] of  opinion-on-topic "Non integration" ] of citizens</metric>
-    <metric>citizens-opinions</metric>
+    <metric>citizens-occupations</metric>
     <enumeratedValueSet variable="citizens-per-community">
       <value value="100"/>
     </enumeratedValueSet>
