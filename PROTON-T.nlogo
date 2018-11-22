@@ -745,7 +745,7 @@ radicalization-threshold
 radicalization-threshold
 0
 1
-0.9
+1.0
 .1
 1
 NIL
@@ -1465,6 +1465,84 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="testing-output-fat" repetitions="3" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="100"/>
+    <metric>count citizens with [ recruited? ]</metric>
+    <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
+    <metric>[ risk ] of citizens</metric>
+    <metric>[ [ value ] of  opinion-on-topic "Non integration" ] of citizens</metric>
+    <enumeratedValueSet variable="citizens-per-community">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-radicalized">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="alpha">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="radicalization-threshold">
+      <value value="0.9"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-communities">
+      <value value="4"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-radius">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-value-update">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="website-access-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="community-side-length">
+      <value value="30"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="testing-output" repetitions="3" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="100"/>
+    <metric>count citizens with [ recruited? ]</metric>
+    <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
+    <enumeratedValueSet variable="citizens-per-community">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-radicalized">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="alpha">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="radicalization-threshold">
+      <value value="0.9"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-communities">
+      <value value="4"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-radius">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-value-update">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="website-access-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="community-side-length">
+      <value value="30"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
