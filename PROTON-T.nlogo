@@ -76,7 +76,9 @@ end
 to go
   ask citizens [
     let new-activity one-of activity-link-neighbors with [
-      [ start-time = current-time and is-mandatory? ] of my-activity-type
+      [ start-time = current-time and is-mandatory? ] of my-activity-type and
+      ([ workday? ] of myself and [ is-job?] of my-activity-type or
+      [ not is-job? ] of my-activity-type)
     ]
     if new-activity != nobody [
       start-activity new-activity
@@ -304,7 +306,7 @@ to setup-jobs
   ]
 end
 
-to setup-mandatory-activities
+to setup-mandatory-activities ; citizen procedire
   ask activity-types with [ is-mandatory? and not is-job? ] [
     let the-type self
     let get-activity [ ->
@@ -312,7 +314,7 @@ to setup-mandatory-activities
     ]
     if shape != "residence" [
       let possible-activities activities with [ my-activity-type = the-type ]
-      set get-activity [ -> min-one-of possible-activities [ distance myself] ]
+      set get-activity [ -> min-one-of possible-activities [ distance myself ] ]
     ]
     ask citizens with [ runresult [ criteria ] of myself ] [
       create-activity-link-to runresult get-activity
@@ -375,6 +377,10 @@ to-report ticks-per-year report ticks-per-day * 365          end
 to-report current-year   report floor ticks / ticks-per-year end
 to-report current-time   report ticks mod ticks-per-day      end
 to-report age            report current-year - birth-year    end
+; days are already there in the rest of the division by seven. I'd keep them that way. It won't be done too often; if it does, it should be cached;
+; a routine could set all the reporters at the beginning of the step, making them into globals. To do in the optimization phase.
+; so we could say 0 = Sunday, 1 = Monday, .. , 6 = Friday, 7 = Saturday.
+to-report week-num          report (floor (ticks / ticks-per-day)) mod 7                                                    end
 
 to-report sum-factors [ factors ]
   let sum-of-weights sum map first factors
@@ -509,6 +515,24 @@ to-report change-brightness [ c delta-b ]
   report hsb (item 0 hsb-list) (item 1 hsb-list) (item 2 hsb-list + delta-b)
 end
 
+; called by behaviorspace
+to-report citizens-occupations
+  report reduce sentence list [
+    (list location-type "job" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
+  ] of activity-types with [ is-job? ] [
+    (list location-type "notjob" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
+  ] of activity-types with [ not is-job? ]
+end
+
+; called by the test subsystem, *TJobsTests.scala
+to-report mean-opinion-on-location [ the-topic-name location-name ]
+      report  mean [ value ] of link-set [
+        out-topic-link-to ( one-of topics with [ topic-name = the-topic-name ])
+      ] of (citizens-on locations with [ shape = location-name ]) with [
+        [ not (is-job? and location-type = location-name) ] of [ my-activity-type ] of current-activity
+      ]
+end
+
 to assert [ f ]
   if not runresult f [ error (word "Assertion failed: " f) ]
 end
@@ -583,10 +607,10 @@ citizens
 HORIZONTAL
 
 MONITOR
-40
-275
-117
-320
+10
+265
+80
+310
 population
 count citizens
 17
@@ -609,10 +633,10 @@ patches
 HORIZONTAL
 
 MONITOR
-120
-275
-195
-320
+80
+265
+135
+310
 density
 count citizens / count patches
 2
@@ -703,10 +727,10 @@ NIL
 1
 
 MONITOR
-200
-275
-262
-320
+195
+265
+250
+310
 time
 (word (ticks mod 24) \":00\")
 17
@@ -759,7 +783,7 @@ false
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Fundamentalism\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
+"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Institutional distrust\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
 
 PLOT
 1098
@@ -838,6 +862,32 @@ activity-value-update
 1
 0.1
 0.05
+1
+NIL
+HORIZONTAL
+
+MONITOR
+135
+265
+195
+310
+NIL
+weekday
+17
+1
+11
+
+SLIDER
+15
+665
+285
+698
+initial-radicalized
+initial-radicalized
+0
+20
+10.0
+1
 1
 NIL
 HORIZONTAL
@@ -1431,6 +1481,85 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="testing-output-fat" repetitions="3" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="100"/>
+    <metric>count citizens with [ recruited? ]</metric>
+    <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
+    <metric>[ risk ] of citizens</metric>
+    <metric>[ [ value ] of  opinion-on-topic "Non integration" ] of citizens</metric>
+    <metric>citizens-occupations</metric>
+    <enumeratedValueSet variable="citizens-per-community">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-radicalized">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="alpha">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="radicalization-threshold">
+      <value value="0.9"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-communities">
+      <value value="4"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-radius">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-value-update">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="website-access-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="community-side-length">
+      <value value="30"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="testing-output" repetitions="3" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="100"/>
+    <metric>count citizens with [ recruited? ]</metric>
+    <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
+    <enumeratedValueSet variable="citizens-per-community">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-radicalized">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="alpha">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="radicalization-threshold">
+      <value value="0.9"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-communities">
+      <value value="4"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-radius">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-value-update">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="website-access-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="community-side-length">
+      <value value="30"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
