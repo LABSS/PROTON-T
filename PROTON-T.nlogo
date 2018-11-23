@@ -381,10 +381,6 @@ to-report age            report current-year - birth-year    end
 ; a routine could set all the reporters at the beginning of the step, making them into globals. To do in the optimization phase.
 ; so we could say 0 = Sunday, 1 = Monday, .. , 6 = Friday, 7 = Saturday.
 to-report week-num          report (floor (ticks / ticks-per-day)) mod 7                                                    end
-to-report workday-catholic? report member? week-num (range 1 6)                                                             end
-to-report weekday           report item week-num [ "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" ] end
-to-report workday-muslim?   report member? week-num (range 0 5)                                                             end
-to-report workday?          report ifelse-value get "muslim?" [ workday-muslim? ] [ workday-catholic? ]                     end ; citizen reporter
 
 to-report sum-factors [ factors ]
   let sum-of-weights sum map first factors
@@ -519,6 +515,7 @@ to-report change-brightness [ c delta-b ]
   report hsb (item 0 hsb-list) (item 1 hsb-list) (item 2 hsb-list + delta-b)
 end
 
+; called by behaviorspace
 to-report citizens-occupations
   report reduce sentence list [
     (list location-type "job" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
@@ -527,6 +524,7 @@ to-report citizens-occupations
   ] of activity-types with [ not is-job? ]
 end
 
+; called by the test subsystem, *TJobsTests.scala
 to-report mean-opinion-on-location [ the-topic-name location-name ]
       report  mean [ value ] of link-set [
         out-topic-link-to ( one-of topics with [ topic-name = the-topic-name ])
