@@ -76,7 +76,9 @@ end
 to go
   ask citizens [
     let new-activity one-of activity-link-neighbors with [
-      [ start-time = current-time and is-mandatory? ] of my-activity-type
+      [ start-time = current-time and is-mandatory? ] of my-activity-type and
+      ([ workday? ] of myself and [ is-job?] of my-activity-type or
+      [ not is-job? ] of my-activity-type)
     ]
     if new-activity != nobody [
       start-activity new-activity
@@ -379,10 +381,6 @@ to-report age            report current-year - birth-year    end
 ; a routine could set all the reporters at the beginning of the step, making them into globals. To do in the optimization phase.
 ; so we could say 0 = Sunday, 1 = Monday, .. , 6 = Friday, 7 = Saturday.
 to-report week-num          report (floor (ticks / ticks-per-day)) mod 7                                                    end
-to-report workday-catholic? report member? week-num (range 1 6)                                                             end
-to-report weekday           report item week-num [ "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" ] end
-to-report workday-muslim?   report member? week-num (range 0 5)                                                             end
-to-report workday?          report ifelse-value get "muslim?" [ workday-muslim? ] [ workday-catholic? ]                     end ; citizen reporter
 
 to-report sum-factors [ factors ]
   let sum-of-weights sum map first factors
@@ -515,6 +513,24 @@ end
 to-report change-brightness [ c delta-b ]
   let hsb-list extract-hsb c
   report hsb (item 0 hsb-list) (item 1 hsb-list) (item 2 hsb-list + delta-b)
+end
+
+; called by behaviorspace
+to-report citizens-occupations
+  report reduce sentence list [
+    (list location-type "job" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
+  ] of activity-types with [ is-job? ] [
+    (list location-type "notjob" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
+  ] of activity-types with [ not is-job? ]
+end
+
+; called by the test subsystem, *TJobsTests.scala
+to-report mean-opinion-on-location [ the-topic-name location-name ]
+      report  mean [ value ] of link-set [
+        out-topic-link-to ( one-of topics with [ topic-name = the-topic-name ])
+      ] of (citizens-on locations with [ shape = location-name ]) with [
+        [ not (is-job? and location-type = location-name) ] of [ my-activity-type ] of current-activity
+      ]
 end
 
 to assert [ f ]
@@ -767,7 +783,7 @@ false
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Fundamentalism\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
+"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Institutional distrust\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
 
 PLOT
 1098
@@ -860,6 +876,21 @@ weekday
 17
 1
 11
+
+SLIDER
+15
+665
+285
+698
+initial-radicalized
+initial-radicalized
+0
+20
+10.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1450,6 +1481,85 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="testing-output-fat" repetitions="3" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="100"/>
+    <metric>count citizens with [ recruited? ]</metric>
+    <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
+    <metric>[ risk ] of citizens</metric>
+    <metric>[ [ value ] of  opinion-on-topic "Non integration" ] of citizens</metric>
+    <metric>citizens-occupations</metric>
+    <enumeratedValueSet variable="citizens-per-community">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-radicalized">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="alpha">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="radicalization-threshold">
+      <value value="0.9"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-communities">
+      <value value="4"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-radius">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-value-update">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="website-access-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="community-side-length">
+      <value value="30"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="testing-output" repetitions="3" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="100"/>
+    <metric>count citizens with [ recruited? ]</metric>
+    <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
+    <enumeratedValueSet variable="citizens-per-community">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-radicalized">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="alpha">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="radicalization-threshold">
+      <value value="0.9"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-communities">
+      <value value="4"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-radius">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-value-update">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="website-access-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="community-side-length">
+      <value value="30"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default

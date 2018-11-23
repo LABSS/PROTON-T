@@ -4,7 +4,6 @@ to-report propensity-factors
   ; first item is weight (in R+), second item is value (in [-1, 1])
   ; todo: confirm weight for attribute factors
   ; todo: figure out the best way to convert odds ratio to weights
-  
   report (list
     (list 1     [ -> ifelse-value (get "male?") [ 1 ] [ 0 ] ])
     (list 1     [ -> ifelse-value (get "muslim?") [ 1 ] [ 0 ] ])
@@ -14,11 +13,15 @@ end
 
 to-report risk-factors
   report (list
-    (list 3.670 [ -> [ value ] of opinion-on-topic "Fundamentalism" ])
-    (list 3.626 [ -> [ value ] of opinion-on-topic "Non integration" ])
-    (list 2.417 [ -> [ value ] of opinion-on-topic "Institutional distrust" ])
-    (list 3.609 [ -> [ value ] of opinion-on-topic "Collective relative deprivation" ])
+    (list 3.670 [ -> propensity ])
+    (list 3.626 [ -> normalized-opinion-on-topic "Non integration" ])
+    (list 2.417 [ -> normalized-opinion-on-topic "Institutional distrust" ])
+    (list 3.609 [ -> normalized-opinion-on-topic "Collective relative deprivation" ])
   )
+end
+
+to-report normalized-opinion-on-topic [ the-topic ]
+  report [ (value + 1) / 2 ] of opinion-on-topic the-topic
 end
 
 to-report attribute-definitions
@@ -42,8 +45,8 @@ end
 
 to-report website-definitions
   report (list
-    (list "Fundamentalism" -1)
-    (list "Fundamentalism"  1) 
+    (list "Non integration" -1)
+    (list "Non integration"  1) 
   )
 end
 
@@ -59,16 +62,15 @@ to-report job-definition-list
   report (list
     ;     num-jobs start-time duration location-type task          criteria                  priority
     (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
-      get "muslim?" and get "male?" and [ value ] of opinion-on-topic "Fundamentalism" = 1 ] 0
+      get "muslim?" and get "male?" and [ value ] of opinion-on-topic "Institutional distrust" = 1 ] 0
     )
     (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
-      [ value ] of opinion-on-topic "Fundamentalism" = -1]                                   0
+      [ value ] of opinion-on-topic "Institutional distrust" = -1]                                   0
     )
-    (list        1          8        8 "school"           [ -> teach  ] [ -> age >= 21 and workday? ]     1)      
-    (list       50          8        8 "factory"          [ -> work   ] [ -> age >= 18 and workday? ]     1)
-    (list       50          8        8 "office"           [ -> work   ] [ -> age >= 18 and workday? ]     1)
-    (list        1         12        8 "bar"              [ -> work   ] [ -> age >= 18 and workday? ]     1)
-    (list        1         16        8 "bar"              [ -> work   ] [ -> age >= 18 and workday? ]     1)
+    (list        1          8        8 "school"           [ -> teach  ] [ -> age >= 21 ]     1)      
+    (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]     1)
+    (list        1         12        8 "bar"              [ -> work   ] [ -> age >= 18 ]     1)
+    (list        1         16        8 "bar"              [ -> work   ] [ -> age >= 18 ]     1)
     
   )
 end
@@ -101,12 +103,13 @@ to-report topic-definitions
   ; This makes the criteria compatible with the ones in activities.
   report (list
     ;      type                             value     criteria
-    (list "Fundamentalism"                  uniform   both-muslims?)
     (list "Non integration"                 uniform   [ -> true ])
     (list "Institutional distrust"          uniform   [ -> true ])
     (list "Collective relative deprivation" uniform   both-muslims?)
   )
 end
+
+to-report topic-list report map [ l -> first l ] topic-definitions end
 
 to-report both-muslims?
   report [  -> 
@@ -114,14 +117,13 @@ to-report both-muslims?
   ]
 end
 
-
 to make-special-citizens
-  post-opinions-setup "mosque" "Fundamentalism" 1 [
-    -> age >= 21 and get "muslim?" and get "male?" and get "muslim?" 
+  post-opinions-setup "mosque" "Institutional distrust" 1 [
+    -> age >= 21 and get "muslim?" and get "male?" 
   ]
-  post-opinions-setup "community center" "Fundamentalism" -1 [ -> age >= 18 ]
+  post-opinions-setup "community center" "Institutional distrust" -1 [ -> age >= 18 ]
+  ask rnd:weighted-n-of initial-radicalized citizens [ risk ] [set recruited? true]
 end
-  
 
 to post-opinions-setup [ the-shape the-topic-name the-value the-criteria ]
   let n count locations with [ shape = the-shape ]
@@ -140,3 +142,8 @@ to post-opinions-setup [ the-shape the-topic-name the-value the-criteria ]
     ]
   ]
 end
+
+to-report workday-nonmuslim? report member? week-num (range 1 6)                                                             end ; citizen reporter
+to-report weekday            report item week-num [ "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" ] end ; citizen reporter
+to-report workday-muslim?    report member? week-num (range 0 5)                                                             end ; citizen reporter
+to-report workday?           report ifelse-value get "muslim?" [ workday-muslim? ] [ workday-nonmuslim? ]                    end ; citizen reporter

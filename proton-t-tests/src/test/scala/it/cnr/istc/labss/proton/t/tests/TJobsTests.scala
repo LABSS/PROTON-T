@@ -28,27 +28,52 @@ class TJobsTests extends TModelSuite {
   test("Community workers preach to an effect") { ws =>
     setup4x300(ws)
     ws.cmd("""
-      repeat 24 * 10 + 10 [ go ] ; 10AM on the tenth day
+      repeat 24 * 10 + 22 [ go ] ; 10PM on the tenth day
     """)
-    val meanFundamentalism = """
+    val meanInstDist = """
       mean [ value ] of link-set [
-        out-topic-link-to ( one-of topics with [ topic-name = "Fundamentalism" ]) 
+        out-topic-link-to ( one-of topics with [ topic-name = "Institutional distrust" ]) 
       ] of (citizens-on locations with [ shape = "community center"]) with [
         [ not (is-job? and location-type = "community center") ] of [ my-activity-type ] of current-activity 
       ]
     """
-    val before = ws.rpt(meanFundamentalism).asInstanceOf[Number].floatValue    
+    val before = ws.rpt(meanInstDist).asInstanceOf[Number].floatValue    
     ws.cmd("""
       repeat 100 [ 
         ask citizens with [ 
           [ is-job? and location-type = "community center" ] of [ my-activity-type ] of current-activity 
-        ] [ preach ]]
+        ] [ preach ]
+        ]
       """)
-    val after = ws.rpt(meanFundamentalism).asInstanceOf[Number].floatValue
+    val after = ws.rpt(meanInstDist).asInstanceOf[Number].floatValue
     after - before < 0 shouldBe true
   }
 
-  test("The activity system should be coherent between variables and links, between locations and activities") { ws =>
+  test("Imams preach to an effect") { ws =>
+    setup4x300(ws)
+    ws.cmd("""
+      repeat 24 * 10 + 22 [ go ] ; 10PM on the tenth day
+    """)
+    val meanInstDist = """
+      mean [ value ] of link-set [
+        out-topic-link-to ( one-of topics with [ topic-name = "Institutional distrust" ]) 
+      ] of (citizens-on locations with [ shape = "mosque"]) with [
+        [ not (is-job? and location-type = "mosque") ] of [ my-activity-type ] of current-activity 
+      ]
+    """
+    val before = ws.rpt(meanInstDist).asInstanceOf[Number].floatValue    
+    ws.cmd("""
+      repeat 100 [ 
+        ask citizens with [ 
+          [ is-job? and location-type = "mosque" ] of [ my-activity-type ] of current-activity 
+        ] [ preach ]
+        ]
+      """)
+    val after = ws.rpt(meanInstDist).asInstanceOf[Number].floatValue
+    after - before > 0 shouldBe true
+  }
+
+  test("citizens in workplace are working") { ws =>
     setup4x300(ws)
     1 to 500 foreach { _ => 
       ws.cmd("go")
