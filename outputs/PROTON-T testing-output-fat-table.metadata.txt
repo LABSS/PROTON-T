@@ -1,0 +1,18 @@
+name, description, group
+"[run number]", run number, id
+"citizens-per-community", number of citizens in each of the communities, init
+"initial-radicalized", number of initial radicalized agents, init
+"alpha", tolerance parameter for opinion dynamics, init
+"radicalization-threshold", radicalization threshold, init
+"num-communities", number of communities in the model, init
+"activity-radius", spatial range of agents for activity selection, init
+"work-socialization-probability", probability of having an exchange while working, init
+"activity-value-update", rate of change of activity preference as the result of successful/unsuccessful interaction, init
+"website-access-probability", probability of website access, init
+"community-side-length", side length of a community, init
+"[step]", step of simulation (one hour by default), id
+"count citizens with [ recruited? ]", number of recruited citizens, result-base
+"count citizens with [ risk > radicalization-threshold ]", numer of citizens at risk of recruitment, result-base
+"[ risk ] of citizens", list of risk level for each agent, result-stats
+"[ [ value ] of  opinion-on-topic ""Non integration"" ] of citizens", opinions on one of the topics, result-stats
+"citizens-occupations", occupational state of the citizens in the form of a list of couples [name_activity  job?  number_of_citizens], result-stats
