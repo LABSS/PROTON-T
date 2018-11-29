@@ -516,12 +516,19 @@ to-report change-brightness [ c delta-b ]
 end
 
 ; called by behaviorspace
-to-report citizens-occupations
+to-report citizens-occupations-hist
   report reduce sentence list [
     (list location-type "job" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
   ] of activity-types with [ is-job? ] [
     (list location-type "notjob" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
   ] of activity-types with [ not is-job? ]
+end
+
+; called by behaviorspace
+to-report citizens-opinions
+  report [ reduce sentence (list who
+    map [ i ->   [ value ] of  opinion-on-topic i ] topics-list)
+   ] of citizens
 end
 
 ; called by the test subsystem, *TJobsTests.scala
@@ -540,11 +547,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1088
-799
+1108
+819
 -1
 -1
-13.0
+10.0
 1
 10
 1
@@ -555,9 +562,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-59
+79
 0
-59
+79
 1
 1
 1
@@ -786,10 +793,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Institutional distrust\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
 
 PLOT
-1098
-550
-1387
-798
+1120
+540
+1409
+788
 Propensity and risk
 NIL
 NIL
@@ -1482,23 +1489,26 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="testing-output-fat" repetitions="3" runMetricsEveryStep="true">
+  <experiment name="testing-output-fat" repetitions="50" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
-    <timeLimit steps="100"/>
+    <timeLimit steps="500"/>
+    <metric>weekday</metric>
+    <metric>(word (ticks mod 24) ":00")</metric>
     <metric>count citizens with [ recruited? ]</metric>
     <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
+    <metric>[ age ] of citizens</metric>
     <metric>[ risk ] of citizens</metric>
-    <metric>[ [ value ] of  opinion-on-topic "Non integration" ] of citizens</metric>
-    <metric>citizens-occupations</metric>
+    <metric>citizens-opinions</metric>
+    <metric>citizens-occupations-hist</metric>
     <enumeratedValueSet variable="citizens-per-community">
-      <value value="100"/>
+      <value value="500"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="initial-radicalized">
       <value value="10"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
-      <value value="0.1"/>
+      <value value="0.8"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="radicalization-threshold">
       <value value="0.9"/>
@@ -1519,7 +1529,7 @@ NetLogo 6.0.4
       <value value="0.1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="community-side-length">
-      <value value="30"/>
+      <value value="40"/>
     </enumeratedValueSet>
   </experiment>
   <experiment name="testing-output" repetitions="3" runMetricsEveryStep="true">
