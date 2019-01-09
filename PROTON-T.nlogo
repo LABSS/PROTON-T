@@ -1489,10 +1489,10 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="testing-output-fat" repetitions="50" runMetricsEveryStep="true">
+  <experiment name="testing-output-fat" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
-    <timeLimit steps="500"/>
+    <timeLimit steps="4"/>
     <metric>weekday</metric>
     <metric>(word (ticks mod 24) ":00")</metric>
     <metric>count citizens with [ recruited? ]</metric>
@@ -1502,7 +1502,7 @@ NetLogo 6.0.4
     <metric>citizens-opinions</metric>
     <metric>citizens-occupations-hist</metric>
     <enumeratedValueSet variable="citizens-per-community">
-      <value value="500"/>
+      <value value="50"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="initial-radicalized">
       <value value="10"/>
