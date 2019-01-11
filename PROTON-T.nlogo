@@ -57,7 +57,7 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
-  setup-communities
+  setup-communities ; citizens are moved at their home
   setup-websites
   setup-opinions
   make-special-citizens ; extreme opinions as needed
@@ -76,8 +76,8 @@ end
 to go
   ask citizens [
     let new-activity one-of activity-link-neighbors with [
-      [ start-time = current-time and is-mandatory? ] of my-activity-type and
-      ([ workday? ] of myself and [ is-job?] of my-activity-type or
+      [ start-time = current-time and is-mandatory? ] of my-activity-type and (
+      [ workday? ] of myself and [ is-job? ] of my-activity-type or
       [ not is-job? ] of my-activity-type)
     ]
     if new-activity != nobody [
@@ -225,7 +225,7 @@ to-report setup-residences [target-patches]
   report turtle-set residences
 end
 
-to setup-citizens [residences]
+to setup-citizens [ residences ]
   create-citizens citizens-per-community [
     set attributes table:make
     foreach attribute-definitions [ def ->
@@ -296,7 +296,7 @@ to setup-jobs
     let candidates citizens with [ runresult the-criteria ]
     ask activities with [ my-activity-type = the-type ] [
       let free-candidates candidates with [
-        not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead
+        not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead ; doesn't seem to work
       ]
       let n min (list (count free-candidates) ([ max-agents ] of my-activity-type))
       ask rnd:weighted-n-of n free-candidates [ distance myself ^ 2 ] [
@@ -306,7 +306,7 @@ to setup-jobs
   ]
 end
 
-to setup-mandatory-activities ; citizen procedire
+to setup-mandatory-activities ; citizen procedure
   ask activity-types with [ is-mandatory? and not is-job? ] [
     let the-type self
     let get-activity [ ->
@@ -328,7 +328,7 @@ to setup-free-time-activities
     let nearby-activities my-nearby-activities
     let the-citizen self
     create-activity-links-to nearby-activities with [
-      [ not is-mandatory? ] of my-activity-type and [ can-do? myself ] of the-citizen
+      [ not is-mandatory? and not is-job? ] of my-activity-type and [ can-do? myself ] of the-citizen
     ] [
       set value -1 + random-float 2 ; TODO: how should this be initialized?
     ]
@@ -547,11 +547,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1108
-819
+1088
+799
 -1
 -1
-10.0
+13.0
 1
 10
 1
@@ -562,9 +562,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-79
+59
 0
-79
+59
 1
 1
 1
@@ -898,6 +898,17 @@ initial-radicalized
 1
 NIL
 HORIZONTAL
+
+MONITOR
+1108
+12
+1240
+57
+mosque attendance
+count citizens with [ [ shape ] of locations-here = [ \"mosque\" ] ]
+0
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
