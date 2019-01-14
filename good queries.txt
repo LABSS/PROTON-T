@@ -1,0 +1,104 @@
+; finding workers
+
+show [ location-type ] of activity-types
+;shows all the jobs and the other activites, too. To get the jobs only, go to 
+show [ location-type ] of activity-types with [ is-job? ]
+; number of jobs 
+[ list who count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] of citizens
+[ count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] of citizens
+; people without a job
+citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ]
+
+; community centers
+
+; all the related activities.
+show activities with [ [ is-job? and location-type = "community center" ]  of my-activity-type ] 
+; who is working there? (list of community workers)
+show [ who ] of turtle-set [ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "community center" ]  of my-activity-type ] 
+; are they fulfilled?
+all? activities with [ [ is-job? and location-type = "community center" ]  of my-activity-type ] [ any? activity-link-neighbors ] 
+; what other jobs the community workers have?
+[ [ [ list is-job? location-type ] of my-activity-type ] of activity-link-neighbors ] of (turtle-set ([ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "community center" ] of my-activity-type ]))
+
+; workplaces
+
+; are the people in the workplace working?
+all? ( citizens with [any? location-here with [ shape = "workplace"] ] ) [ [ [ location-shape ] of my-activity-type ] of current-activty = "workplace"]
+; citizens registered to work
+citizens with [ any? activity-link-neighbors with [ [ is-job? ]  of my-activity-type ] ]
+; citizen registed to work in places (note that one person could work in two places at some point)
+[ list count activity-link-neighbors [ location-type  ]  of my-activity-type ] of activities with [ [ is-job? ]  of my-activity-type ] 
+; what are they doing now (jobs)?
+[ list location-type count citizens with [ [ my-activity-type ] of current-activity = myself ] ] of activity-types with [ is-job? ]
+; what are they doing now (all)?
+reduce sentence [ (list location-type "job" count citizens with [ [ my-activity-type ] of current-activity = myself ]) ] of activity-types with [ is-job? ] 
+
+; what are people doing?
+show [location-type] of [ my-activity-type ] of [current-activity ] of citizen 1927 
+; note that all citizens have a current activity because nobodies are eliminated right into the go.
+; the following gives you the community workers IF it is work time
+show citizens with [ [ is-job? and location-type = "community center" ] of [ my-activity-type ] of current-activity ] 
+; while these are lazy people wasting time at the community centers
+show citizens with [ [ not is-job? and location-type = "community center" ] of [ my-activity-type ] of current-activity ]
+; what do they think about fundamentalism?
+show mean [ value ] of link-set [ out-topic-link-to ( one-of topics with [ topic-name = "Institutional distrust" ]) ] of citizens
+; what about a specific place? Let's find one specific community worker
+let undercover-cop one-of [ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "community center" ]  of my-activity-type ]
+; this should give the same
+let undercover-cop one-of citizens with [ [ is-job? and location-type = "community center" ]  of [ my-activity-type ] of current-activity ] 
+; where is he?
+[ [ shape ] of locations-here ] of one-of citizens with [ [ is-job? and location-type = "community center" ]  of [ my-activity-type ] of current-activity ] 
+; is it a community center?
+[ shape ] of [ location-here ] of undercover-cop = "community center"
+; who else is there?
+show [other citizens-here] of undercover-cop
+; all place kinds and people in them
+[ (list location-type is-job? is-mandatory? count citizens with [ (one-of [ shape ] of locations-here) = [ location-type ] of myself ] ) ] of activity-types
+
+; kids in school
+
+; in school now
+count citizens with [ [ shape ] of locations-here = [ "school" ] and age > 21 ]
+
+; setup of imams
+
+; the imams prepared at the beginning
+[ who ] of citizens with [ [ value ] of out-topic-link-to ( one-of topics with [ topic-name = "Institutional distrust" ]) = 1 ]
+; list of imams
+[ who ] of (turtle-set [ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ])
+; what are the imams doing? Are they working?
+[ list [ shape ] of locations-here  workday?  ] of (turtle-set [ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ])
+; activities of imams
+[ [ list is-job? location-type ] of my-activity-type ] of turtle-set [ activity-link-neighbors ] of (turtle-set [ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ])
+; imams with two jobs
+(turtle-set [ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ]) with [ count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] > 1 ]
+
+; the mosques
+all? activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ] [ any? activity-link-neighbors ]
+; people at the mosques 
+count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]
+
+
+; ---------OC----------
+
+
+; are schools teaching the right people?
+schools with [ any? school-attendance-link-neighbors with [ education-level != [ education-level ] of myself + 1 ] ]
+; all people should be in appropriate schools
+all? persons [ not any? school-attendance-link-neighbors or education-level = ([ education-level ] of one-of school-attendance-link-neighbors) - 1 ] 
+; work and school at the same time
+persons with [ any? school-attendance-link-neighbors and any? job-link ]
+; people in the wrong level of school. Does not work because at the change of year, some people has different distances. The one in the test works.
+all-persons with [ any? school-attendance-link-neighbors and [ education-level ] of one-of school-attendance-link-neighbors != possible-school-level ]
+; works
+    ws.rpt("""all? persons [ 
+      not any? school-attendance-link-neighbors or 
+      education-level = (possible-school-level - 1) or 
+      (birth-tick mod ticks-per-year = 0 and
+        (age > 25 or 
+        education-level = (possible-school-level - 2))) 
+    ]""") shouldBe true
+; report
+    ws.show("[ (list who age education-level possible-school-level [ education-level ] of one-of school-attendance-link-neighbors [ who ] of one-of school-attendance-link-neighbors [ breed = schools ] of one-of school-attendance-link-neighbors) ] of persons with [ any? school-attendance-link-neighbors and education-level != (possible-school-level - 1) ]")
+
+

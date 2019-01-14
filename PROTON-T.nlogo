@@ -57,7 +57,7 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
-  setup-communities
+  setup-communities ; citizens are moved at their home
   setup-websites
   setup-opinions
   make-special-citizens ; extreme opinions as needed
@@ -76,8 +76,8 @@ end
 to go
   ask citizens [
     let new-activity one-of activity-link-neighbors with [
-      [ start-time = current-time and is-mandatory? ] of my-activity-type and
-      ([ workday? ] of myself and [ is-job?] of my-activity-type or
+      [ start-time = current-time and is-mandatory? ] of my-activity-type and (
+      [ workday? ] of myself and [ is-job? ] of my-activity-type or
       [ not is-job? ] of my-activity-type)
     ]
     if new-activity != nobody [
@@ -225,7 +225,7 @@ to-report setup-residences [target-patches]
   report turtle-set residences
 end
 
-to setup-citizens [residences]
+to setup-citizens [ residences ]
   create-citizens citizens-per-community [
     set attributes table:make
     foreach attribute-definitions [ def ->
@@ -296,7 +296,7 @@ to setup-jobs
     let candidates citizens with [ runresult the-criteria ]
     ask activities with [ my-activity-type = the-type ] [
       let free-candidates candidates with [
-        not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead
+        not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead ; doesn't seem to work
       ]
       let n min (list (count free-candidates) ([ max-agents ] of my-activity-type))
       ask rnd:weighted-n-of n free-candidates [ distance myself ^ 2 ] [
@@ -306,7 +306,7 @@ to setup-jobs
   ]
 end
 
-to setup-mandatory-activities ; citizen procedire
+to setup-mandatory-activities ; citizen procedure
   ask activity-types with [ is-mandatory? and not is-job? ] [
     let the-type self
     let get-activity [ ->
@@ -328,7 +328,7 @@ to setup-free-time-activities
     let nearby-activities my-nearby-activities
     let the-citizen self
     create-activity-links-to nearby-activities with [
-      [ not is-mandatory? ] of my-activity-type and [ can-do? myself ] of the-citizen
+      [ not is-mandatory? and not is-job? ] of my-activity-type and [ can-do? myself ] of the-citizen
     ] [
       set value -1 + random-float 2 ; TODO: how should this be initialized?
     ]
@@ -516,12 +516,19 @@ to-report change-brightness [ c delta-b ]
 end
 
 ; called by behaviorspace
-to-report citizens-occupations
+to-report citizens-occupations-hist
   report reduce sentence list [
     (list location-type "job" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
   ] of activity-types with [ is-job? ] [
     (list location-type "notjob" count citizens with [ current-activity != nobody and [ my-activity-type ] of current-activity = myself ])
   ] of activity-types with [ not is-job? ]
+end
+
+; called by behaviorspace
+to-report citizens-opinions
+  report [ reduce sentence (list who
+    map [ i ->   [ value ] of  opinion-on-topic i ] topics-list)
+   ] of citizens
 end
 
 ; called by the test subsystem, *TJobsTests.scala
@@ -786,10 +793,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Institutional distrust\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
 
 PLOT
-1098
-550
-1387
-798
+1120
+540
+1409
+788
 Propensity and risk
 NIL
 NIL
@@ -891,6 +898,17 @@ initial-radicalized
 1
 NIL
 HORIZONTAL
+
+MONITOR
+1108
+12
+1240
+57
+mosque attendance
+count citizens with [ [ shape ] of locations-here = [ \"mosque\" ] ]
+0
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1482,23 +1500,26 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="testing-output-fat" repetitions="3" runMetricsEveryStep="true">
+  <experiment name="testing-output-fat" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
-    <timeLimit steps="100"/>
+    <timeLimit steps="4"/>
+    <metric>weekday</metric>
+    <metric>(word (ticks mod 24) ":00")</metric>
     <metric>count citizens with [ recruited? ]</metric>
     <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
+    <metric>[ age ] of citizens</metric>
     <metric>[ risk ] of citizens</metric>
-    <metric>[ [ value ] of  opinion-on-topic "Non integration" ] of citizens</metric>
-    <metric>citizens-occupations</metric>
+    <metric>citizens-opinions</metric>
+    <metric>citizens-occupations-hist</metric>
     <enumeratedValueSet variable="citizens-per-community">
-      <value value="100"/>
+      <value value="50"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="initial-radicalized">
       <value value="10"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
-      <value value="0.1"/>
+      <value value="0.8"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="radicalization-threshold">
       <value value="0.9"/>
@@ -1519,7 +1540,7 @@ NetLogo 6.0.4
       <value value="0.1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="community-side-length">
-      <value value="30"/>
+      <value value="40"/>
     </enumeratedValueSet>
   </experiment>
   <experiment name="testing-output" repetitions="3" runMetricsEveryStep="true">

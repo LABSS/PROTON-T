@@ -28,7 +28,7 @@ class TJobsTests extends TModelSuite {
   test("Community workers preach to an effect") { ws =>
     setup4x300(ws)
     ws.cmd("""
-      repeat 24 * 10 + 22 [ go ] ; 10PM on the tenth day
+      repeat 24 * 3 + 22 [ go ] ; 10PM on the tenth day
     """)
     val meanInstDist = """
       mean [ value ] of link-set [
@@ -52,7 +52,7 @@ class TJobsTests extends TModelSuite {
   test("Imams preach to an effect") { ws =>
     setup4x300(ws)
     ws.cmd("""
-      repeat 24 * 10 + 22 [ go ] ; 10PM on the tenth day
+      repeat 24 * 3 + 22 [ go ] ; 10PM on the tenth day
     """)
     val meanInstDist = """
       mean [ value ] of link-set [

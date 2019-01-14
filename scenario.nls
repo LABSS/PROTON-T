@@ -13,10 +13,10 @@ end
 
 to-report risk-factors
   report (list
-    (list 3.670 [ -> propensity ])
+    (list 0.670 [ -> propensity ])
     (list 3.626 [ -> normalized-opinion-on-topic "Non integration" ])
-    (list 2.417 [ -> normalized-opinion-on-topic "Institutional distrust" ])
-    (list 3.609 [ -> normalized-opinion-on-topic "Collective relative deprivation" ])
+    (list 0.417 [ -> normalized-opinion-on-topic "Institutional distrust" ])
+    (list 1.609 [ -> normalized-opinion-on-topic "Collective relative deprivation" ])
   )
 end
 
@@ -67,7 +67,7 @@ to-report job-definition-list
     (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
       [ value ] of opinion-on-topic "Institutional distrust" = -1]                                   0
     )
-    (list        1          8        8 "school"           [ -> teach  ] [ -> age >= 21 ]     1)      
+    (list        1          8        8 "school"           [ -> teach  ] [ -> age >= 18 ]     1)      
     (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]     1)
     (list        1         12        8 "bar"              [ -> work   ] [ -> age >= 18 ]     1)
     (list        1         16        8 "bar"              [ -> work   ] [ -> age >= 18 ]     1)
@@ -109,7 +109,7 @@ to-report topic-definitions
   )
 end
 
-to-report topic-list report map [ l -> first l ] topic-definitions end
+to-report topics-list report map [ l -> first l ] topic-definitions end
 
 to-report both-muslims?
   report [  -> 
