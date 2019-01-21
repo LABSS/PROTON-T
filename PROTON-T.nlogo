@@ -383,10 +383,7 @@ to-report age            report current-year - birth-year    end
 to-report week-num          report (floor (ticks / ticks-per-day)) mod 7                                                    end
 
 to-report sum-factors [ factors ]
-  let sum-of-weights sum map first factors
-  report sum map [ pair ->
-    (first pair / sum-of-weights) * runresult last pair
-  ] factors
+  report sum map runresult factors
 end
 
 to-report risk ; citizen reporter
@@ -531,6 +528,10 @@ to-report mean-opinion-on-location [ the-topic-name location-name ]
       ] of (citizens-on locations with [ shape = location-name ]) with [
         [ not (is-job? and location-type = location-name) ] of [ my-activity-type ] of current-activity
       ]
+end
+
+to-report employed?  ; citizen reporter
+  report any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ]
 end
 
 to assert [ f ]
