@@ -51,7 +51,7 @@ class TRiskAndPropensityTests extends TModelSuite {
     println(ws.rpt("""
       [ risk ] of citizen """.concat(citizenkane))) 
     ws.rpt("""
-      [ risk =  2.12994 ] of citizen """.concat(citizenkane)) shouldBe true  
+      [ risk = 2.12994 ] of citizen """.concat(citizenkane)) shouldBe true  
   }
 }
 
