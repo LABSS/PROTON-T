@@ -1,2 +1,12 @@
 *.tmp.nlogo
+.Rhistory
+*.xlsx#
+*.csv#
+*.doc#
+*.docx#
 .DS_Store
+*.icloud
+*.graphml
+*.world
+*.out
+*.swp
