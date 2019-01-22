@@ -39,6 +39,8 @@ topics-own  [
   topic-name
   new-value ; the initialisation function
   criteria  ; a boolean reporter taking a speaker and a listener
+  risk-weight
+  protective-weight ; weights that contribute or protect against risk
 ]
 
 breed [ websites website ]
@@ -127,9 +129,11 @@ end
 to setup-topics
   foreach topic-definitions [ def ->
     create-topics 1 [
-      set topic-name item 0 def
-      set new-value  item 1 def
-      set criteria   item 2 def
+      set topic-name        item 0 def
+      set new-value         item 1 def
+      set criteria          item 2 def
+      set risk-weight       item 3 def
+      set protective-weight item 4 def
       set hidden? true
     ]
   ]
@@ -386,8 +390,13 @@ to-report sum-factors [ factors ]
   report sum map runresult factors
 end
 
+to-report topic-risk-contribution ; opinion-on-topic reporter.
+  ; The link must have been called from a citizen in order to make use of other-end.
+  report 2 * value * ifelse-value (value > 0) [ [ risk-weight ] of other-end ] [ [ protective-weight ] of other-end ]
+end
+
 to-report risk ; citizen reporter
-  report sum-factors risk-factors
+  report sum [ topic-risk-contribution ] of my-out-topic-links + propensity
 end
 
 to sleep

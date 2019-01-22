@@ -5,28 +5,12 @@ to-report propensity-factors ; citizen reporter
                              ; todo: confirm weight for attribute factors
                              ; todo: figure out the best way to convert odds ratio to weights
   report (list
-    [ -> ifelse-value (get "male?") [ 0.113 ] [ 0 ] ]
-    [ -> ifelse-value (employed?) [ 0 ] [ .208 ] ]
-    [ -> ifelse-value (criminal-history?) [ .678 ] [ 0 ] ]
-    [ -> ifelse-value (get "immigrant?") [ .81 ] [ 0 ] ]
-    [ -> ifelse-value (get "authoritarian?") [ .90 ] [ 0 ] ]
-    [ -> ifelse-value (age <= 25) [ .1 ] [ 0 ] ]
-  )
-end
-
-to-report criminal-history?
-  report false
-end
-
-to-report risk-factors ; citizen reporter
-  let ni 2 * [ value ] of opinion-on-topic "Non integration" ; should be a map!
-  let id 2 * [ value ] of opinion-on-topic "Institutional distrust"
-  let rd 2 * [ value ] of opinion-on-topic "Collective relative deprivation"
-  report (list
-    [ -> propensity ]
-    [ -> rd * ifelse-value (rd > 0) [ 0.188 ] [ -0.178 ] ] 
-    [ -> ni * ifelse-value (ni > 0) [ 0.188 ] [ -0.178 ] ]
-    [ -> id * ifelse-value (id > 0) [ 0.188 ] [ -0.178 ] ]
+    [ -> ifelse-value (get "male?")             [ 0.113 ] [ 0     ] ]
+    [ -> ifelse-value (employed?)               [ 0     ] [ 0.208 ] ]
+    [ -> ifelse-value (get "criminal-history?") [ 0.678 ] [ 0     ] ]
+    [ -> ifelse-value (get "immigrant?")        [ 0.081 ] [ 0     ] ]
+    [ -> ifelse-value (get "authoritarian?")    [ 0.9   ] [ 0     ] ]
+    [ -> ifelse-value (age <= 25)               [ 0.1   ] [ 0     ] ]
   )
 end
 
@@ -40,6 +24,7 @@ to-report attribute-definitions
     (list "muslim?"    [ -> random-float 1 < 0.1 ])
     (list "immigrant?" [ -> one-of [true false] ])
     (list "authoritarian?" [ -> one-of [true false] ])
+    (list "criminal-history?" [ -> one-of [true false] ])
   )
 end
 
@@ -112,11 +97,12 @@ to-report topic-definitions
   let uniform [ -> -1 + random-float 2 ]
   ; Criteria are reporters with one speaker (myself) and one listener (self). 
   ; This makes the criteria compatible with the ones in activities.
+  ; the risk and protection are used in risk calculation.
   report (list
-    ;      type                             value     criteria
-    (list "Non integration"                 uniform   [ -> true ])
-    (list "Institutional distrust"          uniform   [ -> true ])
-    (list "Collective relative deprivation" uniform   both-muslims?)
+    ;      type                             value     criteria    risk-weight protective-weight
+    (list "Non integration"                 uniform   [ -> true ]    0.188     0.178)
+    (list "Institutional distrust"          uniform   [ -> true ]    0.277     0.153)
+    (list "Collective relative deprivation" uniform   both-muslims?  0.116     0    )
   )
 end
 
@@ -133,7 +119,9 @@ to make-special-citizens
     -> age >= 21 and get "muslim?" and get "male?" 
   ]
   post-opinions-setup "community center" "Institutional distrust" -1 [ -> age >= 18 ]
-  ask rnd:weighted-n-of initial-radicalized citizens [ risk ] [set recruited? true]
+  let be-positive min [ risk ] of citizens
+  if be-positive > 0 [ set be-positive 0 ]
+  ask rnd:weighted-n-of initial-radicalized citizens [ risk - be-positive ] [set recruited? true]
 end
 
 to post-opinions-setup [ the-shape the-topic-name the-value the-criteria ]
