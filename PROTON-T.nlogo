@@ -14,6 +14,7 @@ citizens-own [
   countdown
   propensity
   current-activity
+  institutional-distrust-modifier
 ]
 
 breed [ activity-types activity-type ]
@@ -75,6 +76,17 @@ end
 
 to go
   ask citizens [
+    if police-interaction = "police" [
+      if police-density > (random-float 1) [
+        ifelse police-interaction-quality > (random-float 1) [
+          ; the interaction between police and citizen is good
+          set institutional-distrust-modifier (institutional-distrust-modifier - random-float 1)
+        ]
+        [
+          set institutional-distrust-modifier (institutional-distrust-modifier + random-float 1)
+        ]
+      ]
+    ]
     let new-activity one-of activity-link-neighbors with [
       [ start-time = current-time and is-mandatory? ] of my-activity-type and (
       [ workday? ] of myself and [ is-job? ] of my-activity-type or
@@ -237,7 +249,8 @@ to setup-citizens [ residences ]
     set current-activity nobody
     set countdown        0
     set residence one-of residences
-    set propensity sum-factors propensity-factors
+    set institutional-distrust-modifier 0
+    set propensity sum-factors propensity-factors "propensity" 0
     set recruited? false
     move-to residence
   ]
@@ -382,15 +395,38 @@ to-report age            report current-year - birth-year    end
 ; so we could say 0 = Sunday, 1 = Monday, .. , 6 = Friday, 7 = Saturday.
 to-report week-num          report (floor (ticks / ticks-per-day)) mod 7                                                    end
 
-to-report sum-factors [ factors ]
-  let sum-of-weights sum map first factors
-  report sum map [ pair ->
-    (first pair / sum-of-weights) * runresult last pair
-  ] factors
+
+to-report sum-factors [ factors type-of-sum modifier-of-sum]
+  if type-of-sum = "propensity" [
+     let sum-of-weights sum map first factors
+     report sum map [ pair ->
+        (first pair / sum-of-weights) * runresult last pair
+     ] factors
+  ]
+  if type-of-sum = "risk" [
+     let sum-of-weights sum map first factors
+     let results []
+     let count-results 1
+     foreach factors [ pair ->
+        ; we modify institutional distruct
+        ifelse count-results = 2 [
+           let x runresult last pair
+           set x x + modifier-of-sum
+           if (x > 1) [set x 1]
+           if (x < -1) [set x -1]
+           set results lput ((first pair / sum-of-weights) * x) results
+         ]
+         [
+           set results lput ((first pair / sum-of-weights) * runresult last pair) results
+         ]
+         set count-results count-results + 1
+     ]
+     report sum results
+  ]
 end
 
 to-report risk ; citizen reporter
-  report sum-factors risk-factors
+  report sum-factors risk-factors "risk" institutional-distrust-modifier
 end
 
 to sleep
@@ -837,7 +873,7 @@ website-access-probability
 website-access-probability
 0
 1
-0.1
+0.0
 0.05
 1
 NIL
@@ -909,6 +945,46 @@ count citizens with [ [ shape ] of locations-here = [ \"mosque\" ] ]
 0
 1
 11
+
+CHOOSER
+15
+710
+185
+755
+police-interaction
+police-interaction
+"no police" "police"
+0
+
+SLIDER
+15
+755
+185
+788
+police-density
+police-density
+0.01
+1
+0.05
+0.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+15
+790
+185
+823
+police-interaction-quality
+police-interaction-quality
+0
+1
+0.8
+0.01
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
