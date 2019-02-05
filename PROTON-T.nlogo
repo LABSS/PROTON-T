@@ -615,7 +615,7 @@ SLIDER
 98
 citizens-per-community
 citizens-per-community
-10
+50
 2000
 100.0
 10

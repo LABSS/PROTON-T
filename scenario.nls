@@ -118,8 +118,11 @@ to make-special-citizens
   post-opinions-setup "mosque" "Institutional distrust" 1 [
     -> age >= 21 and get "muslim?" and get "male?" 
   ]
-  post-opinions-setup "community center" "Institutional distrust" -1 [ -> age >= 18 ]
-  let be-positive min [ risk ] of citizens
+  ; next special citizens should not erase the ones just made
+  post-opinions-setup "community center" "Institutional distrust" -1 [ 
+    -> age >= 18 and [ value ] of opinion-on-topic "Institutional distrust" != 1 
+  ]
+  let be-positive min [ risk ] of citizens - 1E-15  ; overcoming small approximation errors
   if be-positive > 0 [ set be-positive 0 ]
   ask rnd:weighted-n-of initial-radicalized citizens [ risk - be-positive ] [set recruited? true]
 end

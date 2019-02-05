@@ -1,3 +1,4 @@
+# good queries for T model
 ; finding workers
 
 show [ location-type ] of activity-types
@@ -19,6 +20,8 @@ show [ who ] of turtle-set [ activity-link-neighbors ] of activities with [ [ is
 all? activities with [ [ is-job? and location-type = "community center" ]  of my-activity-type ] [ any? activity-link-neighbors ] 
 ; what other jobs the community workers have?
 [ [ [ list is-job? location-type ] of my-activity-type ] of activity-link-neighbors ] of (turtle-set ([ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "community center" ] of my-activity-type ]))
+# people at the community centrs 
+count citizens with [ [ shape ] of locations-here = [ "community center" ] ]
 
 ; workplaces
 
@@ -72,6 +75,8 @@ count citizens with [ [ shape ] of locations-here = [ "school" ] and age > 21 ]
 [ [ list is-job? location-type ] of my-activity-type ] of turtle-set [ activity-link-neighbors ] of (turtle-set [ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ])
 ; imams with two jobs
 (turtle-set [ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ]) with [ count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] > 1 ]
+# opinions of all potential imams
+[ [ value ] of out-topic-link-to one-of topics with [ topic-name = "Institutional distrust" ] ] of citizens with [ runresult [  -> age >= 21 and get "muslim?" and get "male?"] ]
 
 ; the mosques
 all? activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ] [ any? activity-link-neighbors ]
@@ -79,26 +84,34 @@ all? activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-
 count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]
 
 
-; ---------OC----------
+-----
+to-report imamsatwork
+     let a  mean [ value ] of link-set [
+        out-topic-link-to ( one-of topics with [ topic-name = "Institutional distrust" ])
+      ] of (citizens-on locations with [ shape = "mosque"]) with [
+        [ not (is-job? and location-type = "mosque") ] of [ my-activity-type ] of current-activity
+      ]
+      repeat 100 [
+        ask citizens with [
+          [ is-job? and location-type = "mosque" ] of [ my-activity-type ] of current-activity
+  ] [ preach ] ]
+let b mean [ value ] of link-set [
+        out-topic-link-to ( one-of topics with [ topic-name = "Institutional distrust" ])
+      ] of (citizens-on locations with [ shape = "mosque"]) with [
+        [ not (is-job? and location-type = "mosque") ] of [ my-activity-type ] of current-activity
+      ]
+    report b - a
+end
 
-
-; are schools teaching the right people?
-schools with [ any? school-attendance-link-neighbors with [ education-level != [ education-level ] of myself + 1 ] ]
-; all people should be in appropriate schools
-all? persons [ not any? school-attendance-link-neighbors or education-level = ([ education-level ] of one-of school-attendance-link-neighbors) - 1 ] 
-; work and school at the same time
-persons with [ any? school-attendance-link-neighbors and any? job-link ]
-; people in the wrong level of school. Does not work because at the change of year, some people has different distances. The one in the test works.
-all-persons with [ any? school-attendance-link-neighbors and [ education-level ] of one-of school-attendance-link-neighbors != possible-school-level ]
-; works
-    ws.rpt("""all? persons [ 
-      not any? school-attendance-link-neighbors or 
-      education-level = (possible-school-level - 1) or 
-      (birth-tick mod ticks-per-year = 0 and
-        (age > 25 or 
-        education-level = (possible-school-level - 2))) 
-    ]""") shouldBe true
-; report
-    ws.show("[ (list who age education-level possible-school-level [ education-level ] of one-of school-attendance-link-neighbors [ who ] of one-of school-attendance-link-neighbors [ breed = schools ] of one-of school-attendance-link-neighbors) ] of persons with [ any? school-attendance-link-neighbors and education-level != (possible-school-level - 1) ]")
+to runit
+  setup
+  repeat 10 [ go ]
+  while [ imamsatwork > 0
+  ]
+  [
+    repeat 24 [go]
+  ]
+  show "ended"
+end
 
 
