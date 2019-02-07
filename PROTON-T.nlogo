@@ -14,7 +14,6 @@ citizens-own [
   countdown
   propensity
   current-activity
-  institutional-distrust-modifier
 ]
 
 breed [ activity-types activity-type ]
@@ -76,17 +75,7 @@ end
 
 to go
   ask citizens [
-    if police-interaction = "police" [
-      if police-density > (random-float 1) [
-        ifelse police-interaction-quality > (random-float 1) [
-          ; the interaction between police and citizen is good
-          set institutional-distrust-modifier (institutional-distrust-modifier - random-float 1)
-        ]
-        [
-          set institutional-distrust-modifier (institutional-distrust-modifier + random-float 1)
-        ]
-      ]
-    ]
+    police-interact
     let new-activity one-of activity-link-neighbors with [
       [ start-time = current-time and is-mandatory? ] of my-activity-type and (
       [ workday? ] of myself and [ is-job? ] of my-activity-type or
@@ -249,8 +238,7 @@ to setup-citizens [ residences ]
     set current-activity nobody
     set countdown        0
     set residence one-of residences
-    set institutional-distrust-modifier 0
-    set propensity sum-factors propensity-factors "propensity" 0
+    set propensity sum-factors propensity-factors
     set recruited? false
     move-to residence
   ]
@@ -396,37 +384,15 @@ to-report age            report current-year - birth-year    end
 to-report week-num          report (floor (ticks / ticks-per-day)) mod 7                                                    end
 
 
-to-report sum-factors [ factors type-of-sum modifier-of-sum]
-  if type-of-sum = "propensity" [
-     let sum-of-weights sum map first factors
-     report sum map [ pair ->
+to-report sum-factors [ factors ]
+  let sum-of-weights sum map first factors
+  report sum map [ pair ->
         (first pair / sum-of-weights) * runresult last pair
-     ] factors
-  ]
-  if type-of-sum = "risk" [
-     let sum-of-weights sum map first factors
-     let results []
-     let count-results 1
-     foreach factors [ pair ->
-        ; we modify institutional distruct
-        ifelse count-results = 2 [
-           let x runresult last pair
-           set x x + modifier-of-sum
-           if (x > 1) [set x 1]
-           if (x < -1) [set x -1]
-           set results lput ((first pair / sum-of-weights) * x) results
-         ]
-         [
-           set results lput ((first pair / sum-of-weights) * runresult last pair) results
-         ]
-         set count-results count-results + 1
-     ]
-     report sum results
-  ]
+  ] factors
 end
 
 to-report risk ; citizen reporter
-  report sum-factors risk-factors "risk" institutional-distrust-modifier
+  report sum-factors risk-factors
 end
 
 to sleep
@@ -434,6 +400,31 @@ to sleep
 end
 
 to study
+end
+
+to police-interact
+  let institutional-distrust-modifier 0
+  if police-interaction = "police" [
+    if police-density > (random-float 1) [
+      ifelse police-interaction-quality > (random-float 1) [
+         ; the interaction between police and citizen is good
+         set institutional-distrust-modifier  (random-float 1 * -1)
+      ]
+      [
+         set institutional-distrust-modifier  random-float 1
+      ]
+      let the-opinions my-opinions
+      ask the-opinions [
+         if is-topic? end2[
+            if [topic-name] of end2 = "Institutional distrust" [
+              set value value + institutional-distrust-modifier
+              set value max (list -1 value)
+              set value min (list 1 value)
+            ]
+         ]
+      ]
+    ]
+  ]
 end
 
 to socialize ; citizen procedure
@@ -954,7 +945,7 @@ CHOOSER
 police-interaction
 police-interaction
 "no police" "police"
-0
+1
 
 SLIDER
 15
@@ -980,7 +971,7 @@ police-interaction-quality
 police-interaction-quality
 0
 1
-0.8
+0.7
 0.01
 1
 NIL
