@@ -971,7 +971,7 @@ police-interaction-quality
 police-interaction-quality
 0
 1
-0.7
+0.8
 0.01
 1
 NIL
