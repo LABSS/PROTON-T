@@ -1,22 +1,16 @@
 to-report random-birth-year report 0 - random 80 end
   
-to-report propensity-factors
-  ; first item is weight (in R+), second item is value (in [-1, 1])
-  ; todo: confirm weight for attribute factors
-  ; todo: figure out the best way to convert odds ratio to weights
+to-report propensity-factors ; citizen reporter
+                             ; first item is weight (in R+), second item is value (in [-1, 1])
+                             ; todo: confirm weight for attribute factors
+                             ; todo: figure out the best way to convert odds ratio to weights
   report (list
-    (list 1     [ -> ifelse-value (get "male?") [ 1 ] [ 0 ] ])
-    (list 1     [ -> ifelse-value (get "muslim?") [ 1 ] [ 0 ] ])
-    (list 1     [ -> ifelse-value (get "immigrant?") [ 1 ] [ 0 ] ])
-  )
-end
-
-to-report risk-factors
-  report (list
-    (list 0.670 [ -> propensity ])
-    (list 3.626 [ -> normalized-opinion-on-topic "Non integration" ])
-    (list 0.417 [ -> normalized-opinion-on-topic "Institutional distrust" ])
-    (list 1.609 [ -> normalized-opinion-on-topic "Collective relative deprivation" ])
+    [ -> ifelse-value (get "male?")             [ 0.113 ] [ 0     ] ]
+    [ -> ifelse-value (employed?)               [ 0     ] [ 0.208 ] ]
+    [ -> ifelse-value (get "criminal-history?") [ 0.678 ] [ 0     ] ]
+    [ -> ifelse-value (get "immigrant?")        [ 0.081 ] [ 0     ] ]
+    [ -> ifelse-value (get "authoritarian?")    [ 0.9   ] [ 0     ] ]
+    [ -> ifelse-value (age <= 25)               [ 0.1   ] [ 0     ] ]
   )
 end
 
@@ -29,6 +23,8 @@ to-report attribute-definitions
     (list "male?"      [ -> one-of [true false] ])
     (list "muslim?"    [ -> random-float 1 < 0.1 ])
     (list "immigrant?" [ -> one-of [true false] ])
+    (list "authoritarian?" [ -> one-of [true false] ])
+    (list "criminal-history?" [ -> one-of [true false] ])
   )
 end
 
@@ -101,11 +97,12 @@ to-report topic-definitions
   let uniform [ -> -1 + random-float 2 ]
   ; Criteria are reporters with one speaker (myself) and one listener (self). 
   ; This makes the criteria compatible with the ones in activities.
+  ; the risk and protection are used in risk calculation.
   report (list
-    ;      type                             value     criteria
-    (list "Non integration"                 uniform   [ -> true ])
-    (list "Institutional distrust"          uniform   [ -> true ])
-    (list "Collective relative deprivation" uniform   both-muslims?)
+    ;      type                             value     criteria    risk-weight protective-weight
+    (list "Non integration"                 uniform   [ -> true ]    0.188     0.178)
+    (list "Institutional distrust"          uniform   [ -> true ]    0.277     0.153)
+    (list "Collective relative deprivation" uniform   both-muslims?  0.116     0    )
   )
 end
 
@@ -121,8 +118,13 @@ to make-special-citizens
   post-opinions-setup "mosque" "Institutional distrust" 1 [
     -> age >= 21 and get "muslim?" and get "male?" 
   ]
-  post-opinions-setup "community center" "Institutional distrust" -1 [ -> age >= 18 ]
-  ask rnd:weighted-n-of initial-radicalized citizens [ risk ] [set recruited? true]
+  ; next special citizens should not erase the ones just made
+  post-opinions-setup "community center" "Institutional distrust" -1 [ 
+    -> age >= 18 and [ value ] of opinion-on-topic "Institutional distrust" != 1 
+  ]
+  let be-positive min [ risk ] of citizens - 1E-15  ; overcoming small approximation errors
+  if be-positive > 0 [ set be-positive 0 ]
+  ask rnd:weighted-n-of initial-radicalized citizens [ risk - be-positive ] [set recruited? true]
 end
 
 to post-opinions-setup [ the-shape the-topic-name the-value the-criteria ]
