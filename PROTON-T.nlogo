@@ -1,6 +1,11 @@
 __includes [ "scenario.nls" ]
 
-extensions [ table profiler rnd ]
+extensions [ table profiler rnd csv ]
+
+globals [
+  local           ; table with values for setup
+  num-communities
+]
 
 breed [ locations location ]
 
@@ -56,6 +61,7 @@ topic-links-own [ value ]                            ; opinion dynamics score fr
 
 to setup
   clear-all
+  set num-communities 4
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
@@ -550,6 +556,23 @@ to-report employed?  ; citizen reporter
   report any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ]
 end
 
+to-report read-csv [ base-file-name ]
+  report but-first csv:from-file (word "inputs/" scenario "/data/" base-file-name ".csv")
+end
+
+to-report group-by-first-item [ csv-data ]
+  let table table:group-items csv-data first ; group the rows by their first item
+  report table-map table [ rows -> map but-first rows ] ; remove the first item of each row
+end
+
+to-report table-map [ tbl fn ]
+  ; from https://github.com/NetLogo/Table-Extension/issues/6#issuecomment-276109136
+  ; (if `table:map` is ever added to the table extension, this could be replaced by it)
+  report table:from-list map [ entry ->
+    list (first entry) (runresult fn last entry)
+  ] table:to-list tbl
+end
+
 to assert [ f ]
   if not runresult f [ error (word "Assertion failed: " f) ]
 end
@@ -596,16 +619,6 @@ NIL
 NIL
 NIL
 NIL
-1
-
-CHOOSER
-10
-15
-290
-60
-num-communities
-num-communities
-1 4 9 16 25
 1
 
 SLIDER
@@ -919,6 +932,16 @@ count citizens with [ [ shape ] of locations-here = [ \"mosque\" ] ]
 0
 1
 11
+
+CHOOSER
+10
+15
+148
+60
+scenario
+scenario
+"neukolln" "test"
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
