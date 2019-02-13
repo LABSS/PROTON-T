@@ -20,9 +20,9 @@ to-report normalized-opinion-on-topic [ the-topic ]
   report [ (value + 1) / 2 ] of opinion-on-topic the-topic
 end
 
-to-report attribute-definitions
+to-report attribute-definitions [ area ]
   report (list
-    (list "male?"      [ -> one-of [true false] ])
+    (list "male?"      [ -> random-float 100 < local-table-by "percent of males" area ])
     (list "muslim?"    [ -> random-float 1 < 0.1 ])
     (list "immigrant?" [ -> one-of [true false] ])
     (list "authoritarian?" [ -> one-of [true false] ])
@@ -30,19 +30,28 @@ to-report attribute-definitions
   )
 end
 
+to-report local-table-by [ name area ]
+  report table:get table:from-list table:get local name area
+end
+
 to load-neighborhoods
   set local group-by-first-item read-csv "neighborhoods"
-  
+  set population table:from-list table:get local "Population size"
+  set areas table:keys population
+  assert [ -> sqrt length  areas = round sqrt length areas ]
+  set population table:from-list map [ i -> list i round
+    (table:get population i / sum table:values population * total-citizens) ] areas
+  ;set male-percent table:from-list table:get local 
 end  
 
-to-report location-definitions
+to-report location-definitions [ area ]
   report (list
     ;     number name/shape color
     (list      1 "mosque")
     (list      1 "school")
     (list      5 "public space")
-    (list      5 "workplace")
-    (list      5 "community center")
+    (list      1 "workplace")
+    (list      1 "community center")
   )
 end
 

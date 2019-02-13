@@ -4,7 +4,11 @@ extensions [ table profiler rnd csv ]
 
 globals [
   local           ; table with values for setup
-  num-communities
+  ;num-communities
+  areas
+  population
+  male-ratio
+  migrant-muslims-ratio
 ]
 
 breed [ locations location ]
@@ -61,7 +65,7 @@ topic-links-own [ value ]                            ; opinion dynamics score fr
 
 to setup
   clear-all
-  set num-communities 4
+  load-neighborhoods
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
@@ -174,7 +178,7 @@ to-report clipped-random-normal [ the-mean the-std-dev the-min the-max ]
 end
 
 to setup-communities
-  let world-side community-side-length * sqrt num-communities
+  let world-side community-side-length * sqrt length areas
   resize-world 0 (world-side - 1) 0 (world-side - 1)
   set-patch-size floor (800 / world-side)
   let colors [7.4 9.4]; map [ c -> c - 4 ] [turquoise cyan]
@@ -196,19 +200,21 @@ end
 to setup-locations [target-patches]
   set target-patches target-patches with [ count neighbors = 8 ]
   let center patchset-center target-patches
-  foreach location-definitions [ def ->
-    repeat item 0 def [
-      ; locations need to be created one at a time so `territory` is initialized
-      create-locations 1 [
-        set size 3
-        set shape         item 1 def
-        set color         change-brightness peach random 10
-        let candidates target-patches with [
-          not any? other locations with [
-            abs (pxcor - [pxcor] of myself) < 3 and abs (pycor - [pycor] of myself) < 3
+  foreach areas[ area ->
+    foreach location-definitions area [ def ->
+      repeat item 0 def [
+        ; locations need to be created one at a time so `territory` is initialized
+        create-locations 1 [
+          set size 3
+          set shape         item 1 def
+          set color         change-brightness peach random 10
+          let candidates target-patches with [
+            not any? other locations with [
+              abs (pxcor - [pxcor] of myself) < 3 and abs (pycor - [pycor] of myself) < 3
+            ]
           ]
+          move-to rnd:weighted-one-of candidates [ 1 / (1 + (distance center ^ 2)) ]
         ]
-        move-to rnd:weighted-one-of candidates [ 1 / (1 + (distance center ^ 2)) ]
       ]
     ]
   ]
@@ -236,20 +242,22 @@ to-report setup-residences [target-patches]
 end
 
 to setup-citizens [ residences ]
-  create-citizens citizens-per-community [
-    set attributes table:make
-    foreach attribute-definitions [ def ->
-      table:put attributes first def runresult last def
+  foreach areas [ area ->
+    create-citizens table:get population area [
+      set attributes table:make
+      foreach attribute-definitions area [ def ->
+        table:put attributes first def runresult last def
+      ]
+      set color            lput 150 one-of teals
+      set birth-year       random-birth-year
+      set current-task     nobody ; used to indicate "none"
+      set current-activity nobody
+      set countdown        0
+      set residence one-of residences
+      set propensity sum-factors propensity-factors
+      set recruited? false
+      move-to residence
     ]
-    set color            lput 150 one-of teals
-    set birth-year       random-birth-year
-    set current-task     nobody ; used to indicate "none"
-    set current-activity nobody
-    set countdown        0
-    set residence one-of residences
-    set propensity sum-factors propensity-factors
-    set recruited? false
-    move-to residence
   ]
 end
 
@@ -626,11 +634,11 @@ SLIDER
 65
 290
 98
-citizens-per-community
-citizens-per-community
+total-citizens
+total-citizens
 50
 2000
-100.0
+550.0
 10
 1
 citizens
@@ -936,7 +944,7 @@ count citizens with [ [ shape ] of locations-here = [ \"mosque\" ] ]
 CHOOSER
 10
 15
-148
+290
 60
 scenario
 scenario

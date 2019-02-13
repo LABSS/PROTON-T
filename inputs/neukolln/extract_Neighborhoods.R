@@ -8,15 +8,19 @@ df <-
   read_excel(sheet = "Setup-Landscape") %>%
   gather(Area, value, - Factor) %>%
   mutate(
-    Area = Area %>%
-    str_extract_all("\\d+")
+    area = Area %>%
+    str_extract("\\d") %>%
+      map(as.numeric) 
   ) %>%
   mutate(
-      Factor =
+      factor =
         Factor %>%
       gsub(pattern = "%", replacement = " percent", .) %>%
         gsub(pattern = "#", replacement = " num", .)  %>%
-        gsub(pattern = "\\+", replacement = " on", .) 
-  )  %>%
+        gsub(pattern = "\\+", replacement = " on", .) %>%
+        trimws()
+  ) %>%
+  unnest(area) %>%
+  select(factor, area, value) %>%
   write_csv(file.path("data", "neighborhoods.csv"))
 
