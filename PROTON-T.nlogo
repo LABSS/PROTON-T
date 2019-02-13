@@ -7,14 +7,17 @@ globals [
   ;num-communities
   areas
   population
-  male-ratio
+  temp
   migrant-muslims-ratio
 ]
+
+;patches-own [ my-area ]
 
 breed [ locations location ]
 
 breed [ citizens citizen ]
 citizens-own [
+  area
   residence
   birth-year
   recruited?
@@ -40,6 +43,7 @@ activity-types-own [
 
 breed [ activities activity ]
 activities-own [
+  ;area
   my-activity-type ; turtle of breed activity-type
 ]
 
@@ -178,21 +182,28 @@ to-report clipped-random-normal [ the-mean the-std-dev the-min the-max ]
 end
 
 to setup-communities
-  let world-side community-side-length * sqrt length areas
+  let n sqrt length areas
+  let world-side community-side-length * n
   resize-world 0 (world-side - 1) 0 (world-side - 1)
   set-patch-size floor (800 / world-side)
   let colors [7.4 9.4]; map [ c -> c - 4 ] [turquoise cyan]
-  let community-table make-community-table
-  foreach table:keys community-table [ row ->
-    foreach table:keys table:get community-table row [ col ->
-      let community-patches table:get table:get community-table row col
+  foreach range n [ row ->
+    foreach range n [ col ->
+      let the-area item (col + row * n) areas
+      let community-patches patches with [
+        floor (pxcor / community-side-length) = row and
+        floor (pycor / community-side-length) = col
+      ]
       let c ifelse-value (row mod 2 = col mod 2) [ 7.4 ] [ 9.4 ]
-      ask community-patches [ set pcolor c + random-float 0.5 ]
+            ask community-patches [
+        ;set my-area area
+        set pcolor c + random-float 0.5
+      ]
       setup-locations community-patches
       let residences setup-residences community-patches with [
         not any? locations in-radius 1.75 with [ shape != "residence" ]
       ]
-      setup-citizens residences
+      setup-citizens residences the-area
     ]
   ]
 end
@@ -200,8 +211,8 @@ end
 to setup-locations [target-patches]
   set target-patches target-patches with [ count neighbors = 8 ]
   let center patchset-center target-patches
-  foreach areas[ area ->
-    foreach location-definitions area [ def ->
+  foreach areas[ the-area ->
+    foreach location-definitions the-area [ def ->
       repeat item 0 def [
         ; locations need to be created one at a time so `territory` is initialized
         create-locations 1 [
@@ -241,23 +252,22 @@ to-report setup-residences [target-patches]
   report turtle-set residences
 end
 
-to setup-citizens [ residences ]
-  foreach areas [ area ->
-    create-citizens table:get population area [
-      set attributes table:make
-      foreach attribute-definitions area [ def ->
-        table:put attributes first def runresult last def
-      ]
-      set color            lput 150 one-of teals
-      set birth-year       random-birth-year
-      set current-task     nobody ; used to indicate "none"
-      set current-activity nobody
-      set countdown        0
-      set residence one-of residences
-      set propensity sum-factors propensity-factors
-      set recruited? false
-      move-to residence
+to setup-citizens [ residences the-area ]
+  create-citizens table:get population the-area [
+    set attributes table:make
+    foreach attribute-definitions the-area [ def ->
+      table:put attributes first def runresult last def
     ]
+    set area             the-area
+    set color            lput 150 one-of teals
+    set birth-year       random-birth-year
+    set current-task     nobody ; used to indicate "none"
+    set current-activity nobody
+    set countdown        0
+    set residence one-of residences
+    set propensity sum-factors propensity-factors
+    set recruited? false
+    move-to residence
   ]
 end
 
@@ -368,21 +378,6 @@ end
 
 to-report is-at-my-residence? [ the-turtle ] ; citizen reporter
   report [ patch-here ] of the-turtle = [ patch-here ] of residence
-end
-
-to-report make-community-table
-  let n world-width / community-side-length
-  let tbl table:make
-  foreach range n [ row ->
-    table:put tbl row table:make
-    foreach range n [ col ->
-      table:put (table:get tbl row) col patches with [
-        floor (pxcor / community-side-length) = row and
-        floor (pycor / community-side-length) = col
-      ]
-    ]
-  ]
-  report tbl
 end
 
 to-report intervals [ n the-range ]
@@ -638,7 +633,7 @@ total-citizens
 total-citizens
 50
 2000
-550.0
+2000.0
 10
 1
 citizens
