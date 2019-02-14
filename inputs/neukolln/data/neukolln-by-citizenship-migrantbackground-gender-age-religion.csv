@@ -1,0 +1,865 @@
+area,a,b,age_from,age_to,religion,var
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,0,1,Evangelische Kirchen,6
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,0,1,Evangelische Kirchen,3
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,0,1,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,0,1,Evangelische Kirchen,3
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,0,1,Römisch-katholische Kirche,3
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,0,1,Römisch-katholische Kirche,6
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,0,1,Römisch-katholische Kirche,3
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,0,1,Römisch-katholische Kirche,3
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,0,1,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,0,1,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,0,1,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,0,1,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,0,1,ohne Angabe,312
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,0,1,ohne Angabe,132
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,0,1,ohne Angabe,57
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,0,1,ohne Angabe,109
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,1,6,Evangelische Kirchen,63
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,1,6,Evangelische Kirchen,75
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,1,6,Evangelische Kirchen,21
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,1,6,Evangelische Kirchen,112
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,1,6,Römisch-katholische Kirche,27
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,1,6,Römisch-katholische Kirche,21
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,1,6,Römisch-katholische Kirche,9
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,1,6,Römisch-katholische Kirche,21
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,1,6,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,1,6,sonstige/ohne Angabe,3
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,1,6,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,1,6,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,1,6,ohne Angabe,1232
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,1,6,ohne Angabe,572
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,1,6,ohne Angabe,161
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,1,6,ohne Angabe,448
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,6,15,Evangelische Kirchen,108
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,6,15,Evangelische Kirchen,215
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,6,15,Evangelische Kirchen,48
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,6,15,Evangelische Kirchen,301
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,6,15,Römisch-katholische Kirche,57
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,6,15,Römisch-katholische Kirche,63
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,6,15,Römisch-katholische Kirche,21
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,6,15,Römisch-katholische Kirche,83
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,6,15,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,6,15,sonstige/ohne Angabe,3
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,6,15,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,6,15,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,6,15,ohne Angabe,906
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,6,15,ohne Angabe,745
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,6,15,ohne Angabe,234
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,6,15,ohne Angabe,594
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,15,18,Evangelische Kirchen,39
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,15,18,Evangelische Kirchen,136
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,15,18,Evangelische Kirchen,21
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,15,18,Evangelische Kirchen,192
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,15,18,Römisch-katholische Kirche,15
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,15,18,Römisch-katholische Kirche,40
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,15,18,Römisch-katholische Kirche,6
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,15,18,Römisch-katholische Kirche,52
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,15,18,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,15,18,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,15,18,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,15,18,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,15,18,ohne Angabe,237
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,15,18,ohne Angabe,222
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,15,18,ohne Angabe,102
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,15,18,ohne Angabe,186
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,18,25,Evangelische Kirchen,639
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,18,25,Evangelische Kirchen,536
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,18,25,Evangelische Kirchen,117
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,18,25,Evangelische Kirchen,467
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,18,25,Römisch-katholische Kirche,344
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,18,25,Römisch-katholische Kirche,156
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,18,25,Römisch-katholische Kirche,70
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,18,25,Römisch-katholische Kirche,132
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,18,25,sonstige/ohne Angabe,6
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,18,25,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,18,25,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,18,25,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,18,25,ohne Angabe,1714
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,18,25,ohne Angabe,949
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,18,25,ohne Angabe,454
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,18,25,ohne Angabe,724
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,25,55,Evangelische Kirchen,5776
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,25,55,Evangelische Kirchen,2609
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,25,55,Evangelische Kirchen,829
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,25,55,Evangelische Kirchen,2035
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,25,55,Römisch-katholische Kirche,2889
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,25,55,Römisch-katholische Kirche,618
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,25,55,Römisch-katholische Kirche,223
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,25,55,Römisch-katholische Kirche,437
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,25,55,sonstige/ohne Angabe,18
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,25,55,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,25,55,sonstige/ohne Angabe,3
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,25,55,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,25,55,ohne Angabe,13375
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,25,55,ohne Angabe,5109
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,25,55,ohne Angabe,1672
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,25,55,ohne Angabe,4200
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,55,65,Evangelische Kirchen,1316
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,55,65,Evangelische Kirchen,1190
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,55,65,Evangelische Kirchen,421
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,55,65,Evangelische Kirchen,903
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,55,65,Römisch-katholische Kirche,378
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,55,65,Römisch-katholische Kirche,261
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,55,65,Römisch-katholische Kirche,104
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,55,65,Römisch-katholische Kirche,203
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,55,65,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,55,65,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,55,65,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,55,65,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,55,65,ohne Angabe,2264
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,55,65,ohne Angabe,2345
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,55,65,ohne Angabe,893
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,55,65,ohne Angabe,2085
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,65,80,Evangelische Kirchen,1483
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,65,80,Evangelische Kirchen,2113
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,65,80,Evangelische Kirchen,1263
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,65,80,Evangelische Kirchen,1884
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,65,80,Römisch-katholische Kirche,325
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,65,80,Römisch-katholische Kirche,428
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,65,80,Römisch-katholische Kirche,335
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,65,80,Römisch-katholische Kirche,453
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,65,80,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,65,80,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,65,80,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,65,80,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,65,80,ohne Angabe,2213
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,65,80,ohne Angabe,3349
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,65,80,ohne Angabe,2041
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,65,80,ohne Angabe,2872
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,80,120,Evangelische Kirchen,999
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,80,120,Evangelische Kirchen,1294
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,80,120,Evangelische Kirchen,741
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,80,120,Evangelische Kirchen,921
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,80,120,Römisch-katholische Kirche,188
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,80,120,Römisch-katholische Kirche,199
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,80,120,Römisch-katholische Kirche,193
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,80,120,Römisch-katholische Kirche,189
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,80,120,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,80,120,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,80,120,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,80,120,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,weiblich,80,120,ohne Angabe,856
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,weiblich,80,120,ohne Angabe,1126
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,weiblich,80,120,ohne Angabe,773
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,weiblich,80,120,ohne Angabe,859
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,0,1,Evangelische Kirchen,9
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,0,1,Evangelische Kirchen,9
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,0,1,Evangelische Kirchen,3
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,0,1,Evangelische Kirchen,6
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,0,1,Römisch-katholische Kirche,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,0,1,Römisch-katholische Kirche,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,0,1,Römisch-katholische Kirche,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,0,1,Römisch-katholische Kirche,3
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,0,1,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,0,1,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,0,1,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,0,1,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,0,1,ohne Angabe,364
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,0,1,ohne Angabe,109
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,0,1,ohne Angabe,44
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,0,1,ohne Angabe,114
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,1,6,Evangelische Kirchen,39
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,1,6,Evangelische Kirchen,96
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,1,6,Evangelische Kirchen,15
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,1,6,Evangelische Kirchen,115
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,1,6,Römisch-katholische Kirche,24
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,1,6,Römisch-katholische Kirche,25
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,1,6,Römisch-katholische Kirche,6
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,1,6,Römisch-katholische Kirche,45
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,1,6,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,1,6,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,1,6,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,1,6,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,1,6,ohne Angabe,1292
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,1,6,ohne Angabe,554
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,1,6,ohne Angabe,189
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,1,6,ohne Angabe,443
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,6,15,Evangelische Kirchen,76
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,6,15,Evangelische Kirchen,270
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,6,15,Evangelische Kirchen,40
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,6,15,Evangelische Kirchen,288
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,6,15,Römisch-katholische Kirche,63
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,6,15,Römisch-katholische Kirche,81
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,6,15,Römisch-katholische Kirche,18
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,6,15,Römisch-katholische Kirche,51
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,6,15,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,6,15,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,6,15,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,6,15,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,6,15,ohne Angabe,948
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,6,15,ohne Angabe,767
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,6,15,ohne Angabe,269
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,6,15,ohne Angabe,736
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,15,18,Evangelische Kirchen,40
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,15,18,Evangelische Kirchen,126
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,15,18,Evangelische Kirchen,33
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,15,18,Evangelische Kirchen,149
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,15,18,Römisch-katholische Kirche,15
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,15,18,Römisch-katholische Kirche,37
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,15,18,Römisch-katholische Kirche,6
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,15,18,Römisch-katholische Kirche,36
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,15,18,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,15,18,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,15,18,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,15,18,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,15,18,ohne Angabe,241
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,15,18,ohne Angabe,258
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,15,18,ohne Angabe,91
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,15,18,ohne Angabe,249
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,18,25,Evangelische Kirchen,461
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,18,25,Evangelische Kirchen,528
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,18,25,Evangelische Kirchen,97
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,18,25,Evangelische Kirchen,397
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,18,25,Römisch-katholische Kirche,243
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,18,25,Römisch-katholische Kirche,196
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,18,25,Römisch-katholische Kirche,102
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,18,25,Römisch-katholische Kirche,144
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,18,25,sonstige/ohne Angabe,3
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,18,25,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,18,25,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,18,25,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,18,25,ohne Angabe,1587
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,18,25,ohne Angabe,1042
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,18,25,ohne Angabe,444
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,18,25,ohne Angabe,874
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,25,55,Evangelische Kirchen,5119
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,25,55,Evangelische Kirchen,2166
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,25,55,Evangelische Kirchen,751
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,25,55,Evangelische Kirchen,1662
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,25,55,Römisch-katholische Kirche,2736
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,25,55,Römisch-katholische Kirche,520
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,25,55,Römisch-katholische Kirche,237
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,25,55,Römisch-katholische Kirche,449
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,25,55,sonstige/ohne Angabe,12
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,25,55,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,25,55,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,25,55,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,25,55,ohne Angabe,14718
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,25,55,ohne Angabe,5533
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,25,55,ohne Angabe,1812
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,25,55,ohne Angabe,4346
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,55,65,Evangelische Kirchen,1398
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,55,65,Evangelische Kirchen,923
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,55,65,Evangelische Kirchen,279
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,55,65,Evangelische Kirchen,635
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,55,65,Römisch-katholische Kirche,450
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,55,65,Römisch-katholische Kirche,228
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,55,65,Römisch-katholische Kirche,64
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,55,65,Römisch-katholische Kirche,208
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,55,65,sonstige/ohne Angabe,3
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,55,65,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,55,65,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,55,65,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,55,65,ohne Angabe,3007
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,55,65,ohne Angabe,2372
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,55,65,ohne Angabe,763
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,55,65,ohne Angabe,2145
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,65,80,Evangelische Kirchen,1203
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,65,80,Evangelische Kirchen,1483
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,65,80,Evangelische Kirchen,746
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,65,80,Evangelische Kirchen,1149
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,65,80,Römisch-katholische Kirche,352
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,65,80,Römisch-katholische Kirche,306
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,65,80,Römisch-katholische Kirche,229
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,65,80,Römisch-katholische Kirche,362
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,65,80,sonstige/ohne Angabe,4
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,65,80,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,65,80,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,65,80,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,65,80,ohne Angabe,2576
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,65,80,ohne Angabe,3073
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,65,80,ohne Angabe,1634
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,65,80,ohne Angabe,3048
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,80,120,Evangelische Kirchen,380
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,80,120,Evangelische Kirchen,513
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,80,120,Evangelische Kirchen,264
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,80,120,Evangelische Kirchen,449
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,80,120,Römisch-katholische Kirche,65
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,80,120,Römisch-katholische Kirche,137
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,80,120,Römisch-katholische Kirche,103
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,80,120,Römisch-katholische Kirche,110
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,80,120,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,80,120,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,80,120,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,80,120,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche ohne Migrationshintergrund,männlich,80,120,ohne Angabe,528
+0802 Britz/Buckow,Deutsche ohne Migrationshintergrund,männlich,80,120,ohne Angabe,738
+0803 Gropiusstadt,Deutsche ohne Migrationshintergrund,männlich,80,120,ohne Angabe,514
+0804 Buckow Nord/Rudow,Deutsche ohne Migrationshintergrund,männlich,80,120,ohne Angabe,697
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,0,1,Evangelische Kirchen,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,0,1,Evangelische Kirchen,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,0,1,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,0,1,Evangelische Kirchen,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,0,1,Römisch-katholische Kirche,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,0,1,Römisch-katholische Kirche,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,0,1,Römisch-katholische Kirche,3
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,0,1,Römisch-katholische Kirche,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,0,1,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,0,1,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,0,1,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,0,1,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,0,1,ohne Angabe,469
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,0,1,ohne Angabe,138
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,0,1,ohne Angabe,141
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,0,1,ohne Angabe,88
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,1,6,Evangelische Kirchen,15
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,1,6,Evangelische Kirchen,18
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,1,6,Evangelische Kirchen,3
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,1,6,Evangelische Kirchen,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,1,6,Römisch-katholische Kirche,42
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,1,6,Römisch-katholische Kirche,48
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,1,6,Römisch-katholische Kirche,54
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,1,6,Römisch-katholische Kirche,39
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,1,6,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,1,6,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,1,6,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,1,6,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,1,6,ohne Angabe,2269
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,1,6,ohne Angabe,750
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,1,6,ohne Angabe,580
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,1,6,ohne Angabe,443
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,6,15,Evangelische Kirchen,27
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,6,15,Evangelische Kirchen,34
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,6,15,Evangelische Kirchen,28
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,6,15,Evangelische Kirchen,15
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,6,15,Römisch-katholische Kirche,85
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,6,15,Römisch-katholische Kirche,94
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,6,15,Römisch-katholische Kirche,112
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,6,15,Römisch-katholische Kirche,106
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,6,15,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,6,15,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,6,15,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,6,15,sonstige/ohne Angabe,3
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,6,15,ohne Angabe,3817
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,6,15,ohne Angabe,1134
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,6,15,ohne Angabe,837
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,6,15,ohne Angabe,671
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,15,18,Evangelische Kirchen,9
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,15,18,Evangelische Kirchen,12
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,15,18,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,15,18,Evangelische Kirchen,7
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,15,18,Römisch-katholische Kirche,42
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,15,18,Römisch-katholische Kirche,49
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,15,18,Römisch-katholische Kirche,39
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,15,18,Römisch-katholische Kirche,36
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,15,18,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,15,18,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,15,18,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,15,18,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,15,18,ohne Angabe,1172
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,15,18,ohne Angabe,314
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,15,18,ohne Angabe,233
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,15,18,ohne Angabe,205
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,18,25,Evangelische Kirchen,34
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,18,25,Evangelische Kirchen,19
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,18,25,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,18,25,Evangelische Kirchen,18
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,18,25,Römisch-katholische Kirche,73
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,18,25,Römisch-katholische Kirche,28
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,18,25,Römisch-katholische Kirche,31
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,18,25,Römisch-katholische Kirche,30
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,18,25,sonstige/ohne Angabe,6
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,18,25,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,18,25,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,18,25,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,18,25,ohne Angabe,1288
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,18,25,ohne Angabe,336
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,18,25,ohne Angabe,312
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,18,25,ohne Angabe,235
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,25,55,Evangelische Kirchen,266
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,25,55,Evangelische Kirchen,100
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,25,55,Evangelische Kirchen,117
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,25,55,Evangelische Kirchen,55
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,25,55,Römisch-katholische Kirche,666
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,25,55,Römisch-katholische Kirche,407
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,25,55,Römisch-katholische Kirche,349
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,25,55,Römisch-katholische Kirche,282
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,25,55,sonstige/ohne Angabe,12
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,25,55,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,25,55,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,25,55,sonstige/ohne Angabe,3
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,25,55,ohne Angabe,5315
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,25,55,ohne Angabe,1785
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,25,55,ohne Angabe,1360
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,25,55,ohne Angabe,1216
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,55,65,Evangelische Kirchen,21
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,55,65,Evangelische Kirchen,36
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,55,65,Evangelische Kirchen,38
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,55,65,Evangelische Kirchen,22
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,55,65,Römisch-katholische Kirche,181
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,55,65,Römisch-katholische Kirche,210
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,55,65,Römisch-katholische Kirche,241
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,55,65,Römisch-katholische Kirche,138
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,55,65,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,55,65,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,55,65,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,55,65,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,55,65,ohne Angabe,624
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,55,65,ohne Angabe,315
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,55,65,ohne Angabe,329
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,55,65,ohne Angabe,234
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,65,80,Evangelische Kirchen,23
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,65,80,Evangelische Kirchen,57
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,65,80,Evangelische Kirchen,56
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,65,80,Evangelische Kirchen,9
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,65,80,Römisch-katholische Kirche,99
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,65,80,Römisch-katholische Kirche,98
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,65,80,Römisch-katholische Kirche,135
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,65,80,Römisch-katholische Kirche,61
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,65,80,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,65,80,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,65,80,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,65,80,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,65,80,ohne Angabe,303
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,65,80,ohne Angabe,159
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,65,80,ohne Angabe,158
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,65,80,ohne Angabe,128
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,80,120,Evangelische Kirchen,9
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,80,120,Evangelische Kirchen,18
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,80,120,Evangelische Kirchen,27
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,80,120,Evangelische Kirchen,6
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,80,120,Römisch-katholische Kirche,21
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,80,120,Römisch-katholische Kirche,31
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,80,120,Römisch-katholische Kirche,47
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,80,120,Römisch-katholische Kirche,19
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,80,120,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,80,120,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,80,120,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,80,120,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,weiblich,80,120,ohne Angabe,25
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,weiblich,80,120,ohne Angabe,21
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,weiblich,80,120,ohne Angabe,32
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,weiblich,80,120,ohne Angabe,3
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,0,1,Evangelische Kirchen,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,0,1,Evangelische Kirchen,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,0,1,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,0,1,Evangelische Kirchen,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,0,1,Römisch-katholische Kirche,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,0,1,Römisch-katholische Kirche,3
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,0,1,Römisch-katholische Kirche,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,0,1,Römisch-katholische Kirche,3
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,0,1,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,0,1,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,0,1,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,0,1,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,0,1,ohne Angabe,525
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,0,1,ohne Angabe,145
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,0,1,ohne Angabe,121
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,0,1,ohne Angabe,93
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,1,6,Evangelische Kirchen,6
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,1,6,Evangelische Kirchen,12
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,1,6,Evangelische Kirchen,3
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,1,6,Evangelische Kirchen,9
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,1,6,Römisch-katholische Kirche,51
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,1,6,Römisch-katholische Kirche,57
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,1,6,Römisch-katholische Kirche,21
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,1,6,Römisch-katholische Kirche,59
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,1,6,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,1,6,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,1,6,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,1,6,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,1,6,ohne Angabe,2382
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,1,6,ohne Angabe,770
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,1,6,ohne Angabe,617
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,1,6,ohne Angabe,442
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,6,15,Evangelische Kirchen,12
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,6,15,Evangelische Kirchen,35
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,6,15,Evangelische Kirchen,9
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,6,15,Evangelische Kirchen,25
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,6,15,Römisch-katholische Kirche,108
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,6,15,Römisch-katholische Kirche,127
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,6,15,Römisch-katholische Kirche,88
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,6,15,Römisch-katholische Kirche,95
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,6,15,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,6,15,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,6,15,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,6,15,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,6,15,ohne Angabe,3884
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,6,15,ohne Angabe,1184
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,6,15,ohne Angabe,907
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,6,15,ohne Angabe,714
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,15,18,Evangelische Kirchen,6
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,15,18,Evangelische Kirchen,6
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,15,18,Evangelische Kirchen,12
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,15,18,Evangelische Kirchen,6
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,15,18,Römisch-katholische Kirche,24
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,15,18,Römisch-katholische Kirche,43
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,15,18,Römisch-katholische Kirche,63
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,15,18,Römisch-katholische Kirche,64
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,15,18,sonstige/ohne Angabe,3
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,15,18,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,15,18,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,15,18,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,15,18,ohne Angabe,1162
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,15,18,ohne Angabe,349
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,15,18,ohne Angabe,255
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,15,18,ohne Angabe,234
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,18,25,Evangelische Kirchen,25
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,18,25,Evangelische Kirchen,6
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,18,25,Evangelische Kirchen,11
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,18,25,Evangelische Kirchen,6
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,18,25,Römisch-katholische Kirche,41
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,18,25,Römisch-katholische Kirche,36
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,18,25,Römisch-katholische Kirche,42
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,18,25,Römisch-katholische Kirche,22
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,18,25,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,18,25,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,18,25,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,18,25,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,18,25,ohne Angabe,1382
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,18,25,ohne Angabe,344
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,18,25,ohne Angabe,359
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,18,25,ohne Angabe,286
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,25,55,Evangelische Kirchen,242
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,25,55,Evangelische Kirchen,96
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,25,55,Evangelische Kirchen,51
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,25,55,Evangelische Kirchen,34
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,25,55,Römisch-katholische Kirche,601
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,25,55,Römisch-katholische Kirche,422
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,25,55,Römisch-katholische Kirche,348
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,25,55,Römisch-katholische Kirche,298
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,25,55,sonstige/ohne Angabe,6
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,25,55,sonstige/ohne Angabe,3
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,25,55,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,25,55,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,25,55,ohne Angabe,5450
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,25,55,ohne Angabe,1842
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,25,55,ohne Angabe,1359
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,25,55,ohne Angabe,1123
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,55,65,Evangelische Kirchen,40
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,55,65,Evangelische Kirchen,25
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,55,65,Evangelische Kirchen,23
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,55,65,Evangelische Kirchen,4
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,55,65,Römisch-katholische Kirche,168
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,55,65,Römisch-katholische Kirche,189
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,55,65,Römisch-katholische Kirche,191
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,55,65,Römisch-katholische Kirche,128
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,55,65,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,55,65,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,55,65,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,55,65,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,55,65,ohne Angabe,837
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,55,65,ohne Angabe,335
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,55,65,ohne Angabe,352
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,55,65,ohne Angabe,335
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,65,80,Evangelische Kirchen,10
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,65,80,Evangelische Kirchen,29
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,65,80,Evangelische Kirchen,19
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,65,80,Evangelische Kirchen,13
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,65,80,Römisch-katholische Kirche,106
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,65,80,Römisch-katholische Kirche,89
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,65,80,Römisch-katholische Kirche,101
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,65,80,Römisch-katholische Kirche,40
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,65,80,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,65,80,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,65,80,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,65,80,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,65,80,ohne Angabe,380
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,65,80,ohne Angabe,177
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,65,80,ohne Angabe,146
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,65,80,ohne Angabe,114
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,80,120,Evangelische Kirchen,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,80,120,Evangelische Kirchen,19
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,80,120,Evangelische Kirchen,6
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,80,120,Evangelische Kirchen,6
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,80,120,Römisch-katholische Kirche,19
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,80,120,Römisch-katholische Kirche,10
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,80,120,Römisch-katholische Kirche,24
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,80,120,Römisch-katholische Kirche,10
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,80,120,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,80,120,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,80,120,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,80,120,sonstige/ohne Angabe,-
+0801 Neukölln,Deutsche mit Migrationshintergrund,männlich,80,120,ohne Angabe,32
+0802 Britz/Buckow,Deutsche mit Migrationshintergrund,männlich,80,120,ohne Angabe,9
+0803 Gropiusstadt,Deutsche mit Migrationshintergrund,männlich,80,120,ohne Angabe,22
+0804 Buckow Nord/Rudow,Deutsche mit Migrationshintergrund,männlich,80,120,ohne Angabe,9
+0801 Neukölln,Ausländer,weiblich,0,1,Evangelische Kirchen,-
+0802 Britz/Buckow,Ausländer,weiblich,0,1,Evangelische Kirchen,-
+0803 Gropiusstadt,Ausländer,weiblich,0,1,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,0,1,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,weiblich,0,1,Römisch-katholische Kirche,-
+0802 Britz/Buckow,Ausländer,weiblich,0,1,Römisch-katholische Kirche,-
+0803 Gropiusstadt,Ausländer,weiblich,0,1,Römisch-katholische Kirche,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,0,1,Römisch-katholische Kirche,4
+0801 Neukölln,Ausländer,weiblich,0,1,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Ausländer,weiblich,0,1,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,weiblich,0,1,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,0,1,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,weiblich,0,1,ohne Angabe,149
+0802 Britz/Buckow,Ausländer,weiblich,0,1,ohne Angabe,39
+0803 Gropiusstadt,Ausländer,weiblich,0,1,ohne Angabe,12
+0804 Buckow Nord/Rudow,Ausländer,weiblich,0,1,ohne Angabe,12
+0801 Neukölln,Ausländer,weiblich,1,6,Evangelische Kirchen,-
+0802 Britz/Buckow,Ausländer,weiblich,1,6,Evangelische Kirchen,-
+0803 Gropiusstadt,Ausländer,weiblich,1,6,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,1,6,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,weiblich,1,6,Römisch-katholische Kirche,19
+0802 Britz/Buckow,Ausländer,weiblich,1,6,Römisch-katholische Kirche,6
+0803 Gropiusstadt,Ausländer,weiblich,1,6,Römisch-katholische Kirche,3
+0804 Buckow Nord/Rudow,Ausländer,weiblich,1,6,Römisch-katholische Kirche,10
+0801 Neukölln,Ausländer,weiblich,1,6,sonstige/ohne Angabe,3
+0802 Britz/Buckow,Ausländer,weiblich,1,6,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,weiblich,1,6,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,1,6,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,weiblich,1,6,ohne Angabe,760
+0802 Britz/Buckow,Ausländer,weiblich,1,6,ohne Angabe,254
+0803 Gropiusstadt,Ausländer,weiblich,1,6,ohne Angabe,73
+0804 Buckow Nord/Rudow,Ausländer,weiblich,1,6,ohne Angabe,79
+0801 Neukölln,Ausländer,weiblich,6,15,Evangelische Kirchen,3
+0802 Britz/Buckow,Ausländer,weiblich,6,15,Evangelische Kirchen,-
+0803 Gropiusstadt,Ausländer,weiblich,6,15,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,6,15,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,weiblich,6,15,Römisch-katholische Kirche,55
+0802 Britz/Buckow,Ausländer,weiblich,6,15,Römisch-katholische Kirche,40
+0803 Gropiusstadt,Ausländer,weiblich,6,15,Römisch-katholische Kirche,19
+0804 Buckow Nord/Rudow,Ausländer,weiblich,6,15,Römisch-katholische Kirche,24
+0801 Neukölln,Ausländer,weiblich,6,15,sonstige/ohne Angabe,3
+0802 Britz/Buckow,Ausländer,weiblich,6,15,sonstige/ohne Angabe,3
+0803 Gropiusstadt,Ausländer,weiblich,6,15,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,6,15,sonstige/ohne Angabe,4
+0801 Neukölln,Ausländer,weiblich,6,15,ohne Angabe,1129
+0802 Britz/Buckow,Ausländer,weiblich,6,15,ohne Angabe,300
+0803 Gropiusstadt,Ausländer,weiblich,6,15,ohne Angabe,134
+0804 Buckow Nord/Rudow,Ausländer,weiblich,6,15,ohne Angabe,118
+0801 Neukölln,Ausländer,weiblich,15,18,Evangelische Kirchen,4
+0802 Britz/Buckow,Ausländer,weiblich,15,18,Evangelische Kirchen,-
+0803 Gropiusstadt,Ausländer,weiblich,15,18,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,15,18,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,weiblich,15,18,Römisch-katholische Kirche,20
+0802 Britz/Buckow,Ausländer,weiblich,15,18,Römisch-katholische Kirche,14
+0803 Gropiusstadt,Ausländer,weiblich,15,18,Römisch-katholische Kirche,6
+0804 Buckow Nord/Rudow,Ausländer,weiblich,15,18,Römisch-katholische Kirche,-
+0801 Neukölln,Ausländer,weiblich,15,18,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Ausländer,weiblich,15,18,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,weiblich,15,18,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,15,18,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,weiblich,15,18,ohne Angabe,315
+0802 Britz/Buckow,Ausländer,weiblich,15,18,ohne Angabe,114
+0803 Gropiusstadt,Ausländer,weiblich,15,18,ohne Angabe,41
+0804 Buckow Nord/Rudow,Ausländer,weiblich,15,18,ohne Angabe,45
+0801 Neukölln,Ausländer,weiblich,18,25,Evangelische Kirchen,27
+0802 Britz/Buckow,Ausländer,weiblich,18,25,Evangelische Kirchen,3
+0803 Gropiusstadt,Ausländer,weiblich,18,25,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,18,25,Evangelische Kirchen,7
+0801 Neukölln,Ausländer,weiblich,18,25,Römisch-katholische Kirche,181
+0802 Britz/Buckow,Ausländer,weiblich,18,25,Römisch-katholische Kirche,55
+0803 Gropiusstadt,Ausländer,weiblich,18,25,Römisch-katholische Kirche,36
+0804 Buckow Nord/Rudow,Ausländer,weiblich,18,25,Römisch-katholische Kirche,33
+0801 Neukölln,Ausländer,weiblich,18,25,sonstige/ohne Angabe,9
+0802 Britz/Buckow,Ausländer,weiblich,18,25,sonstige/ohne Angabe,9
+0803 Gropiusstadt,Ausländer,weiblich,18,25,sonstige/ohne Angabe,3
+0804 Buckow Nord/Rudow,Ausländer,weiblich,18,25,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,weiblich,18,25,ohne Angabe,2109
+0802 Britz/Buckow,Ausländer,weiblich,18,25,ohne Angabe,518
+0803 Gropiusstadt,Ausländer,weiblich,18,25,ohne Angabe,235
+0804 Buckow Nord/Rudow,Ausländer,weiblich,18,25,ohne Angabe,226
+0801 Neukölln,Ausländer,weiblich,25,55,Evangelische Kirchen,239
+0802 Britz/Buckow,Ausländer,weiblich,25,55,Evangelische Kirchen,33
+0803 Gropiusstadt,Ausländer,weiblich,25,55,Evangelische Kirchen,9
+0804 Buckow Nord/Rudow,Ausländer,weiblich,25,55,Evangelische Kirchen,15
+0801 Neukölln,Ausländer,weiblich,25,55,Römisch-katholische Kirche,1543
+0802 Britz/Buckow,Ausländer,weiblich,25,55,Römisch-katholische Kirche,501
+0803 Gropiusstadt,Ausländer,weiblich,25,55,Römisch-katholische Kirche,286
+0804 Buckow Nord/Rudow,Ausländer,weiblich,25,55,Römisch-katholische Kirche,272
+0801 Neukölln,Ausländer,weiblich,25,55,sonstige/ohne Angabe,47
+0802 Britz/Buckow,Ausländer,weiblich,25,55,sonstige/ohne Angabe,18
+0803 Gropiusstadt,Ausländer,weiblich,25,55,sonstige/ohne Angabe,12
+0804 Buckow Nord/Rudow,Ausländer,weiblich,25,55,sonstige/ohne Angabe,12
+0801 Neukölln,Ausländer,weiblich,25,55,ohne Angabe,15658
+0802 Britz/Buckow,Ausländer,weiblich,25,55,ohne Angabe,2848
+0803 Gropiusstadt,Ausländer,weiblich,25,55,ohne Angabe,1823
+0804 Buckow Nord/Rudow,Ausländer,weiblich,25,55,ohne Angabe,1294
+0801 Neukölln,Ausländer,weiblich,55,65,Evangelische Kirchen,20
+0802 Britz/Buckow,Ausländer,weiblich,55,65,Evangelische Kirchen,6
+0803 Gropiusstadt,Ausländer,weiblich,55,65,Evangelische Kirchen,3
+0804 Buckow Nord/Rudow,Ausländer,weiblich,55,65,Evangelische Kirchen,22
+0801 Neukölln,Ausländer,weiblich,55,65,Römisch-katholische Kirche,315
+0802 Britz/Buckow,Ausländer,weiblich,55,65,Römisch-katholische Kirche,98
+0803 Gropiusstadt,Ausländer,weiblich,55,65,Römisch-katholische Kirche,49
+0804 Buckow Nord/Rudow,Ausländer,weiblich,55,65,Römisch-katholische Kirche,67
+0801 Neukölln,Ausländer,weiblich,55,65,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Ausländer,weiblich,55,65,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,weiblich,55,65,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,55,65,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,weiblich,55,65,ohne Angabe,1799
+0802 Britz/Buckow,Ausländer,weiblich,55,65,ohne Angabe,425
+0803 Gropiusstadt,Ausländer,weiblich,55,65,ohne Angabe,348
+0804 Buckow Nord/Rudow,Ausländer,weiblich,55,65,ohne Angabe,199
+0801 Neukölln,Ausländer,weiblich,65,80,Evangelische Kirchen,24
+0802 Britz/Buckow,Ausländer,weiblich,65,80,Evangelische Kirchen,29
+0803 Gropiusstadt,Ausländer,weiblich,65,80,Evangelische Kirchen,6
+0804 Buckow Nord/Rudow,Ausländer,weiblich,65,80,Evangelische Kirchen,4
+0801 Neukölln,Ausländer,weiblich,65,80,Römisch-katholische Kirche,240
+0802 Britz/Buckow,Ausländer,weiblich,65,80,Römisch-katholische Kirche,80
+0803 Gropiusstadt,Ausländer,weiblich,65,80,Römisch-katholische Kirche,69
+0804 Buckow Nord/Rudow,Ausländer,weiblich,65,80,Römisch-katholische Kirche,70
+0801 Neukölln,Ausländer,weiblich,65,80,sonstige/ohne Angabe,6
+0802 Britz/Buckow,Ausländer,weiblich,65,80,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,weiblich,65,80,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,65,80,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,weiblich,65,80,ohne Angabe,1884
+0802 Britz/Buckow,Ausländer,weiblich,65,80,ohne Angabe,412
+0803 Gropiusstadt,Ausländer,weiblich,65,80,ohne Angabe,290
+0804 Buckow Nord/Rudow,Ausländer,weiblich,65,80,ohne Angabe,203
+0801 Neukölln,Ausländer,weiblich,80,120,Evangelische Kirchen,3
+0802 Britz/Buckow,Ausländer,weiblich,80,120,Evangelische Kirchen,-
+0803 Gropiusstadt,Ausländer,weiblich,80,120,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,80,120,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,weiblich,80,120,Römisch-katholische Kirche,27
+0802 Britz/Buckow,Ausländer,weiblich,80,120,Römisch-katholische Kirche,15
+0803 Gropiusstadt,Ausländer,weiblich,80,120,Römisch-katholische Kirche,21
+0804 Buckow Nord/Rudow,Ausländer,weiblich,80,120,Römisch-katholische Kirche,9
+0801 Neukölln,Ausländer,weiblich,80,120,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Ausländer,weiblich,80,120,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,weiblich,80,120,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,weiblich,80,120,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,weiblich,80,120,ohne Angabe,285
+0802 Britz/Buckow,Ausländer,weiblich,80,120,ohne Angabe,68
+0803 Gropiusstadt,Ausländer,weiblich,80,120,ohne Angabe,52
+0804 Buckow Nord/Rudow,Ausländer,weiblich,80,120,ohne Angabe,59
+0801 Neukölln,Ausländer,männlich,0,1,Evangelische Kirchen,-
+0802 Britz/Buckow,Ausländer,männlich,0,1,Evangelische Kirchen,-
+0803 Gropiusstadt,Ausländer,männlich,0,1,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,0,1,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,männlich,0,1,Römisch-katholische Kirche,-
+0802 Britz/Buckow,Ausländer,männlich,0,1,Römisch-katholische Kirche,-
+0803 Gropiusstadt,Ausländer,männlich,0,1,Römisch-katholische Kirche,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,0,1,Römisch-katholische Kirche,-
+0801 Neukölln,Ausländer,männlich,0,1,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Ausländer,männlich,0,1,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,männlich,0,1,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,0,1,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,männlich,0,1,ohne Angabe,153
+0802 Britz/Buckow,Ausländer,männlich,0,1,ohne Angabe,62
+0803 Gropiusstadt,Ausländer,männlich,0,1,ohne Angabe,19
+0804 Buckow Nord/Rudow,Ausländer,männlich,0,1,ohne Angabe,10
+0801 Neukölln,Ausländer,männlich,1,6,Evangelische Kirchen,-
+0802 Britz/Buckow,Ausländer,männlich,1,6,Evangelische Kirchen,-
+0803 Gropiusstadt,Ausländer,männlich,1,6,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,1,6,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,männlich,1,6,Römisch-katholische Kirche,12
+0802 Britz/Buckow,Ausländer,männlich,1,6,Römisch-katholische Kirche,9
+0803 Gropiusstadt,Ausländer,männlich,1,6,Römisch-katholische Kirche,11
+0804 Buckow Nord/Rudow,Ausländer,männlich,1,6,Römisch-katholische Kirche,12
+0801 Neukölln,Ausländer,männlich,1,6,sonstige/ohne Angabe,3
+0802 Britz/Buckow,Ausländer,männlich,1,6,sonstige/ohne Angabe,3
+0803 Gropiusstadt,Ausländer,männlich,1,6,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,1,6,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,männlich,1,6,ohne Angabe,828
+0802 Britz/Buckow,Ausländer,männlich,1,6,ohne Angabe,238
+0803 Gropiusstadt,Ausländer,männlich,1,6,ohne Angabe,78
+0804 Buckow Nord/Rudow,Ausländer,männlich,1,6,ohne Angabe,81
+0801 Neukölln,Ausländer,männlich,6,15,Evangelische Kirchen,6
+0802 Britz/Buckow,Ausländer,männlich,6,15,Evangelische Kirchen,3
+0803 Gropiusstadt,Ausländer,männlich,6,15,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,6,15,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,männlich,6,15,Römisch-katholische Kirche,47
+0802 Britz/Buckow,Ausländer,männlich,6,15,Römisch-katholische Kirche,23
+0803 Gropiusstadt,Ausländer,männlich,6,15,Römisch-katholische Kirche,12
+0804 Buckow Nord/Rudow,Ausländer,männlich,6,15,Römisch-katholische Kirche,24
+0801 Neukölln,Ausländer,männlich,6,15,sonstige/ohne Angabe,6
+0802 Britz/Buckow,Ausländer,männlich,6,15,sonstige/ohne Angabe,7
+0803 Gropiusstadt,Ausländer,männlich,6,15,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,6,15,sonstige/ohne Angabe,4
+0801 Neukölln,Ausländer,männlich,6,15,ohne Angabe,1122
+0802 Britz/Buckow,Ausländer,männlich,6,15,ohne Angabe,374
+0803 Gropiusstadt,Ausländer,männlich,6,15,ohne Angabe,180
+0804 Buckow Nord/Rudow,Ausländer,männlich,6,15,ohne Angabe,140
+0801 Neukölln,Ausländer,männlich,15,18,Evangelische Kirchen,3
+0802 Britz/Buckow,Ausländer,männlich,15,18,Evangelische Kirchen,4
+0803 Gropiusstadt,Ausländer,männlich,15,18,Evangelische Kirchen,3
+0804 Buckow Nord/Rudow,Ausländer,männlich,15,18,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,männlich,15,18,Römisch-katholische Kirche,22
+0802 Britz/Buckow,Ausländer,männlich,15,18,Römisch-katholische Kirche,6
+0803 Gropiusstadt,Ausländer,männlich,15,18,Römisch-katholische Kirche,12
+0804 Buckow Nord/Rudow,Ausländer,männlich,15,18,Römisch-katholische Kirche,4
+0801 Neukölln,Ausländer,männlich,15,18,sonstige/ohne Angabe,3
+0802 Britz/Buckow,Ausländer,männlich,15,18,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,männlich,15,18,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,15,18,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,männlich,15,18,ohne Angabe,350
+0802 Britz/Buckow,Ausländer,männlich,15,18,ohne Angabe,126
+0803 Gropiusstadt,Ausländer,männlich,15,18,ohne Angabe,63
+0804 Buckow Nord/Rudow,Ausländer,männlich,15,18,ohne Angabe,59
+0801 Neukölln,Ausländer,männlich,18,25,Evangelische Kirchen,27
+0802 Britz/Buckow,Ausländer,männlich,18,25,Evangelische Kirchen,-
+0803 Gropiusstadt,Ausländer,männlich,18,25,Evangelische Kirchen,10
+0804 Buckow Nord/Rudow,Ausländer,männlich,18,25,Evangelische Kirchen,6
+0801 Neukölln,Ausländer,männlich,18,25,Römisch-katholische Kirche,114
+0802 Britz/Buckow,Ausländer,männlich,18,25,Römisch-katholische Kirche,48
+0803 Gropiusstadt,Ausländer,männlich,18,25,Römisch-katholische Kirche,27
+0804 Buckow Nord/Rudow,Ausländer,männlich,18,25,Römisch-katholische Kirche,28
+0801 Neukölln,Ausländer,männlich,18,25,sonstige/ohne Angabe,31
+0802 Britz/Buckow,Ausländer,männlich,18,25,sonstige/ohne Angabe,3
+0803 Gropiusstadt,Ausländer,männlich,18,25,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,18,25,sonstige/ohne Angabe,4
+0801 Neukölln,Ausländer,männlich,18,25,ohne Angabe,2387
+0802 Britz/Buckow,Ausländer,männlich,18,25,ohne Angabe,718
+0803 Gropiusstadt,Ausländer,männlich,18,25,ohne Angabe,247
+0804 Buckow Nord/Rudow,Ausländer,männlich,18,25,ohne Angabe,222
+0801 Neukölln,Ausländer,männlich,25,55,Evangelische Kirchen,230
+0802 Britz/Buckow,Ausländer,männlich,25,55,Evangelische Kirchen,34
+0803 Gropiusstadt,Ausländer,männlich,25,55,Evangelische Kirchen,14
+0804 Buckow Nord/Rudow,Ausländer,männlich,25,55,Evangelische Kirchen,10
+0801 Neukölln,Ausländer,männlich,25,55,Römisch-katholische Kirche,1553
+0802 Britz/Buckow,Ausländer,männlich,25,55,Römisch-katholische Kirche,420
+0803 Gropiusstadt,Ausländer,männlich,25,55,Römisch-katholische Kirche,215
+0804 Buckow Nord/Rudow,Ausländer,männlich,25,55,Römisch-katholische Kirche,219
+0801 Neukölln,Ausländer,männlich,25,55,sonstige/ohne Angabe,66
+0802 Britz/Buckow,Ausländer,männlich,25,55,sonstige/ohne Angabe,31
+0803 Gropiusstadt,Ausländer,männlich,25,55,sonstige/ohne Angabe,11
+0804 Buckow Nord/Rudow,Ausländer,männlich,25,55,sonstige/ohne Angabe,3
+0801 Neukölln,Ausländer,männlich,25,55,ohne Angabe,18852
+0802 Britz/Buckow,Ausländer,männlich,25,55,ohne Angabe,3573
+0803 Gropiusstadt,Ausländer,männlich,25,55,ohne Angabe,1847
+0804 Buckow Nord/Rudow,Ausländer,männlich,25,55,ohne Angabe,1395
+0801 Neukölln,Ausländer,männlich,55,65,Evangelische Kirchen,60
+0802 Britz/Buckow,Ausländer,männlich,55,65,Evangelische Kirchen,9
+0803 Gropiusstadt,Ausländer,männlich,55,65,Evangelische Kirchen,6
+0804 Buckow Nord/Rudow,Ausländer,männlich,55,65,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,männlich,55,65,Römisch-katholische Kirche,333
+0802 Britz/Buckow,Ausländer,männlich,55,65,Römisch-katholische Kirche,93
+0803 Gropiusstadt,Ausländer,männlich,55,65,Römisch-katholische Kirche,60
+0804 Buckow Nord/Rudow,Ausländer,männlich,55,65,Römisch-katholische Kirche,50
+0801 Neukölln,Ausländer,männlich,55,65,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Ausländer,männlich,55,65,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,männlich,55,65,sonstige/ohne Angabe,3
+0804 Buckow Nord/Rudow,Ausländer,männlich,55,65,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,männlich,55,65,ohne Angabe,2003
+0802 Britz/Buckow,Ausländer,männlich,55,65,ohne Angabe,418
+0803 Gropiusstadt,Ausländer,männlich,55,65,ohne Angabe,329
+0804 Buckow Nord/Rudow,Ausländer,männlich,55,65,ohne Angabe,217
+0801 Neukölln,Ausländer,männlich,65,80,Evangelische Kirchen,12
+0802 Britz/Buckow,Ausländer,männlich,65,80,Evangelische Kirchen,-
+0803 Gropiusstadt,Ausländer,männlich,65,80,Evangelische Kirchen,6
+0804 Buckow Nord/Rudow,Ausländer,männlich,65,80,Evangelische Kirchen,3
+0801 Neukölln,Ausländer,männlich,65,80,Römisch-katholische Kirche,185
+0802 Britz/Buckow,Ausländer,männlich,65,80,Römisch-katholische Kirche,43
+0803 Gropiusstadt,Ausländer,männlich,65,80,Römisch-katholische Kirche,45
+0804 Buckow Nord/Rudow,Ausländer,männlich,65,80,Römisch-katholische Kirche,58
+0801 Neukölln,Ausländer,männlich,65,80,sonstige/ohne Angabe,3
+0802 Britz/Buckow,Ausländer,männlich,65,80,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,männlich,65,80,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,65,80,sonstige/ohne Angabe,3
+0801 Neukölln,Ausländer,männlich,65,80,ohne Angabe,1614
+0802 Britz/Buckow,Ausländer,männlich,65,80,ohne Angabe,351
+0803 Gropiusstadt,Ausländer,männlich,65,80,ohne Angabe,246
+0804 Buckow Nord/Rudow,Ausländer,männlich,65,80,ohne Angabe,198
+0801 Neukölln,Ausländer,männlich,80,120,Evangelische Kirchen,3
+0802 Britz/Buckow,Ausländer,männlich,80,120,Evangelische Kirchen,3
+0803 Gropiusstadt,Ausländer,männlich,80,120,Evangelische Kirchen,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,80,120,Evangelische Kirchen,-
+0801 Neukölln,Ausländer,männlich,80,120,Römisch-katholische Kirche,24
+0802 Britz/Buckow,Ausländer,männlich,80,120,Römisch-katholische Kirche,18
+0803 Gropiusstadt,Ausländer,männlich,80,120,Römisch-katholische Kirche,9
+0804 Buckow Nord/Rudow,Ausländer,männlich,80,120,Römisch-katholische Kirche,20
+0801 Neukölln,Ausländer,männlich,80,120,sonstige/ohne Angabe,-
+0802 Britz/Buckow,Ausländer,männlich,80,120,sonstige/ohne Angabe,-
+0803 Gropiusstadt,Ausländer,männlich,80,120,sonstige/ohne Angabe,-
+0804 Buckow Nord/Rudow,Ausländer,männlich,80,120,sonstige/ohne Angabe,-
+0801 Neukölln,Ausländer,männlich,80,120,ohne Angabe,294
+0802 Britz/Buckow,Ausländer,männlich,80,120,ohne Angabe,69
+0803 Gropiusstadt,Ausländer,männlich,80,120,ohne Angabe,60
+0804 Buckow Nord/Rudow,Ausländer,männlich,80,120,ohne Angabe,48
