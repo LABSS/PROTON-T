@@ -62,6 +62,10 @@ show [other citizens-here] of undercover-cop
 
 ; in school now
 count citizens with [ [ shape ] of locations-here = [ "school" ] and age > 21 ]
+; bad schools
+schools with [ any? school-attendance-link-neighbors with [ education-level != [ education-level ] of myself - 1 ] ]
+; all people should be in appropriate schools
+all? persons [ not any? school-attendance-link-neighbors or education-level = ([ education-level ] of one-of school-attendance-link-neighbors) - 1 ] 
 
 ; setup of imams
 

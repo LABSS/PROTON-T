@@ -57,6 +57,7 @@ to-report location-definitions [ the-area ]
     (list local-table-by "num of community centers" the-area "community center")      
     (list local-table-by "num of parks"             the-area     "public space")  
     (list  5 "workplace")
+    ;(list   1 "mosque")
   )
 end
 
@@ -71,7 +72,7 @@ to-report mandatory-activity-definition-list
   report (list
     ;     start-time duration location-type task         criteria
     (list          0        8 "residence"   [ -> sleep ] [ -> true ] )
-    (list          8        8 "school"      [ -> study ] [ -> age >= 5 and age <= 18 ])
+    ;(list          8        8 "school"      [ -> study ] [ -> age >= 5 and age <= 18 ])
   )
 end
 

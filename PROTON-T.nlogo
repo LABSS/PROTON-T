@@ -199,7 +199,7 @@ to setup-communities
         ;set my-area area
         set pcolor c + random-float 0.5
       ]
-      setup-locations community-patches
+      setup-locations community-patches the-area
       let residences setup-residences community-patches with [
         not any? locations in-radius 1.75 with [ shape != "residence" ]
       ]
@@ -208,24 +208,22 @@ to setup-communities
   ]
 end
 
-to setup-locations [target-patches]
+to setup-locations [ target-patches the-area ]
   set target-patches target-patches with [ count neighbors = 8 ]
   let center patchset-center target-patches
-  foreach areas[ the-area ->
-    foreach location-definitions the-area [ def ->
-      repeat item 0 def [
-        ; locations need to be created one at a time so `territory` is initialized
-        create-locations 1 [
-          set size 3
-          set shape         item 1 def
-          set color         change-brightness peach random 10
-          let candidates target-patches with [
-            not any? other locations with [
-              abs (pxcor - [pxcor] of myself) < 3 and abs (pycor - [pycor] of myself) < 3
-            ]
+  foreach location-definitions the-area [ def ->
+    repeat item 0 def [
+      ; locations need to be created one at a time so `territory` is initialized
+      create-locations 1 [
+        set size 3
+        set shape         item 1 def
+        set color         change-brightness peach random 10
+        let candidates target-patches with [
+          not any? other locations with [
+            abs (pxcor - [pxcor] of myself) < 3 and abs (pycor - [pycor] of myself) < 3
           ]
-          move-to rnd:weighted-one-of candidates [ 1 / (1 + (distance center ^ 2)) ]
         ]
+        move-to rnd:weighted-one-of candidates [ 1 / (1 + (distance center ^ 2)) ]
       ]
     ]
   ]
@@ -240,7 +238,7 @@ to-report patchset-center [patchset]
   report patch (min-x + ((max-x - min-x) / 2)) ((min-y + ((max-y - min-y) / 2)))
 end
 
-to-report setup-residences [target-patches]
+to-report setup-residences [ target-patches ]
   let residences []
   ask target-patches [
     sprout-locations 1 [
@@ -345,6 +343,7 @@ to setup-mandatory-activities ; citizen procedure
       set get-activity [ -> min-one-of possible-activities [ distance myself ] ]
     ]
     ask citizens with [ runresult [ criteria ] of myself ] [
+
       create-activity-link-to runresult get-activity
     ]
   ]
@@ -583,11 +582,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1088
-799
+1036
+747
 -1
 -1
-13.0
+7.0
 1
 10
 1
@@ -598,9 +597,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-59
+103
 0
-59
+103
 1
 1
 1
@@ -633,7 +632,7 @@ total-citizens
 total-citizens
 50
 2000
-2000.0
+540.0
 10
 1
 citizens
