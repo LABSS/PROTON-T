@@ -43,6 +43,8 @@ topics-own  [
 
 breed [ websites website ]
 
+breed [ police the-police ]
+
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
 activity-links-own [ value ]                         ; value of activity for the citizen
 
@@ -57,6 +59,7 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
+  setup-police;
   setup-communities ; citizens are moved at their home
   setup-websites
   setup-opinions
@@ -71,6 +74,14 @@ to setup
   update-plots
   display
   ; TODO: write some test code to make sure the schedule is consistent.
+end
+
+to setup-police
+  create-police 1
+  ask one-of police [
+    let police-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
+    ask police-topic-link [set value police-interaction-quality]
+  ]
 end
 
 to go
@@ -403,25 +414,10 @@ to study
 end
 
 to police-interact
-  let institutional-distrust-modifier 0
   if police-interaction = "police" [
     if police-density > (random-float 1) [
-      ifelse police-interaction-quality > (random-float 1) [
-         ; the interaction between police and citizen is good
-         set institutional-distrust-modifier  (random-float 1 * -1)
-      ]
-      [
-         set institutional-distrust-modifier  random-float 1
-      ]
-      let the-opinions my-opinions
-      ask the-opinions [
-         if is-topic? end2[
-            if [topic-name] of end2 = "Institutional distrust" [
-              set value value + institutional-distrust-modifier
-              set value max (list -1 value)
-              set value min (list 1 value)
-            ]
-         ]
+      ask one-of police [
+       let result? talk-to (turtle-set myself) (one-of topics with [topic-name = "Institutional distrust"])
       ]
     ]
   ]
@@ -491,6 +487,9 @@ to-report talk-to [ recipients the-object ] ; citizen procedure
       if abs (v1 - v2) < t [
         ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
         set success? true
+        ; show talk-to effect
+        ; show v2
+        ; ask l2 [show value]
       ]
     ]
   ]
@@ -969,9 +968,9 @@ SLIDER
 823
 police-interaction-quality
 police-interaction-quality
-0
+-1
 1
-0.8
+0.3
 0.01
 1
 NIL
