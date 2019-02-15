@@ -21,7 +21,8 @@ downloadFromZip := {
   val extensions = List(
     "table" -> "table-1.3.0.zip",
     "profiler" -> "profiler-1.1.0.zip",
-    "rnd" -> "rnd-3.0.0.zip"
+    "rnd" -> "rnd-3.0.0.zip",
+    "csv" -> "csv-1.1.0.zip"
   )
   for {
     (extension, file) <- extensions

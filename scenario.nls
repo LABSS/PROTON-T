@@ -53,11 +53,12 @@ end
 to-report location-definitions [ the-area ]
     report (list
     ;     number                                                   name/shape
-    (list local-table-by "num of mosques"           the-area           "mosque")
+    (list (local-table-by "num of mosques"          the-area - 
+      local-table-by "numof radical mosques"        the-area)          "mosque")
     (list local-table-by "num of community centers" the-area "community center")      
     (list local-table-by "num of parks"             the-area     "public space")  
     (list  5 "workplace")
-    ;(list   1 "mosque")
+    (list local-table-by "numof radical mosques"    the-area   "radical mosque")
   )
 end
 
@@ -76,21 +77,19 @@ to-report mandatory-activity-definition-list
   )
 end
 
-
+; TODO double check
 to-report job-definition-list
   report (list
     ;     num-jobs start-time duration location-type task          criteria                  priority
     (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
+      get "muslim?" and get "male?" ]                                                                1
+    )
+    (list        1          8       16 "radical mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" and [ value ] of opinion-on-topic "Institutional distrust" = 1 ] 0
-    )
-    (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
+    )    (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
       [ value ] of opinion-on-topic "Institutional distrust" = -1]                                   0
-    )
-    (list        1          8        8 "school"           [ -> teach  ] [ -> age >= 18 ]     1)      
-    (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]     1)
-    (list        1         12        8 "bar"              [ -> work   ] [ -> age >= 18 ]     1)
-    (list        1         16        8 "bar"              [ -> work   ] [ -> age >= 18 ]     1)
-    
+    )     
+    (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]             1)
   )
 end
 
@@ -109,10 +108,6 @@ to work ; generic work activity
 end
 
 to preach
-  let result talk-to other citizens-here one-of topics ; calling talk-to for its side effects
-end
-
-to teach
   let result talk-to other citizens-here one-of topics ; calling talk-to for its side effects
 end
 
@@ -139,7 +134,9 @@ end
 
 to make-special-citizens
   foreach areas [ the-area ->
-    post-opinions-setup n-of (local-table-by "numof radical mosques" the-area) (locations with [ shape =  "mosque"]) "Institutional distrust" 1 [
+    let radical-mosques (locations with [ shape =  "radical mosque"])
+    ask radical-mosques [ set color red ]
+    post-opinions-setup radical-mosques "Institutional distrust" 1 [
       -> age >= 21 and get "muslim?" and get "male?" 
     ]
     ; next special citizens should not erase the ones just made

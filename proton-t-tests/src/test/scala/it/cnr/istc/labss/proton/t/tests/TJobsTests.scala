@@ -8,8 +8,7 @@ class TJobsTests extends TModelSuite {
 
  def setup4x300(ws: HeadlessWorkspace): Unit = {
     ws.cmd("""
-      set num-communities 4
-      set citizens-per-community 300
+      set total-citizens 1000
       setup
     """)
   }
@@ -56,30 +55,30 @@ class TJobsTests extends TModelSuite {
     after - before < 0 shouldBe true
   }
 
-  test("Imams preach to an effect") { ws =>
+  test("Radical imams preach to an effect") { ws =>
     setup4x300(ws)
     ws.cmd("""
       repeat 24 * 3 + 22 [ go ] ; 10PM on the tenth day
       ask n-of 
-        count locations with [ shape = "mosque" ] 
+        count locations with [ shape = "radical mosque" ] 
         citizens with [
-          [ shape ] of locations-here != [ "mosque" ] 
+          [ shape ] of locations-here != [ "radical mosque" ] 
         ] [
-          move-to one-of locations with [ shape = "mosque" ] 
+          move-to one-of locations with [ shape = "radical mosque" ] 
         ]    
     """)
     val meanInstDist = """
       mean [ value ] of link-set [
         out-topic-link-to ( one-of topics with [ topic-name = "Institutional distrust" ]) 
-      ] of (citizens-on locations with [ shape = "mosque"]) with [
-        [ not (is-job? and location-type = "mosque") ] of [ my-activity-type ] of current-activity 
+      ] of (citizens-on locations with [ shape = "radical mosque"]) with [
+        [ not (is-job? and location-type = "radical mosque") ] of [ my-activity-type ] of current-activity 
       ]
     """
     val before = ws.rpt(meanInstDist).asInstanceOf[Number].floatValue    
     ws.cmd("""
       repeat 100 [ 
         ask citizens with [ 
-          [ is-job? and location-type = "mosque" ] of [ my-activity-type ] of current-activity 
+          [ is-job? and location-type = "radical mosque" ] of [ my-activity-type ] of current-activity 
         ] [ preach ]
         ]
       """)

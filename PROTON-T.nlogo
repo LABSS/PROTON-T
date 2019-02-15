@@ -582,11 +582,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1036
-747
+1088
+799
 -1
 -1
-7.0
+13.0
 1
 10
 1
@@ -597,9 +597,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-103
+59
 0
-103
+59
 1
 1
 1
@@ -632,7 +632,7 @@ total-citizens
 total-citizens
 50
 2000
-540.0
+990.0
 10
 1
 citizens
@@ -1016,38 +1016,6 @@ Circle -7500403 true true 110 75 80
 Line -7500403 true 150 100 80 30
 Line -7500403 true 150 100 220 30
 
-building institution
-false
-0
-Rectangle -7500403 true true 0 60 300 270
-Rectangle -16777216 true false 130 196 168 256
-Rectangle -16777216 false false 0 255 300 270
-Polygon -7500403 true true 0 60 150 15 300 60
-Polygon -16777216 false false 0 60 150 15 300 60
-Circle -1 true false 135 26 30
-Circle -16777216 false false 135 25 30
-Rectangle -16777216 false false 0 60 300 75
-Rectangle -16777216 false false 218 75 255 90
-Rectangle -16777216 false false 218 240 255 255
-Rectangle -16777216 false false 224 90 249 240
-Rectangle -16777216 false false 45 75 82 90
-Rectangle -16777216 false false 45 240 82 255
-Rectangle -16777216 false false 51 90 76 240
-Rectangle -16777216 false false 90 240 127 255
-Rectangle -16777216 false false 90 75 127 90
-Rectangle -16777216 false false 96 90 121 240
-Rectangle -16777216 false false 179 90 204 240
-Rectangle -16777216 false false 173 75 210 90
-Rectangle -16777216 false false 173 240 210 255
-Rectangle -16777216 false false 269 90 294 240
-Rectangle -16777216 false false 263 75 300 90
-Rectangle -16777216 false false 263 240 300 255
-Rectangle -16777216 false false 0 240 37 255
-Rectangle -16777216 false false 6 90 31 240
-Rectangle -16777216 false false 0 75 37 90
-Line -16777216 false 112 260 184 260
-Line -16777216 false 105 265 196 265
-
 building store
 false
 0
@@ -1358,6 +1326,38 @@ Line -16777216 false 0 165 300 165
 Polygon -7500403 true true 0 165 45 135 60 90 240 90 255 135 300 165
 Rectangle -7500403 true true 0 0 75 45
 Rectangle -16777216 false false 0 0 75 45
+
+radical mosque
+false
+0
+Rectangle -7500403 true true 0 60 300 270
+Rectangle -16777216 true false 130 196 168 256
+Rectangle -16777216 false false 0 255 300 270
+Polygon -7500403 true true 0 60 150 15 300 60
+Polygon -16777216 false false 0 60 150 15 300 60
+Circle -1 true false 135 26 30
+Circle -16777216 false false 135 25 30
+Rectangle -16777216 false false 0 60 300 75
+Rectangle -16777216 false false 218 75 255 90
+Rectangle -16777216 false false 218 240 255 255
+Rectangle -16777216 false false 224 90 249 240
+Rectangle -16777216 false false 45 75 82 90
+Rectangle -16777216 false false 45 240 82 255
+Rectangle -16777216 false false 51 90 76 240
+Rectangle -16777216 false false 90 240 127 255
+Rectangle -16777216 false false 90 75 127 90
+Rectangle -16777216 false false 96 90 121 240
+Rectangle -16777216 false false 179 90 204 240
+Rectangle -16777216 false false 173 75 210 90
+Rectangle -16777216 false false 173 240 210 255
+Rectangle -16777216 false false 269 90 294 240
+Rectangle -16777216 false false 263 75 300 90
+Rectangle -16777216 false false 263 240 300 255
+Rectangle -16777216 false false 0 240 37 255
+Rectangle -16777216 false false 6 90 31 240
+Rectangle -16777216 false false 0 75 37 90
+Line -16777216 false 112 260 184 260
+Line -16777216 false 105 265 196 265
 
 residence
 false
