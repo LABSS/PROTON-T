@@ -85,11 +85,11 @@ to-report job-definition-list
       get "muslim?" and get "male?" ]                                                                1
     )
     (list        1          8       16 "radical mosque"      [ -> preach ] [ -> age >= 21 and
-      get "muslim?" and get "male?" and [ value ] of opinion-on-topic "Institutional distrust" = 1 ] 0
+      get "muslim?" and get "male?" and opinion-on-topic "Institutional distrust" = 1 ] 0
     )    (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
-      [ value ] of opinion-on-topic "Institutional distrust" = -1]                                   0
+      opinion-on-topic "Institutional distrust" = -1]                                   0
     )     
-    (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]             1)
+    (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]             2)
   )
 end
 
@@ -141,7 +141,7 @@ to make-special-citizens
     ]
     ; next special citizens should not erase the ones just made
     post-opinions-setup (locations with [ shape =  "community center" ]) "Institutional distrust" -1 [ ; need to specify area
-      -> age >= 18 and [ value ] of opinion-on-topic "Institutional distrust" != 1 
+      -> age >= 18 and opinion-on-topic "Institutional distrust" != 1 
       ]
     ]
     let be-positive min [ risk ] of citizens - 1E-15  ; overcoming small approximation errors

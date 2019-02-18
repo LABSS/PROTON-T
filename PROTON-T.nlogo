@@ -156,7 +156,7 @@ end
 to setup-websites
   foreach website-definitions [ def ->
     create-websites 1 [
-      create-topic-link-to one-of topics with [ topic-name = item 0 def ] [
+      create-topic-link-to topic-by-name item 0 def [
         set value item 1 def
       ]
       set hidden? true
@@ -465,7 +465,6 @@ to-report my-opinions ; citizen reporter
     my-website-links
   )
 end
-
 to-report talk-to [ recipients the-object ] ; citizen procedure
   let success? false
   if any? recipients [
@@ -513,7 +512,7 @@ to-report get [ attribute-name ]
 end
 
 to-report opinion-on-topic [ the-topic-name ] ; citizen reporter
-  report out-topic-link-to one-of topics with [ topic-name = the-topic-name ]
+  report [ value ] of out-topic-link-to topic-by-name the-topic-name
 end
 
 to-report teals
@@ -541,14 +540,14 @@ end
 ; called by behaviorspace
 to-report citizens-opinions
   report [ reduce sentence (list who
-    map [ i ->   [ value ] of  opinion-on-topic i ] topics-list)
+    map [ i ->  opinion-on-topic i ] topics-list)
    ] of citizens
 end
 
 ; called by the test subsystem, *TJobsTests.scala
 to-report mean-opinion-on-location [ the-topic-name location-name ]
       report  mean [ value ] of link-set [
-        out-topic-link-to ( one-of topics with [ topic-name = the-topic-name ])
+        out-topic-link-to topic-by-name the-topic-name
       ] of (citizens-on locations with [ shape = location-name ]) with [
         [ not (is-job? and location-type = location-name) ] of [ my-activity-type ] of current-activity
       ]
@@ -573,6 +572,10 @@ to-report table-map [ tbl fn ]
   report table:from-list map [ entry ->
     list (first entry) (runresult fn last entry)
   ] table:to-list tbl
+end
+
+to-report topic-by-name [ the-name ]
+  report one-of topics with [ topic-name = the-name ]
 end
 
 to assert [ f ]
@@ -632,7 +635,7 @@ total-citizens
 total-citizens
 50
 2000
-990.0
+400.0
 10
 1
 citizens
@@ -778,7 +781,7 @@ alpha
 alpha
 0
 1
-0.1
+1.0
 0.1
 1
 NIL
