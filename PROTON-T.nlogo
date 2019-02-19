@@ -944,6 +944,46 @@ scenario
 "neukolln" "test"
 0
 
+CHOOSER
+15
+705
+285
+750
+police-interaction
+police-interaction
+"police" "none"
+0
+
+SLIDER
+15
+750
+285
+783
+police-density
+police-density
+0
+0.1
+0.05
+0.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+15
+785
+285
+818
+police-interaction-quality
+police-interaction-quality
+-1
+1
+0.05
+0.05
+1
+NIL
+HORIZONTAL
+
 @#$#@#$#@
 ## WHAT IS IT?
 
