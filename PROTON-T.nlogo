@@ -54,6 +54,8 @@ topics-own  [
 
 breed [ websites website ]
 
+breed [ police the-police ]
+
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
 activity-links-own [ value ]                         ; value of activity for the citizen
 
@@ -69,6 +71,7 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
+  setup-police;
   setup-communities ; citizens are moved at their home
   setup-websites
   setup-opinions
@@ -85,8 +88,17 @@ to setup
   ; TODO: write some test code to make sure the schedule is consistent.
 end
 
+to setup-police
+  create-police 1
+  ask one-of police [
+    let police-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
+    ask police-topic-link [set value police-interaction-quality]
+  ]
+end
+
 to go
   ask citizens [
+    police-interact
     let new-activity one-of activity-link-neighbors with [
       [ start-time = current-time and is-mandatory? ] of my-activity-type and (
       [ workday? ] of myself and [ is-job? ] of my-activity-type or
@@ -389,6 +401,7 @@ to-report age            report current-year - birth-year    end
 ; so we could say 0 = Sunday, 1 = Monday, .. , 6 = Friday, 7 = Saturday.
 to-report week-num          report (floor (ticks / ticks-per-day)) mod 7                                                    end
 
+
 to-report sum-factors [ factors ]
   report sum map runresult factors
 end
@@ -407,6 +420,16 @@ to sleep
 end
 
 to study
+end
+
+to police-interact
+  if police-interaction = "police" [
+    if police-density > (random-float 1) [
+      ask one-of police [
+       let result? talk-to (turtle-set myself) (one-of topics with [topic-name = "Institutional distrust"])
+      ]
+    ]
+  ]
 end
 
 to socialize ; citizen procedure
@@ -473,6 +496,9 @@ to-report talk-to [ recipients the-object ] ; citizen procedure
       if abs (v1 - v2) < t [
         ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
         set success? true
+        ; show talk-to effect
+        ; show v2
+        ; ask l2 [show value]
       ]
     ]
   ]
@@ -951,7 +977,7 @@ CHOOSER
 750
 police-interaction
 police-interaction
-"police" "none"
+"police" "no police"
 0
 
 SLIDER
