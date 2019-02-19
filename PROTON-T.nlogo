@@ -4,14 +4,11 @@ extensions [ table profiler rnd csv ]
 
 globals [
   local           ; table with values for setup
-  ;num-communities
   areas
   population
   temp
   migrant-muslims-ratio
 ]
-
-;patches-own [ my-area ]
 
 breed [ locations location ]
 
@@ -43,7 +40,6 @@ activity-types-own [
 
 breed [ activities activity ]
 activities-own [
-  ;area
   my-activity-type ; turtle of breed activity-type
 ]
 
@@ -343,7 +339,6 @@ to setup-mandatory-activities ; citizen procedure
       set get-activity [ -> min-one-of possible-activities [ distance myself ] ]
     ]
     ask citizens with [ runresult [ criteria ] of myself ] [
-
       create-activity-link-to runresult get-activity
     ]
   ]
@@ -465,6 +460,7 @@ to-report my-opinions ; citizen reporter
     my-website-links
   )
 end
+
 to-report talk-to [ recipients the-object ] ; citizen procedure
   let success? false
   if any? recipients [
