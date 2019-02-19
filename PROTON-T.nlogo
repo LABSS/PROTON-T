@@ -39,6 +39,8 @@ topics-own  [
   topic-name
   new-value ; the initialisation function
   criteria  ; a boolean reporter taking a speaker and a listener
+  risk-weight
+  protective-weight ; weights that contribute or protect against risk
 ]
 
 breed [ websites website ]
@@ -139,9 +141,11 @@ end
 to setup-topics
   foreach topic-definitions [ def ->
     create-topics 1 [
-      set topic-name item 0 def
-      set new-value  item 1 def
-      set criteria   item 2 def
+      set topic-name        item 0 def
+      set new-value         item 1 def
+      set criteria          item 2 def
+      set risk-weight       item 3 def
+      set protective-weight item 4 def
       set hidden? true
     ]
   ]
@@ -396,14 +400,16 @@ to-report week-num          report (floor (ticks / ticks-per-day)) mod 7        
 
 
 to-report sum-factors [ factors ]
-  let sum-of-weights sum map first factors
-  report sum map [ pair ->
-        (first pair / sum-of-weights) * runresult last pair
-  ] factors
+  report sum map runresult factors
+end
+
+to-report topic-risk-contribution ; opinion-on-topic reporter.
+  ; The link must have been called from a citizen in order to make use of other-end.
+  report 2 * value * ifelse-value (value > 0) [ [ risk-weight ] of other-end ] [ [ protective-weight ] of other-end ]
 end
 
 to-report risk ; citizen reporter
-  report sum-factors risk-factors
+  report sum [ topic-risk-contribution ] of my-out-topic-links + propensity
 end
 
 to sleep
@@ -566,6 +572,10 @@ to-report mean-opinion-on-location [ the-topic-name location-name ]
       ]
 end
 
+to-report employed?  ; citizen reporter
+  report any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ]
+end
+
 to assert [ f ]
   if not runresult f [ error (word "Assertion failed: " f) ]
 end
@@ -631,7 +641,7 @@ SLIDER
 98
 citizens-per-community
 citizens-per-community
-10
+50
 2000
 100.0
 10

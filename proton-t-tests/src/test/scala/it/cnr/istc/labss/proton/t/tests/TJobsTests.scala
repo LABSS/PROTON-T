@@ -29,6 +29,13 @@ class TJobsTests extends TModelSuite {
     setup4x300(ws)
     ws.cmd("""
       repeat 24 * 3 + 22 [ go ] ; 10PM on the tenth day
+      ask n-of 
+        count locations with [ shape = "community center" ] 
+        citizens with [
+          [ shape ] of locations-here != [ "community center" ] 
+        ] [
+          move-to one-of locations with [ shape = "community center" ] 
+        ]
     """)
     val meanInstDist = """
       mean [ value ] of link-set [
@@ -53,6 +60,13 @@ class TJobsTests extends TModelSuite {
     setup4x300(ws)
     ws.cmd("""
       repeat 24 * 3 + 22 [ go ] ; 10PM on the tenth day
+      ask n-of 
+        count locations with [ shape = "mosque" ] 
+        citizens with [
+          [ shape ] of locations-here != [ "mosque" ] 
+        ] [
+          move-to one-of locations with [ shape = "mosque" ] 
+        ]    
     """)
     val meanInstDist = """
       mean [ value ] of link-set [
