@@ -27,6 +27,7 @@ class TJobsTests extends TModelSuite {
   test("Community workers preach to an effect") { ws =>
     setup(ws)
     ws.cmd("""
+      set alpha 0.1
       repeat 24 * 3 + 22 [ go ]
       ask n-of 
         count locations with [ shape = "community center" ] 
@@ -58,6 +59,7 @@ class TJobsTests extends TModelSuite {
   test("Radical imams preach to an effect") { ws =>
     setup(ws)
     ws.cmd("""
+      set alpha 0.1
       repeat 24 * 3 + 22 [ go ] 
       ask n-of (10 * 
         count locations with [ shape = "radical mosque" ])
