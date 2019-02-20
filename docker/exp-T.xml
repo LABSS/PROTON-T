@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE experiments SYSTEM "behaviorspace.dtd"><experiments>
+  <experiment name="exp" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="1"/>
+    <metric>count citizens with [ recruited? ]</metric>
+    <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
+    <metric>[ age ] of citizens</metric>
+    <metric>[ risk ] of citizens</metric>
+    <metric>citizens-opinions</metric>
+    <enumeratedValueSet variable="total-citizens">
+      <value value="400"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-interaction">
+      <value value="&quot;no police&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-radicalized">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="alpha">
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-density">
+      <value value="0.05"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="radicalization-threshold">
+      <value value="0.9"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-interaction-quality">
+      <value value="0.05"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-radius">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-value-update">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="scenario">
+      <value value="&quot;neukolln&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="website-access-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="community-side-length">
+      <value value="30"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
