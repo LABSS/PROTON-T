@@ -27,6 +27,6 @@ RUN echo $_VERSION
 
 WORKDIR /PROTON-T
 #
-CMD /PROTON-T/docker/runit-T.sh $VERSION
-#CMD /extdisk/runit-T.sh $VERSION
+#CMD /PROTON-T/docker/runit-T.sh $VERSION
+CMD /extdisk/runit-T.sh $VERSION
 
