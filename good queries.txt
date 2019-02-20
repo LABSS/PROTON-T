@@ -62,6 +62,10 @@ show [other citizens-here] of undercover-cop
 
 ; in school now
 count citizens with [ [ shape ] of locations-here = [ "school" ] and age > 21 ]
+; bad schools
+schools with [ any? school-attendance-link-neighbors with [ education-level != [ education-level ] of myself - 1 ] ]
+; all people should be in appropriate schools
+all? persons [ not any? school-attendance-link-neighbors or education-level = ([ education-level ] of one-of school-attendance-link-neighbors) - 1 ] 
 
 ; setup of imams
 
@@ -77,6 +81,9 @@ count citizens with [ [ shape ] of locations-here = [ "school" ] and age > 21 ]
 (turtle-set [ activity-link-neighbors ] of activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ]) with [ count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] > 1 ]
 # opinions of all potential imams
 [ [ value ] of out-topic-link-to one-of topics with [ topic-name = "Institutional distrust" ] ] of citizens with [ runresult [  -> age >= 21 and get "muslim?" and get "male?"] ]
+# are radical imams unwavering in their faith?
+ask citizens with [           [ is-job? and location-type = "radical mosque" ] of [ my-activity-type ] of current-activity         ] [ show [value] of link-with one-of topics with [ topic-name = "Institutional distrust" ]]
+
 
 ; the mosques
 all? activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ] [ any? activity-link-neighbors ]

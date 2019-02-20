@@ -6,19 +6,18 @@ import org.nlogo.api.ScalaConversions.RichSeq
 
 class TJobsTests extends TModelSuite {
 
- def setup4x300(ws: HeadlessWorkspace): Unit = {
+ def setup(ws: HeadlessWorkspace): Unit = {
     ws.cmd("""
-      set num-communities 4
-      set citizens-per-community 300
+      set total-citizens 1000
       setup
     """)
   }
 
   test("All mosques and community centers staffed") { ws =>
-    setup4x300(ws)
+    setup(ws)
     ws.rpt("""
       all? activities with [ 
-        [ is-job? and (location-type = "community center"  or location-type = "mosque") ]  of my-activity-type 
+        [ is-job? and (location-type = "community center"  or location-type = "mosque" or location-type = "radical mosque") ]  of my-activity-type 
       ] [ 
         any? activity-link-neighbors 
       ] 
@@ -26,9 +25,10 @@ class TJobsTests extends TModelSuite {
   }
 
   test("Community workers preach to an effect") { ws =>
-    setup4x300(ws)
+    setup(ws)
     ws.cmd("""
-      repeat 24 * 3 + 22 [ go ] ; 10PM on the tenth day
+      set alpha 0.1
+      repeat 24 * 3 + 22 [ go ]
       ask n-of 
         count locations with [ shape = "community center" ] 
         citizens with [
@@ -56,39 +56,40 @@ class TJobsTests extends TModelSuite {
     after - before < 0 shouldBe true
   }
 
-  test("Imams preach to an effect") { ws =>
-    setup4x300(ws)
+  test("Radical imams preach to an effect") { ws =>
+    setup(ws)
     ws.cmd("""
-      repeat 24 * 3 + 22 [ go ] ; 10PM on the tenth day
-      ask n-of 
-        count locations with [ shape = "mosque" ] 
+      set alpha 0.1
+      repeat 24 * 3 + 22 [ go ] 
+      ask n-of (10 * 
+        count locations with [ shape = "radical mosque" ])
         citizens with [
-          [ shape ] of locations-here != [ "mosque" ] 
+          [ shape ] of locations-here != [ "radical mosque" ] 
         ] [
-          move-to one-of locations with [ shape = "mosque" ] 
+          move-to one-of locations with [ shape = "radical mosque" ] 
         ]    
     """)
     val meanInstDist = """
       mean [ value ] of link-set [
         out-topic-link-to ( one-of topics with [ topic-name = "Institutional distrust" ]) 
-      ] of (citizens-on locations with [ shape = "mosque"]) with [
-        [ not (is-job? and location-type = "mosque") ] of [ my-activity-type ] of current-activity 
+      ] of (citizens-on locations with [ shape = "radical mosque" ]) with [
+        [ not (is-job? and location-type = "radical mosque") ] of [ my-activity-type ] of current-activity 
       ]
     """
-    val before = ws.rpt(meanInstDist).asInstanceOf[Number].floatValue    
+    val before = ws.rpt(meanInstDist).asInstanceOf[Number].floatValue
     ws.cmd("""
       repeat 100 [ 
         ask citizens with [ 
-          [ is-job? and location-type = "mosque" ] of [ my-activity-type ] of current-activity 
+          [ is-job? and location-type = "radical mosque" ] of [ my-activity-type ] of current-activity 
         ] [ preach ]
         ]
       """)
-    val after = ws.rpt(meanInstDist).asInstanceOf[Number].floatValue
-    after - before > 0 shouldBe true
+      val after = ws.rpt(meanInstDist).asInstanceOf[Number].floatValue
+      after - before > 0 shouldBe true
   }
 
   test("citizens in workplace are working") { ws =>
-    setup4x300(ws)
+    setup(ws)
     1 to 500 foreach { _ => 
       ws.cmd("go")
       ws.rpt("""

@@ -8,8 +8,7 @@ class TRiskAndPropensityTests extends TModelSuite {
 
  def setup4x300(ws: HeadlessWorkspace): Unit = {
     ws.cmd("""
-      set num-communities 4
-      set citizens-per-community 300
+      set total-citizens 1000
       setup
     """)
   }

@@ -1,11 +1,20 @@
 __includes [ "scenario.nls" ]
 
-extensions [ table profiler rnd ]
+extensions [ table profiler rnd csv ]
+
+globals [
+  local           ; table with values for setup
+  areas
+  population
+  temp
+  migrant-muslims-ratio
+]
 
 breed [ locations location ]
 
 breed [ citizens citizen ]
 citizens-own [
+  area
   residence
   birth-year
   recruited?
@@ -58,6 +67,7 @@ topic-links-own [ value ]                            ; opinion dynamics score fr
 
 to setup
   clear-all
+  load-neighborhoods
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
@@ -154,7 +164,7 @@ end
 to setup-websites
   foreach website-definitions [ def ->
     create-websites 1 [
-      create-topic-link-to one-of topics with [ topic-name = item 0 def ] [
+      create-topic-link-to topic-by-name item 0 def [
         set value item 1 def
       ]
       set hidden? true
@@ -180,29 +190,36 @@ to-report clipped-random-normal [ the-mean the-std-dev the-min the-max ]
 end
 
 to setup-communities
-  let world-side community-side-length * sqrt num-communities
+  let n sqrt length areas
+  let world-side community-side-length * n
   resize-world 0 (world-side - 1) 0 (world-side - 1)
   set-patch-size floor (800 / world-side)
   let colors [7.4 9.4]; map [ c -> c - 4 ] [turquoise cyan]
-  let community-table make-community-table
-  foreach table:keys community-table [ row ->
-    foreach table:keys table:get community-table row [ col ->
-      let community-patches table:get table:get community-table row col
+  foreach range n [ row ->
+    foreach range n [ col ->
+      let the-area item (col + row * n) areas
+      let community-patches patches with [
+        floor (pxcor / community-side-length) = row and
+        floor (pycor / community-side-length) = col
+      ]
       let c ifelse-value (row mod 2 = col mod 2) [ 7.4 ] [ 9.4 ]
-      ask community-patches [ set pcolor c + random-float 0.5 ]
-      setup-locations community-patches
+            ask community-patches [
+        ;set my-area area
+        set pcolor c + random-float 0.5
+      ]
+      setup-locations community-patches the-area
       let residences setup-residences community-patches with [
         not any? locations in-radius 1.75 with [ shape != "residence" ]
       ]
-      setup-citizens residences
+      setup-citizens residences the-area
     ]
   ]
 end
 
-to setup-locations [target-patches]
+to setup-locations [ target-patches the-area ]
   set target-patches target-patches with [ count neighbors = 8 ]
   let center patchset-center target-patches
-  foreach location-definitions [ def ->
+  foreach location-definitions the-area [ def ->
     repeat item 0 def [
       ; locations need to be created one at a time so `territory` is initialized
       create-locations 1 [
@@ -229,7 +246,7 @@ to-report patchset-center [patchset]
   report patch (min-x + ((max-x - min-x) / 2)) ((min-y + ((max-y - min-y) / 2)))
 end
 
-to-report setup-residences [target-patches]
+to-report setup-residences [ target-patches ]
   let residences []
   ask target-patches [
     sprout-locations 1 [
@@ -241,12 +258,13 @@ to-report setup-residences [target-patches]
   report turtle-set residences
 end
 
-to setup-citizens [ residences ]
-  create-citizens citizens-per-community [
+to setup-citizens [ residences the-area ]
+  create-citizens table:get population the-area [
     set attributes table:make
-    foreach attribute-definitions [ def ->
+    foreach attribute-definitions the-area [ def ->
       table:put attributes first def runresult last def
     ]
+    set area             the-area
     set color            lput 150 one-of teals
     set birth-year       random-birth-year
     set current-task     nobody ; used to indicate "none"
@@ -366,21 +384,6 @@ end
 
 to-report is-at-my-residence? [ the-turtle ] ; citizen reporter
   report [ patch-here ] of the-turtle = [ patch-here ] of residence
-end
-
-to-report make-community-table
-  let n world-width / community-side-length
-  let tbl table:make
-  foreach range n [ row ->
-    table:put tbl row table:make
-    foreach range n [ col ->
-      table:put (table:get tbl row) col patches with [
-        floor (pxcor / community-side-length) = row and
-        floor (pycor / community-side-length) = col
-      ]
-    ]
-  ]
-  report tbl
 end
 
 to-report intervals [ n the-range ]
@@ -531,7 +534,7 @@ to-report get [ attribute-name ]
 end
 
 to-report opinion-on-topic [ the-topic-name ] ; citizen reporter
-  report out-topic-link-to one-of topics with [ topic-name = the-topic-name ]
+  report [ value ] of out-topic-link-to topic-by-name the-topic-name
 end
 
 to-report teals
@@ -559,14 +562,14 @@ end
 ; called by behaviorspace
 to-report citizens-opinions
   report [ reduce sentence (list who
-    map [ i ->   [ value ] of  opinion-on-topic i ] topics-list)
+    map [ i ->  opinion-on-topic i ] topics-list)
    ] of citizens
 end
 
 ; called by the test subsystem, *TJobsTests.scala
 to-report mean-opinion-on-location [ the-topic-name location-name ]
       report  mean [ value ] of link-set [
-        out-topic-link-to ( one-of topics with [ topic-name = the-topic-name ])
+        out-topic-link-to topic-by-name the-topic-name
       ] of (citizens-on locations with [ shape = location-name ]) with [
         [ not (is-job? and location-type = location-name) ] of [ my-activity-type ] of current-activity
       ]
@@ -574,6 +577,27 @@ end
 
 to-report employed?  ; citizen reporter
   report any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ]
+end
+
+to-report read-csv [ base-file-name ]
+  report but-first csv:from-file (word "inputs/" scenario "/data/" base-file-name ".csv")
+end
+
+to-report group-by-first-item [ csv-data ]
+  let table table:group-items csv-data first ; group the rows by their first item
+  report table-map table [ rows -> map but-first rows ] ; remove the first item of each row
+end
+
+to-report table-map [ tbl fn ]
+  ; from https://github.com/NetLogo/Table-Extension/issues/6#issuecomment-276109136
+  ; (if `table:map` is ever added to the table extension, this could be replaced by it)
+  report table:from-list map [ entry ->
+    list (first entry) (runresult fn last entry)
+  ] table:to-list tbl
+end
+
+to-report topic-by-name [ the-name ]
+  report one-of topics with [ topic-name = the-name ]
 end
 
 to assert [ f ]
@@ -624,26 +648,16 @@ NIL
 NIL
 1
 
-CHOOSER
-10
-15
-290
-60
-num-communities
-num-communities
-1 4 9 16 25
-1
-
 SLIDER
 10
 65
 290
 98
-citizens-per-community
-citizens-per-community
+total-citizens
+total-citizens
 50
 2000
-100.0
+400.0
 10
 1
 citizens
@@ -789,7 +803,7 @@ alpha
 alpha
 0
 1
-0.1
+1.0
 0.1
 1
 NIL
@@ -947,24 +961,34 @@ count citizens with [ [ shape ] of locations-here = [ \"mosque\" ] ]
 11
 
 CHOOSER
+10
 15
-710
-185
-755
+290
+60
+scenario
+scenario
+"neukolln" "test"
+0
+
+CHOOSER
+15
+705
+285
+750
 police-interaction
 police-interaction
-"no police" "police"
-1
+"police" "no police"
+0
 
 SLIDER
 15
-755
-185
-788
+750
+285
+783
 police-density
 police-density
-0.01
-1
+0
+0.1
 0.05
 0.01
 1
@@ -973,15 +997,15 @@ HORIZONTAL
 
 SLIDER
 15
-790
-185
-823
+785
+285
+818
 police-interaction-quality
 police-interaction-quality
 -1
 1
-0.3
-0.01
+0.05
+0.05
 1
 NIL
 HORIZONTAL
@@ -1056,38 +1080,6 @@ Circle -7500403 true true 110 127 80
 Circle -7500403 true true 110 75 80
 Line -7500403 true 150 100 80 30
 Line -7500403 true 150 100 220 30
-
-building institution
-false
-0
-Rectangle -7500403 true true 0 60 300 270
-Rectangle -16777216 true false 130 196 168 256
-Rectangle -16777216 false false 0 255 300 270
-Polygon -7500403 true true 0 60 150 15 300 60
-Polygon -16777216 false false 0 60 150 15 300 60
-Circle -1 true false 135 26 30
-Circle -16777216 false false 135 25 30
-Rectangle -16777216 false false 0 60 300 75
-Rectangle -16777216 false false 218 75 255 90
-Rectangle -16777216 false false 218 240 255 255
-Rectangle -16777216 false false 224 90 249 240
-Rectangle -16777216 false false 45 75 82 90
-Rectangle -16777216 false false 45 240 82 255
-Rectangle -16777216 false false 51 90 76 240
-Rectangle -16777216 false false 90 240 127 255
-Rectangle -16777216 false false 90 75 127 90
-Rectangle -16777216 false false 96 90 121 240
-Rectangle -16777216 false false 179 90 204 240
-Rectangle -16777216 false false 173 75 210 90
-Rectangle -16777216 false false 173 240 210 255
-Rectangle -16777216 false false 269 90 294 240
-Rectangle -16777216 false false 263 75 300 90
-Rectangle -16777216 false false 263 240 300 255
-Rectangle -16777216 false false 0 240 37 255
-Rectangle -16777216 false false 6 90 31 240
-Rectangle -16777216 false false 0 75 37 90
-Line -16777216 false 112 260 184 260
-Line -16777216 false 105 265 196 265
 
 building store
 false
@@ -1399,6 +1391,38 @@ Line -16777216 false 0 165 300 165
 Polygon -7500403 true true 0 165 45 135 60 90 240 90 255 135 300 165
 Rectangle -7500403 true true 0 0 75 45
 Rectangle -16777216 false false 0 0 75 45
+
+radical mosque
+false
+0
+Rectangle -7500403 true true 0 60 300 270
+Rectangle -16777216 true false 130 196 168 256
+Rectangle -16777216 false false 0 255 300 270
+Polygon -7500403 true true 0 60 150 15 300 60
+Polygon -16777216 false false 0 60 150 15 300 60
+Circle -1 true false 135 26 30
+Circle -16777216 false false 135 25 30
+Rectangle -16777216 false false 0 60 300 75
+Rectangle -16777216 false false 218 75 255 90
+Rectangle -16777216 false false 218 240 255 255
+Rectangle -16777216 false false 224 90 249 240
+Rectangle -16777216 false false 45 75 82 90
+Rectangle -16777216 false false 45 240 82 255
+Rectangle -16777216 false false 51 90 76 240
+Rectangle -16777216 false false 90 240 127 255
+Rectangle -16777216 false false 90 75 127 90
+Rectangle -16777216 false false 96 90 121 240
+Rectangle -16777216 false false 179 90 204 240
+Rectangle -16777216 false false 173 75 210 90
+Rectangle -16777216 false false 173 240 210 255
+Rectangle -16777216 false false 269 90 294 240
+Rectangle -16777216 false false 263 75 300 90
+Rectangle -16777216 false false 263 240 300 255
+Rectangle -16777216 false false 0 240 37 255
+Rectangle -16777216 false false 6 90 31 240
+Rectangle -16777216 false false 0 75 37 90
+Line -16777216 false 112 260 184 260
+Line -16777216 false 105 265 196 265
 
 residence
 false
