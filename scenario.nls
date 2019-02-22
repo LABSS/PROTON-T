@@ -1,7 +1,5 @@
 to-report random-birth-year report 0 - random 80 end
   
-  
-  
 to-report propensity-factors ; citizen reporter
                              ; first item is weight (in R+), second item is value (in [-1, 1])
                              ; todo: confirm weight for attribute factors

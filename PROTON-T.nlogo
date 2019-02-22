@@ -68,6 +68,7 @@ topic-links-own [ value ]                            ; opinion dynamics score fr
 to setup
   clear-all
   load-neighborhoods
+  setup-world  ; warning: this kills all turtles and links in case of resize
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
@@ -189,12 +190,15 @@ to-report clipped-random-normal [ the-mean the-std-dev the-min the-max ]
   report result
 end
 
-to setup-communities
-  let n sqrt length areas
-  let world-side community-side-length * n
+to setup-world
+  let world-side community-side-length * sqrt length areas
   resize-world 0 (world-side - 1) 0 (world-side - 1)
   set-patch-size floor (800 / world-side)
   let colors [7.4 9.4]; map [ c -> c - 4 ] [turquoise cyan]
+end
+
+to setup-communities
+  let n sqrt length areas
   foreach range n [ row ->
     foreach range n [ col ->
       let the-area item (col + row * n) areas
@@ -681,7 +685,7 @@ SLIDER
 138
 community-side-length
 community-side-length
-0
+20
 100
 30.0
 1
