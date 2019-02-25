@@ -670,7 +670,7 @@ total-citizens
 total-citizens
 50
 2000
-5000.0
+400.0
 10
 1
 citizens
@@ -1626,7 +1626,7 @@ show timer</final>
     <metric>count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]</metric>
     <metric>aggregate-citizens-opinions</metric>
     <enumeratedValueSet variable="total-citizens">
-      <value value="5000"/>
+      <value value="10000"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="police-interaction">
       <value value="&quot;no police&quot;"/>
