@@ -122,3 +122,5 @@ to runit
 end
 
 
+set total-citizens 10000 set community-side-length 100 reset-timer repeat 10 [setup show "ping" show timer]
+set total-citizens 400 reset-timer foreach  (range 30 50) [ l -> set community-side-length l setup show "ping" show timer] show "end"

@@ -131,6 +131,9 @@ to go
     set countdown countdown - 1
   ]
   tick
+  if behaviorspace-experiment-name != "" [
+    show (word behaviorspace-run-number "." ticks)
+  ]
 end
 
 to start-activity [ new-activity ] ; citizen procedure
@@ -570,6 +573,12 @@ to-report citizens-opinions
    ] of citizens
 end
 
+; called by behaviorspace
+to-report aggregate-citizens-opinions
+  report
+    map [ i -> mean [ opinion-on-topic i ] of citizens] topics-list
+end
+
 ; called by the test subsystem, *TJobsTests.scala
 to-report mean-opinion-on-location [ the-topic-name location-name ]
       report  mean [ value ] of link-set [
@@ -611,11 +620,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1088
-799
+1108
+819
 -1
 -1
-13.0
+10.0
 1
 10
 1
@@ -626,9 +635,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-59
+79
 0
-59
+79
 1
 1
 1
@@ -661,7 +670,7 @@ total-citizens
 total-citizens
 50
 2000
-400.0
+5000.0
 10
 1
 citizens
@@ -687,7 +696,7 @@ community-side-length
 community-side-length
 20
 100
-30.0
+40.0
 1
 1
 patches
@@ -807,7 +816,7 @@ alpha
 alpha
 0
 1
-1.0
+0.2
 0.1
 1
 NIL
@@ -982,7 +991,7 @@ CHOOSER
 police-interaction
 police-interaction
 "police" "no police"
-0
+1
 
 SLIDER
 15
@@ -993,7 +1002,7 @@ police-density
 police-density
 0
 0.1
-0.05
+0.01
 0.01
 1
 NIL
@@ -1008,7 +1017,7 @@ police-interaction-quality
 police-interaction-quality
 -1
 1
-0.05
+0.5
 0.05
 1
 NIL
@@ -1604,32 +1613,39 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="testing-output-fat" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="test-compactsave" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
-    <timeLimit steps="4"/>
-    <metric>weekday</metric>
-    <metric>(word (ticks mod 24) ":00")</metric>
+    <final>show "Time elapsed:"
+show timer</final>
+    <timeLimit steps="2"/>
     <metric>count citizens with [ recruited? ]</metric>
     <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
-    <metric>[ age ] of citizens</metric>
-    <metric>[ risk ] of citizens</metric>
-    <metric>citizens-opinions</metric>
-    <metric>citizens-occupations-hist</metric>
-    <enumeratedValueSet variable="citizens-per-community">
-      <value value="50"/>
+    <metric>mean [ propensity ] of citizens</metric>
+    <metric>mean [ risk ] of citizens</metric>
+    <metric>count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]</metric>
+    <metric>aggregate-citizens-opinions</metric>
+    <enumeratedValueSet variable="total-citizens">
+      <value value="5000"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-interaction">
+      <value value="&quot;no police&quot;"/>
+      <value value="&quot;police&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="initial-radicalized">
       <value value="10"/>
     </enumeratedValueSet>
+    <enumeratedValueSet variable="police-density">
+      <value value="0.01"/>
+    </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
-      <value value="0.8"/>
+      <value value="0.2"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="radicalization-threshold">
       <value value="0.9"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="num-communities">
-      <value value="4"/>
+    <enumeratedValueSet variable="police-interaction-quality">
+      <value value="0.5"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-radius">
       <value value="10"/>
@@ -1639,49 +1655,15 @@ NetLogo 6.0.4
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-value-update">
       <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="scenario">
+      <value value="&quot;neukolln&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="website-access-probability">
       <value value="0.1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="community-side-length">
       <value value="40"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="testing-output" repetitions="3" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <timeLimit steps="100"/>
-    <metric>count citizens with [ recruited? ]</metric>
-    <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
-    <enumeratedValueSet variable="citizens-per-community">
-      <value value="100"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-radicalized">
-      <value value="10"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="alpha">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="radicalization-threshold">
-      <value value="0.9"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="num-communities">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="activity-radius">
-      <value value="10"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="work-socialization-probability">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="activity-value-update">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="website-access-probability">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community-side-length">
-      <value value="30"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
