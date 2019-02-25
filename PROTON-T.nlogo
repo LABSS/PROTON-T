@@ -1613,12 +1613,12 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="test-compactsave" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="test-compactsave" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <final>show "Time elapsed:"
 show timer</final>
-    <timeLimit steps="2"/>
+    <timeLimit steps="1000"/>
     <metric>count citizens with [ recruited? ]</metric>
     <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
     <metric>mean [ propensity ] of citizens</metric>
