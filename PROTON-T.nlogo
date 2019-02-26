@@ -10,6 +10,10 @@ globals [
   migrant-muslims-ratio
 ]
 
+patches-own [
+  community-index
+]
+
 breed [ locations location ]
 
 breed [ citizens citizen ]
@@ -56,6 +60,11 @@ breed [ websites website ]
 
 breed [ police the-police ]
 
+breed [ cpos cpo ]
+cpos-own [
+  number-of-interactions
+]
+
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
 activity-links-own [ value ]                         ; value of activity for the citizen
 
@@ -71,8 +80,8 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
-  setup-police;
   setup-communities ; citizens are moved at their home
+  setup-police;
   setup-websites
   setup-opinions
   make-special-citizens ; extreme opinions as needed
@@ -92,11 +101,37 @@ to setup-police
   create-police 1
   ask one-of police [
     let police-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
-    ask police-topic-link [set value police-interaction-quality]
+    ask police-topic-link [set value police-interaction-quality * -1]
+  ]
+  if any? cpos [
+    ask cpos [
+      let cpo-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
+      ask cpo-topic-link [set value -0.75]
+    ]
+  ]
+end
+
+to go-init-police
+  if any? cpos [
+    ask cpos [
+      set number-of-interactions 0
+      let citizens-to-check citizens-on neighbors
+      ifelse any? citizens-to-check [
+        let citizen-to-check one-of citizens-to-check
+        set heading towards citizen-to-check
+        forward 1
+      ]
+      [
+        let actual-community-index [community-index] of patch-here
+        let next-position one-of neighbors with [community-index = actual-community-index]
+        move-to next-position
+      ]
+    ]
   ]
 end
 
 to go
+  go-init-police
   ask citizens [
     police-interact
     let new-activity one-of activity-link-neighbors with [
@@ -195,6 +230,7 @@ to setup-communities
   resize-world 0 (world-side - 1) 0 (world-side - 1)
   set-patch-size floor (800 / world-side)
   let colors [7.4 9.4]; map [ c -> c - 4 ] [turquoise cyan]
+  let ci 1
   foreach range n [ row ->
     foreach range n [ col ->
       let the-area item (col + row * n) areas
@@ -203,8 +239,9 @@ to setup-communities
         floor (pycor / community-side-length) = col
       ]
       let c ifelse-value (row mod 2 = col mod 2) [ 7.4 ] [ 9.4 ]
-            ask community-patches [
+      ask community-patches [
         ;set my-area area
+        set community-index ci
         set pcolor c + random-float 0.5
       ]
       setup-locations community-patches the-area
@@ -212,6 +249,15 @@ to setup-communities
         not any? locations in-radius 1.75 with [ shape != "residence" ]
       ]
       setup-citizens residences the-area
+      if police-interaction = "cpo" [
+        ask n-of cpo-density community-patches [
+          sprout-cpos 1 [
+            set shape "flag"
+            set color red
+          ]
+        ]
+      ]
+      set ci ci + 1
     ]
   ]
 end
@@ -423,10 +469,19 @@ to study
 end
 
 to police-interact
-  if police-interaction = "police" [
+  if police-interaction = "police" or police-interaction = "cpo" [
     if police-density > (random-float 1) [
       ask one-of police [
        let result? talk-to (turtle-set myself) (one-of topics with [topic-name = "Institutional distrust"])
+      ]
+    ]
+    if police-interaction = "cpo" [
+      let the-citizen self
+      ask cpos with [ number-of-interactions <= 4 and (distance the-citizen) < 3][
+        if (random-float 1) < 0.9 [
+          let result? talk-to (turtle-set the-citizen) (one-of topics with [topic-name = "Institutional distrust"])
+          set number-of-interactions number-of-interactions + 1
+        ]
       ]
     ]
   ]
@@ -977,38 +1032,48 @@ CHOOSER
 750
 police-interaction
 police-interaction
-"police" "no police"
+"police" "cpo" "no police"
 0
 
 SLIDER
 15
 750
-285
+155
 783
 police-density
 police-density
 0
+1
 0.1
 0.05
-0.01
 1
 NIL
 HORIZONTAL
 
 SLIDER
 15
-785
+795
 285
-818
+828
 police-interaction-quality
 police-interaction-quality
 -1
 1
-0.05
+-0.25
 0.05
 1
 NIL
 HORIZONTAL
+
+CHOOSER
+155
+750
+285
+795
+cpo-density
+cpo-density
+1 2
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
