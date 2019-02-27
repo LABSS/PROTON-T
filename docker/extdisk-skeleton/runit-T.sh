@@ -10,18 +10,15 @@ cp /extdisk/exp-T.xml .
 
 today="$( date +"%Y%m%d" )"
 number=0
-
-while test -e "/extdisk/$1/$today$suffix"; do
+suffix='00'
+while test -e "/extdisk/T/$1/$today/$suffix"; do
     (( ++number ))
-    suffix="$( printf -- '-%02d' "$number" )"
+    suffix="$( printf -- '%02d' "$number" )"
 done
 
-dname="$today$suffix"
+dname="/extdisk/T/$1/$today/$suffix"
 
 printf 'Will use "%s" as dirname\n' "$dname"
-mkdir -p "/extdisk/T/$1/$today$suffix/"
+mkdir -p $dname
 
-cp table-output.csv "/extdisk/T/$1/$today$suffix/"
-cp exp-T.xml "/extdisk/T/$1/$today$suffix/"
-cp netlogo.log "/extdisk/T/$1/$today$suffix/"
-
+cp table-output.csv exp-T.xml netlogo.log $dname
