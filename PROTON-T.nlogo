@@ -5,7 +5,10 @@ extensions [ table profiler rnd csv ]
 globals [
   local           ; table with values for setup
   areas
+  area-names
+  area-numbers
   population
+  population-details
   temp
   migrant-muslims-ratio
 ]
@@ -599,6 +602,12 @@ end
 to-report group-by-first-item [ csv-data ]
   let table table:group-items csv-data first ; group the rows by their first item
   report table-map table [ rows -> map but-first rows ] ; remove the first item of each row
+end
+
+to-report group-by-5-keys [ csv-data ]
+  let table table:group-items csv-data [ line -> sublist line 0 5 ]; group the rows by lists with initial 5 items
+  ;report table-map table [ rows -> map [ i -> last i ] rows ]
+  report table-map table [ rows -> map last rows ]
 end
 
 to-report table-map [ tbl fn ]

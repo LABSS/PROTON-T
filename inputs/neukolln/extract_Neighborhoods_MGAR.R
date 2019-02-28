@@ -38,13 +38,45 @@ names(df1)<-df0[3,]
 
 df3 <-   df1 %>%
   gather(class, var, -area) %>%
-  separate(class, into = c("a", "b", "age","religion"), sep = "___") %>%
+  separate(class, into = c("migrant_status", "gender", "age","religion"), sep = "___") %>%
+  separate(area, into = c("area_code", "area_name"), sep = 5) %>%
   mutate(
-    age = case_when(
+    area_code = as.numeric(area_code %>% map(
+      function(x){substr(x,4,4)}
+    )),
+    value = as.numeric(
+      case_when(
+      var == "-" ~ "0",
+      TRUE ~ var)
+    ),
+    age2 = case_when(
       age == "unter 1 Jahr" ~ "0 bis unter 1",
       age == "80 und mehr" ~ "80 bis unter 120",
       TRUE ~ age
     )
   ) %>%
-  separate(age, into = c("age_from", "age_to"), sep = " bis unter ") %>%
+  separate(age2, into = c("age_from", "age_to"), sep = " bis unter ") %>%
+  mutate(
+    duration = as.numeric(age_to) - as.numeric(age_from),
+    age_to = as.numeric(age_to) - 1
+  ) %>%
+  unite(age,  c("age_from", "age_to")) %>%
+  mutate(
+    age = age %>%
+      str_extract_all("\\d+") %>%
+      map(as.numeric) %>%
+      map((lift(seq)))  
+  ) 
+
+df3 %>%
+  group_by(area_code, area_name) %>%
+  summarize(sum(value)) %>%
+  write_csv(file.path("data", "neukolln-totals.csv"))  
+
+df4 <- df3 %>%
+  mutate(value = as.numeric(value) / duration) %>%
+  unnest(age) %>%
+  select(area_code, migrant_status,gender,age,religion,value) %>%
   write_csv(file.path("data", "neukolln-by-citizenship-migrantbackground-gender-age-religion.csv"))  
+
+

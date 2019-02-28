@@ -44,6 +44,18 @@ to load-neighborhoods
   ;set male-percent table:from-list table:get local 
 end  
 
+to load-totals
+  set population group-by-first-item read-csv "neukolln-totals"
+  set areas table:keys population
+  set area-names map [ i -> first first (table:get population i) ] table:keys population 
+  set area-numbers  map [ i -> last first table:get population i ] table:keys population 
+end
+
+;  select(area_code,area_name, migrant_status,gender,age_from,age_to,religion,value) %>%
+to load-neighborhood-people
+  set population-details group-by-5-keys read-csv "neukolln-by-citizenship-migrantbackground-gender-age-religion" 
+end  
+
 to-report location-names
   report (list "mosque" "community center" "workplace" "public space")
 end
