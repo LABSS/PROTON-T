@@ -3,23 +3,28 @@
   <experiment name="exp" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
-    <timeLimit steps="1"/>
+    <final>show "Time elapsed:"
+      show timer
+    </final>
+    <timeLimit steps="10"/>
     <metric>count citizens with [ recruited? ]</metric>
     <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
     <metric>[ age ] of citizens</metric>
     <metric>[ risk ] of citizens</metric>
-    <metric>citizens-opinions</metric>
+    <metric>aggregate-citizens-opinions</metric>
     <enumeratedValueSet variable="total-citizens">
       <value value="400"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="police-interaction">
       <value value="&quot;no police&quot;"/>
+      <value value="&quot;police&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="initial-radicalized">
       <value value="10"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
-      <value value="0.5"/>
+      <value value="0.1"/>
+      <value value="0.9"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="police-density">
       <value value="0.05"/>
@@ -37,7 +42,8 @@
       <value value="0.1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-value-update">
-      <value value="0.1"/>
+      <value value="0.2"/>
+      <value value="0.9"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="scenario">
       <value value="&quot;neukolln&quot;"/>
