@@ -3,7 +3,6 @@ library(readxl)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-maxcol<-37+4*4
 maxcol<-217
 
 df <-
@@ -43,6 +42,7 @@ df3 <-   df1 %>%
   mutate(
     area_code = as.numeric(area_code %>% map(
       function(x){substr(x,4,4)}
+      # ~ substr(.,4,4)
     )),
     value = as.numeric(
       case_when(
