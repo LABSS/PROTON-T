@@ -37,7 +37,7 @@ names(df1)<-df0[3,]
 
 df3 <-   df1 %>%
   gather(class, var, -area) %>%
-  separate(class, into = c("migrant_status", "gender", "age","religion"), sep = "___") %>%
+  separate(class, into = c("migrant?", "male?", "age","muslim?"), sep = "___") %>%
   separate(area, into = c("area_code", "area_name"), sep = 5) %>%
   mutate(
     area_code = as.numeric(area_code %>% map(
@@ -53,8 +53,26 @@ df3 <-   df1 %>%
       age == "unter 1 Jahr" ~ "0 bis unter 1",
       age == "80 und mehr" ~ "80 bis unter 120",
       TRUE ~ age
-    )
+    ),
+    "migrant?" = recode( `migrant?` ,
+        "Ausländer" = "true", 
+        "Deutsche mit Migrationshintergrund" = "true",
+        "Deutsche ohne Migrationshintergrund" = "false" 
+      ),
+    "male?" = recode( `male?` ,
+        "männlich" = "true", 
+        "weiblich" = "false" 
+      ), 
+    "muslim?" = recode( `muslim?` ,
+        "Evangelische Kirchen"       = "false",
+        "Römisch-katholische Kirche" = "false",
+        "ohne Angabe"                = "true", 
+        "sonstige/ohne Angabe"       = "true"
+      )     
   ) %>%
+  select(-age,-var) %>%
+  group_by(area_code, area_name, `migrant?`, `male?`, `muslim?`, age2) %>% 
+  summarise_all(funs(sum)) %>%
   separate(age2, into = c("age_from", "age_to"), sep = " bis unter ") %>%
   mutate(
     duration = as.numeric(age_to) - as.numeric(age_from),
@@ -66,17 +84,20 @@ df3 <-   df1 %>%
       str_extract_all("\\d+") %>%
       map(as.numeric) %>%
       map((lift(seq)))  
-  ) 
-
-df3 %>%
-  group_by(area_code, area_name) %>%
-  summarize(sum(value)) %>%
-  write_csv(file.path("data", "neukolln-totals.csv"))  
+  )
 
 df4 <- df3 %>%
+  ungroup() %>%
   mutate(value = as.numeric(value) / duration) %>%
   unnest(age) %>%
-  select(area_code, migrant_status,gender,age,religion,value) %>%
-  write_csv(file.path("data", "neukolln-by-citizenship-migrantbackground-gender-age-religion.csv"))  
+  filter(age>15)
 
+df4 %>%
+  select(area_code, "migrant?","male?","muslim?", age,value) %>%
+  write_csv(file.path("data", "neukolln-by-citizenship-migrantbackground-gender-religion-age.csv"))  
 
+df4 %>%
+  select(area_code, area_name, value) %>%
+  group_by(area_code, area_name)      %>%
+  summarize(sum(value))               %>%
+  write_csv(file.path("data", "neukolln-totals.csv"))  

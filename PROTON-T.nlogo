@@ -6,10 +6,9 @@ globals [
   local           ; table with values for setup
   areas
   area-names
-  area-numbers
+  area-population
   population
   population-details
-  temp
   migrant-muslims-ratio
 ]
 
@@ -70,13 +69,13 @@ topic-links-own [ value ]                            ; opinion dynamics score fr
 
 to setup
   clear-all
-  load-neighborhoods
+  load-totals
   setup-world  ; warning: this kills all turtles and links in case of resize
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
   setup-police;
-  setup-communities ; citizens are moved at their home
+  setup-communities-citizens ; citizens are created and moved to their home
   setup-websites
   setup-opinions
   make-special-citizens ; extreme opinions as needed
@@ -203,7 +202,7 @@ to setup-world
   let colors [7.4 9.4]; map [ c -> c - 4 ] [turquoise cyan]
 end
 
-to setup-communities
+to setup-communities-citizens
   let n sqrt length areas
   foreach range n [ row ->
     foreach range n [ col ->
@@ -269,14 +268,10 @@ to-report setup-residences [ target-patches ]
 end
 
 to setup-citizens [ residences the-area ]
-  create-citizens table:get population the-area [
-    set attributes table:make
-    foreach attribute-definitions the-area [ def ->
-      table:put attributes first def runresult last def
-    ]
+  create-citizens table:get area-population the-area [
+    set attributes make-attributes-set the-area ; sets also age
     set area             the-area
     set color            lput 150 one-of teals
-    set birth-year       random-birth-year
     set current-task     nobody ; used to indicate "none"
     set current-activity nobody
     set countdown        0
@@ -401,11 +396,11 @@ to-report intervals [ n the-range ]
   report n-values n [ i -> i * (the-range / n) ]
 end
 
-to-report ticks-per-day  report 24                           end
-to-report ticks-per-year report ticks-per-day * 365          end
-to-report current-year   report floor ticks / ticks-per-year end
-to-report current-time   report ticks mod ticks-per-day      end
-to-report age            report current-year - birth-year    end
+to-report ticks-per-day  report 24                             end
+to-report ticks-per-year report ticks-per-day * 365            end
+to-report current-year   report floor (ticks / ticks-per-year) end
+to-report current-time   report ticks mod ticks-per-day        end
+to-report age            report current-year - birth-year      end
 ; days are already there in the rest of the division by seven. I'd keep them that way. It won't be done too often; if it does, it should be cached;
 ; a routine could set all the reporters at the beginning of the step, making them into globals. To do in the optimization phase.
 ; so we could say 0 = Sunday, 1 = Monday, .. , 6 = Friday, 7 = Saturday.
@@ -629,11 +624,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1108
-819
+1088
+799
 -1
 -1
-10.0
+13.0
 1
 10
 1
@@ -644,9 +639,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-79
+59
 0
-79
+59
 1
 1
 1
@@ -705,7 +700,7 @@ community-side-length
 community-side-length
 20
 100
-40.0
+30.0
 1
 1
 patches
