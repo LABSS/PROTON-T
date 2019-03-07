@@ -9,8 +9,9 @@
     <timeLimit steps="10"/>
     <metric>count citizens with [ recruited? ]</metric>
     <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
-    <metric>[ age ] of citizens</metric>
-    <metric>[ risk ] of citizens</metric>
+    <metric>mean [ age ] of citizens</metric>
+    <metric>mean [ risk ] of citizens</metric>
+    <metric>mean [ propensity ] of citizens</metric>
     <metric>aggregate-citizens-opinions</metric>
     <enumeratedValueSet variable="total-citizens">
       <value value="400"/>
