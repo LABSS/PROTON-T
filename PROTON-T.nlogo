@@ -18,6 +18,7 @@ breed [ locations location ]
 
 breed [ citizens citizen ]
 citizens-own [
+  area
   residence
   birth-year
   recruited?
@@ -62,7 +63,6 @@ breed [ police the-police ]
 breed [ cpos cpo ]
 cpos-own [
   number-of-interactions
-  area
 ]
 
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
@@ -111,30 +111,21 @@ to setup-police
   ]
 end
 
-to move-police
-  if any? cpos [
-    ask cpos [
-      set number-of-interactions 0
-      let best-patches patches with [ count citizens-here >= 4 and area-id = [ area of myself] ]
-      if any best-patches [ move-to one-of best-patches ]
-
-      let citizens-to-check citizens-on neighbors
-      ifelse any? citizens-to-check [
-        let citizen-to-check one-of citizens-to-check
-        set heading towards citizen-to-check
-        forward 1
-      ]
-      [
-        let actual-community-index [community-index] of patch-here
-        let next-position one-of neighbors with [community-index = actual-community-index]
-        move-to next-position
-      ]
+to move-cpos
+  ask cpos [
+    set number-of-interactions 0
+    let best-patches patches with [ count citizens-here >= 4 and area-id =
+      [ area-id ] of [ patch-here ] of myself ]
+    if-else any? best-patches [
+      move-to one-of best-patches
+    ] [
+      move-to one-of patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself]
     ]
   ]
 end
 
 to go
-  move-police
+  if any? cpos [ move-cpos ]
   ask citizens [
     police-interact
     let new-activity one-of activity-link-neighbors with [
@@ -233,7 +224,6 @@ to setup-communities
   resize-world 0 (world-side - 1) 0 (world-side - 1)
   set-patch-size floor (800 / world-side)
   let colors [7.4 9.4]; map [ c -> c - 4 ] [turquoise cyan]
-  let ci 1
   foreach range n [ row ->
     foreach range n [ col ->
       let the-area item (col + row * n) areas
@@ -243,8 +233,7 @@ to setup-communities
       ]
       let c ifelse-value (row mod 2 = col mod 2) [ 7.4 ] [ 9.4 ]
       ask community-patches [
-        ;set my-area area
-        set community-index ci
+        set area-id the-area
         set pcolor c + random-float 0.5
       ]
       setup-locations community-patches the-area
@@ -252,17 +241,18 @@ to setup-communities
         not any? locations in-radius 1.75 with [ shape != "residence" ]
       ]
       setup-citizens residences the-area
-      if police-interaction = "cpo" [
-        ask n-of cpo-numerousness  community-patches [
-          sprout-cpos 1 [
-            set shape "flag"
-            set color red
-          ]
-        ]
-      ]
-      set ci ci + 1
+      if police-interaction = "cpo" [ setup-cpos community-patches ]
     ]
   ]
+end
+
+to setup-cpos [ the-patches ]
+ask n-of cpo-numerousness the-patches [
+  sprout-cpos 1 [
+    set shape "flag"
+    set color red
+  ]
+]
 end
 
 to setup-locations [ target-patches the-area ]
@@ -471,20 +461,20 @@ end
 to study
 end
 
-to police-interact
-  if police-interaction = "police" or police-interaction = "cpo" [
+to police-interact ; citizen procedure
+  if police-interaction = "police" [
     if police-density > (random-float 1) [
       ask one-of police [
-       let result? talk-to (turtle-set myself) (one-of topics with [topic-name = "Institutional distrust"])
+        let result? talk-to (turtle-set myself) (one-of topics with [topic-name = "Institutional distrust"])
       ]
     ]
-    if police-interaction = "cpo" [
-      ask cpos-here with [ number-of-interactions <= 4 ][
-        if (random-float 1) < 0.9 [
-          show "wow"
-          let result? talk-to myself topic-by-name "Institutional distrust"
-          set number-of-interactions number-of-interactions + 1
-        ]
+  ]
+  ; this would be faster if initiated by the cpos. But let's leave it like this for now.
+  if police-interaction = "cpo" [
+    ask cpos-here with [ number-of-interactions <= 4 ][
+      if (random-float 1) < 0.9 [
+        let result? talk-to turtle-set myself topic-by-name "Institutional distrust"
+        set number-of-interactions number-of-interactions + 1
       ]
     ]
   ]
@@ -1076,7 +1066,7 @@ CHOOSER
 cpo-numerousness
 cpo-numerousness
 1 2
-1
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
