@@ -11,14 +11,13 @@ globals [
 ]
 
 patches-own [
-  community-index
+  area-id
 ]
 
 breed [ locations location ]
 
 breed [ citizens citizen ]
 citizens-own [
-  area
   residence
   birth-year
   recruited?
@@ -63,6 +62,7 @@ breed [ police the-police ]
 breed [ cpos cpo ]
 cpos-own [
   number-of-interactions
+  area
 ]
 
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
@@ -101,20 +101,23 @@ to setup-police
   create-police 1
   ask one-of police [
     let police-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
-    ask police-topic-link [set value police-distrust-effect]
+    ask police-topic-link [ set value police-distrust-effect ]
   ]
   if any? cpos [
     ask cpos [
       let cpo-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
-      ask cpo-topic-link [set value -0.75]
+      ask cpo-topic-link [ set value -1 ]
     ]
   ]
 end
 
-to go-init-police
+to move-police
   if any? cpos [
     ask cpos [
       set number-of-interactions 0
+      let best-patches patches with [ count citizens-here >= 4 and area-id = [ area of myself] ]
+      if any best-patches [ move-to one-of best-patches ]
+
       let citizens-to-check citizens-on neighbors
       ifelse any? citizens-to-check [
         let citizen-to-check one-of citizens-to-check
@@ -131,7 +134,7 @@ to go-init-police
 end
 
 to go
-  go-init-police
+  move-police
   ask citizens [
     police-interact
     let new-activity one-of activity-link-neighbors with [
@@ -476,10 +479,10 @@ to police-interact
       ]
     ]
     if police-interaction = "cpo" [
-      let the-citizen self
-      ask cpos with [ number-of-interactions <= 4 and (distance the-citizen) < 1][
+      ask cpos-here with [ number-of-interactions <= 4 ][
         if (random-float 1) < 0.9 [
-          let result? talk-to (turtle-set the-citizen) (one-of topics with [topic-name = "Institutional distrust"])
+          show "wow"
+          let result? talk-to myself topic-by-name "Institutional distrust"
           set number-of-interactions number-of-interactions + 1
         ]
       ]
@@ -1033,7 +1036,7 @@ CHOOSER
 police-interaction
 police-interaction
 "police" "cpo" "no police"
-0
+1
 
 SLIDER
 15
@@ -1073,7 +1076,7 @@ CHOOSER
 cpo-numerousness
 cpo-numerousness
 1 2
-0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
