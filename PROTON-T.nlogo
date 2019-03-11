@@ -101,7 +101,7 @@ to setup-police
   create-police 1
   ask one-of police [
     let police-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
-    ask police-topic-link [set value police-interaction-quality * -1]
+    ask police-topic-link [set value police-distrust-effect]
   ]
   if any? cpos [
     ask cpos [
@@ -250,7 +250,7 @@ to setup-communities
       ]
       setup-citizens residences the-area
       if police-interaction = "cpo" [
-        ask n-of cpo-density community-patches [
+        ask n-of cpo-numerousness  community-patches [
           sprout-cpos 1 [
             set shape "flag"
             set color red
@@ -477,7 +477,7 @@ to police-interact
     ]
     if police-interaction = "cpo" [
       let the-citizen self
-      ask cpos with [ number-of-interactions <= 4 and (distance the-citizen) < 3][
+      ask cpos with [ number-of-interactions <= 4 and (distance the-citizen) < 1][
         if (random-float 1) < 0.9 [
           let result? talk-to (turtle-set the-citizen) (one-of topics with [topic-name = "Institutional distrust"])
           set number-of-interactions number-of-interactions + 1
@@ -1055,8 +1055,8 @@ SLIDER
 795
 285
 828
-police-interaction-quality
-police-interaction-quality
+police-distrust-effect
+police-distrust-effect
 -1
 1
 -0.25
@@ -1070,8 +1070,8 @@ CHOOSER
 750
 285
 795
-cpo-density
-cpo-density
+cpo-numerousness
+cpo-numerousness
 1 2
 0
 
