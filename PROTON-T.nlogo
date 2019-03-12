@@ -12,6 +12,10 @@ globals [
   migrant-muslims-ratio
 ]
 
+patches-own [
+  area-id
+]
+
 breed [ locations location ]
 
 breed [ citizens citizen ]
@@ -58,6 +62,11 @@ breed [ websites website ]
 
 breed [ police the-police ]
 
+breed [ cpos cpo ]
+cpos-own [
+  number-of-interactions
+]
+
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
 activity-links-own [ value ]                         ; value of activity for the citizen
 
@@ -76,6 +85,8 @@ to setup
   set-default-shape citizens "person"
   setup-police;
   setup-communities-citizens ; citizens are created and moved to their home
+  setup-communities ; citizens are moved at their home
+  setup-police;
   setup-websites
   setup-opinions
   make-special-citizens ; extreme opinions as needed
@@ -95,11 +106,31 @@ to setup-police
   create-police 1
   ask one-of police [
     let police-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
-    ask police-topic-link [set value police-interaction-quality]
+    ask police-topic-link [ set value police-distrust-effect ]
+  ]
+  if any? cpos [
+    ask cpos [
+      let cpo-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
+      ask cpo-topic-link [ set value -1 ]
+    ]
+  ]
+end
+
+to move-cpos
+  ask cpos [
+    set number-of-interactions 0
+    let best-patches patches with [ count citizens-here >= 4 and area-id =
+      [ area-id ] of [ patch-here ] of myself ]
+    if-else any? best-patches [
+      move-to one-of best-patches
+    ] [
+      move-to one-of patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself]
+    ]
   ]
 end
 
 to go
+  if any? cpos [ move-cpos ]
   ask citizens [
     police-interact
     let new-activity one-of activity-link-neighbors with [
@@ -212,8 +243,8 @@ to setup-communities-citizens
         floor (pycor / community-side-length) = col
       ]
       let c ifelse-value (row mod 2 = col mod 2) [ 7.4 ] [ 9.4 ]
-            ask community-patches [
-        ;set my-area area
+      ask community-patches [
+        set area-id the-area
         set pcolor c + random-float 0.5
       ]
       setup-locations community-patches the-area
@@ -221,8 +252,18 @@ to setup-communities-citizens
         not any? locations in-radius 1.75 with [ shape != "residence" ]
       ]
       setup-citizens residences the-area
+      if police-interaction = "cpo" [ setup-cpos community-patches ]
     ]
   ]
+end
+
+to setup-cpos [ the-patches ]
+ask n-of cpo-numerousness the-patches [
+  sprout-cpos 1 [
+    set shape "flag"
+    set color red
+  ]
+]
 end
 
 to setup-locations [ target-patches the-area ]
@@ -427,11 +468,20 @@ end
 to study
 end
 
-to police-interact
+to police-interact ; citizen procedure
   if police-interaction = "police" [
     if police-density > (random-float 1) [
       ask one-of police [
-       let result? talk-to (turtle-set myself) (one-of topics with [topic-name = "Institutional distrust"])
+        let result? talk-to (turtle-set myself) (one-of topics with [topic-name = "Institutional distrust"])
+      ]
+    ]
+  ]
+  ; this would be faster if initiated by the cpos. But let's leave it like this for now.
+  if police-interaction = "cpo" [
+    ask cpos-here with [ number-of-interactions <= 4 ][
+      if (random-float 1) < 0.9 [
+        let result? talk-to turtle-set myself topic-by-name "Institutional distrust"
+        set number-of-interactions number-of-interactions + 1
       ]
     ]
   ]
@@ -994,38 +1044,48 @@ CHOOSER
 750
 police-interaction
 police-interaction
-"police" "no police"
+"police" "cpo" "no police"
 1
 
 SLIDER
 15
 750
-285
+155
 783
 police-density
 police-density
 0
+1
 0.1
-0.01
-0.01
+0.05
 1
 NIL
 HORIZONTAL
 
 SLIDER
 15
-785
+795
 285
-818
-police-interaction-quality
-police-interaction-quality
+828
+police-distrust-effect
+police-distrust-effect
 -1
 1
-0.5
+-0.25
 0.05
 1
 NIL
 HORIZONTAL
+
+CHOOSER
+155
+750
+285
+795
+cpo-numerousness
+cpo-numerousness
+1 2
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
