@@ -672,9 +672,9 @@ SLIDER
 98
 total-citizens
 total-citizens
-50
+100
 2000
-400.0
+550.0
 10
 1
 citizens
@@ -777,7 +777,7 @@ activity-radius
 activity-radius
 1
 100
-10.0
+9.0
 1
 1
 patches
