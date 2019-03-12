@@ -123,7 +123,8 @@ to move-cpos
     if-else any? best-patches [
       move-to one-of best-patches
     ] [
-      move-to one-of patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself]
+      set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself]
+      if any? best-patches [ move-to one-of best-patches ] ; if none, can as well stay there
     ]
   ]
 end
