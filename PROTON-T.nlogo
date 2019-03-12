@@ -85,7 +85,6 @@ to setup
   set-default-shape citizens "person"
   setup-police;
   setup-communities-citizens ; citizens are created and moved to their home
-  setup-communities ; citizens are moved at their home
   setup-police;
   setup-websites
   setup-opinions
@@ -724,7 +723,7 @@ total-citizens
 total-citizens
 100
 2000
-550.0
+400.0
 10
 1
 citizens
@@ -827,7 +826,7 @@ activity-radius
 activity-radius
 1
 100
-9.0
+11.0
 1
 1
 patches
@@ -984,7 +983,7 @@ activity-value-update
 activity-value-update
 0
 1
-0.1
+0.5
 0.05
 1
 NIL
@@ -1045,7 +1044,7 @@ CHOOSER
 police-interaction
 police-interaction
 "police" "cpo" "no police"
-1
+2
 
 SLIDER
 15
@@ -1056,7 +1055,7 @@ police-density
 police-density
 0
 1
-0.1
+0.05
 0.05
 1
 NIL
