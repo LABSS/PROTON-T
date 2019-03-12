@@ -1,0 +1,23 @@
+name, description, group
+"[run number]", run number, id
+"total-citizens", number of citizens, init
+"initial-radicalized", number of initial radicalized agents, init
+"police-interaction", switch to turn the interaction with normal police on or off, intervention
+"police-density", density of the above, intervention
+"police-interaction-quality", level of the topic that is made worse by police interaction (worse case, -1), intervention
+"initial-radicalized", number of radicalized persons at simulation onset, init
+"alpha", tolerance parameter for opinion dynamics, init
+"radicalization-threshold", radicalization threshold, init
+"activity-radius", spatial range of agents for activity selection, init
+"work-socialization-probability", probability of having an exchange while working, init
+"activity-value-update", rate of change of activity preference as the result of successful/unsuccessful interaction, init
+"scenario", the scenario we calibrate against, init
+"website-access-probability", probability of website access, init
+"community-side-length", side length of a community, init
+"[step]", step of simulation (one hour by default), id
+"count citizens with [ recruited? ]", number of recruited citizens, result-base
+"count citizens with [ risk > radicalization-threshold ]", number of citizens at risk of recruitment, result-base
+"mean [ age ] of citizens", result-base
+"mean [ risk ] of citizens", result-base
+"mean [ propensity ] of citizens", result-base
+"aggregate-citizens-opinions", result-stats

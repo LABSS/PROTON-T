@@ -3,7 +3,6 @@ library(readxl)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-maxcol<-37+4*4
 maxcol<-217
 
 df <-
@@ -38,13 +37,67 @@ names(df1)<-df0[3,]
 
 df3 <-   df1 %>%
   gather(class, var, -area) %>%
-  separate(class, into = c("a", "b", "age","religion"), sep = "___") %>%
+  separate(class, into = c("migrant?", "male?", "age","muslim?"), sep = "___") %>%
+  separate(area, into = c("area_code", "area_name"), sep = 5) %>%
   mutate(
-    age = case_when(
+    area_code = as.numeric(area_code %>% map(
+      function(x){substr(x,4,4)}
+      # ~ substr(.,4,4)
+    )),
+    value = as.numeric(
+      case_when(
+      var == "-" ~ "0",
+      TRUE ~ var)
+    ),
+    age2 = case_when(
       age == "unter 1 Jahr" ~ "0 bis unter 1",
       age == "80 und mehr" ~ "80 bis unter 120",
       TRUE ~ age
-    )
+    ),
+    "migrant?" = recode( `migrant?` ,
+        "Ausländer" = "true", 
+        "Deutsche mit Migrationshintergrund" = "true",
+        "Deutsche ohne Migrationshintergrund" = "false" 
+      ),
+    "male?" = recode( `male?` ,
+        "männlich" = "true", 
+        "weiblich" = "false" 
+      ), 
+    "muslim?" = recode( `muslim?` ,
+        "Evangelische Kirchen"       = "false",
+        "Römisch-katholische Kirche" = "false",
+        "ohne Angabe"                = "true", 
+        "sonstige/ohne Angabe"       = "true"
+      )     
   ) %>%
-  separate(age, into = c("age_from", "age_to"), sep = " bis unter ") %>%
-  write_csv(file.path("data", "neukolln-by-citizenship-migrantbackground-gender-age-religion.csv"))  
+  select(-age,-var) %>%
+  group_by(area_code, area_name, `migrant?`, `male?`, `muslim?`, age2) %>% 
+  summarise_all(funs(sum)) %>%
+  separate(age2, into = c("age_from", "age_to"), sep = " bis unter ") %>%
+  mutate(
+    duration = as.numeric(age_to) - as.numeric(age_from),
+    age_to = as.numeric(age_to) - 1
+  ) %>%
+  unite(age,  c("age_from", "age_to")) %>%
+  mutate(
+    age = age %>%
+      str_extract_all("\\d+") %>%
+      map(as.numeric) %>%
+      map((lift(seq)))  
+  )
+
+df4 <- df3 %>%
+  ungroup() %>%
+  mutate(value = as.numeric(value) / duration) %>%
+  unnest(age) %>%
+  filter(age>15)
+
+df4 %>%
+  select(area_code, "migrant?","male?","muslim?", age,value) %>%
+  write_csv(file.path("data", "neukolln-by-citizenship-migrantbackground-gender-religion-age.csv"))  
+
+df4 %>%
+  select(area_code, area_name, value) %>%
+  group_by(area_code, area_name)      %>%
+  summarize(sum(value))               %>%
+  write_csv(file.path("data", "neukolln-totals.csv"))  

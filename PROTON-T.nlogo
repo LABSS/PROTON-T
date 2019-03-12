@@ -5,8 +5,10 @@ extensions [ table profiler rnd csv ]
 globals [
   local           ; table with values for setup
   areas
+  area-names
+  area-population
   population
-  temp
+  population-details
   migrant-muslims-ratio
 ]
 
@@ -76,11 +78,13 @@ topic-links-own [ value ]                            ; opinion dynamics score fr
 
 to setup
   clear-all
-  load-neighborhoods
+  load-totals
+  setup-world  ; warning: this kills all turtles and links in case of resize
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
-  setup-communities ; citizens are moved at their home
+  setup-police;
+  setup-communities-citizens ; citizens are created and moved to their home
   setup-police;
   setup-websites
   setup-opinions
@@ -119,7 +123,8 @@ to move-cpos
     if-else any? best-patches [
       move-to one-of best-patches
     ] [
-      move-to one-of patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself]
+      set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself]
+      if any? best-patches [ move-to one-of best-patches ] ; if none, can as well stay there
     ]
   ]
 end
@@ -159,6 +164,9 @@ to go
     set countdown countdown - 1
   ]
   tick
+  if behaviorspace-experiment-name != "" [
+    show (word behaviorspace-run-number "." ticks)
+  ]
 end
 
 to start-activity [ new-activity ] ; citizen procedure
@@ -218,12 +226,15 @@ to-report clipped-random-normal [ the-mean the-std-dev the-min the-max ]
   report result
 end
 
-to setup-communities
-  let n sqrt length areas
-  let world-side community-side-length * n
+to setup-world
+  let world-side community-side-length * sqrt length areas
   resize-world 0 (world-side - 1) 0 (world-side - 1)
   set-patch-size floor (800 / world-side)
   let colors [7.4 9.4]; map [ c -> c - 4 ] [turquoise cyan]
+end
+
+to setup-communities-citizens
+  let n sqrt length areas
   foreach range n [ row ->
     foreach range n [ col ->
       let the-area item (col + row * n) areas
@@ -298,14 +309,10 @@ to-report setup-residences [ target-patches ]
 end
 
 to setup-citizens [ residences the-area ]
-  create-citizens table:get population the-area [
-    set attributes table:make
-    foreach attribute-definitions the-area [ def ->
-      table:put attributes first def runresult last def
-    ]
+  create-citizens table:get area-population the-area [
+    set attributes make-attributes-set the-area ; sets also age
     set area             the-area
     set color            lput 150 one-of teals
-    set birth-year       random-birth-year
     set current-task     nobody ; used to indicate "none"
     set current-activity nobody
     set countdown        0
@@ -430,11 +437,11 @@ to-report intervals [ n the-range ]
   report n-values n [ i -> i * (the-range / n) ]
 end
 
-to-report ticks-per-day  report 24                           end
-to-report ticks-per-year report ticks-per-day * 365          end
-to-report current-year   report floor ticks / ticks-per-year end
-to-report current-time   report ticks mod ticks-per-day      end
-to-report age            report current-year - birth-year    end
+to-report ticks-per-day  report 24                             end
+to-report ticks-per-year report ticks-per-day * 365            end
+to-report current-year   report floor (ticks / ticks-per-year) end
+to-report current-time   report ticks mod ticks-per-day        end
+to-report age            report current-year - birth-year      end
 ; days are already there in the rest of the division by seven. I'd keep them that way. It won't be done too often; if it does, it should be cached;
 ; a routine could set all the reporters at the beginning of the step, making them into globals. To do in the optimization phase.
 ; so we could say 0 = Sunday, 1 = Monday, .. , 6 = Friday, 7 = Saturday.
@@ -614,6 +621,12 @@ to-report citizens-opinions
    ] of citizens
 end
 
+; called by behaviorspace
+to-report aggregate-citizens-opinions
+  report
+    map [ i -> mean [ opinion-on-topic i ] of citizens] topics-list
+end
+
 ; called by the test subsystem, *TJobsTests.scala
 to-report mean-opinion-on-location [ the-topic-name location-name ]
       report  mean [ value ] of link-set [
@@ -634,6 +647,12 @@ end
 to-report group-by-first-item [ csv-data ]
   let table table:group-items csv-data first ; group the rows by their first item
   report table-map table [ rows -> map but-first rows ] ; remove the first item of each row
+end
+
+to-report group-by-5-keys [ csv-data ]
+  let table table:group-items csv-data [ line -> sublist line 0 5 ]; group the rows by lists with initial 5 items
+  ;report table-map table [ rows -> map [ i -> last i ] rows ]
+  report table-map table [ rows -> map last rows ]
 end
 
 to-report table-map [ tbl fn ]
@@ -703,7 +722,7 @@ SLIDER
 98
 total-citizens
 total-citizens
-50
+100
 2000
 400.0
 10
@@ -729,7 +748,7 @@ SLIDER
 138
 community-side-length
 community-side-length
-0
+20
 100
 30.0
 1
@@ -808,7 +827,7 @@ activity-radius
 activity-radius
 1
 100
-10.0
+11.0
 1
 1
 patches
@@ -851,7 +870,7 @@ alpha
 alpha
 0
 1
-1.0
+0.2
 0.1
 1
 NIL
@@ -965,7 +984,7 @@ activity-value-update
 activity-value-update
 0
 1
-0.1
+0.5
 0.05
 1
 NIL
@@ -1026,7 +1045,7 @@ CHOOSER
 police-interaction
 police-interaction
 "police" "cpo" "no police"
-1
+2
 
 SLIDER
 15
@@ -1037,7 +1056,7 @@ police-density
 police-density
 0
 1
-0.1
+0.05
 0.05
 1
 NIL
@@ -1658,32 +1677,39 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="testing-output-fat" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="test-compactsave" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
-    <timeLimit steps="4"/>
-    <metric>weekday</metric>
-    <metric>(word (ticks mod 24) ":00")</metric>
+    <final>show "Time elapsed:"
+show timer</final>
+    <timeLimit steps="1000"/>
     <metric>count citizens with [ recruited? ]</metric>
     <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
-    <metric>[ age ] of citizens</metric>
-    <metric>[ risk ] of citizens</metric>
-    <metric>citizens-opinions</metric>
-    <metric>citizens-occupations-hist</metric>
-    <enumeratedValueSet variable="citizens-per-community">
-      <value value="50"/>
+    <metric>mean [ propensity ] of citizens</metric>
+    <metric>mean [ risk ] of citizens</metric>
+    <metric>count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]</metric>
+    <metric>aggregate-citizens-opinions</metric>
+    <enumeratedValueSet variable="total-citizens">
+      <value value="10000"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-interaction">
+      <value value="&quot;no police&quot;"/>
+      <value value="&quot;police&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="initial-radicalized">
       <value value="10"/>
     </enumeratedValueSet>
+    <enumeratedValueSet variable="police-density">
+      <value value="0.01"/>
+    </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
-      <value value="0.8"/>
+      <value value="0.2"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="radicalization-threshold">
       <value value="0.9"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="num-communities">
-      <value value="4"/>
+    <enumeratedValueSet variable="police-interaction-quality">
+      <value value="0.5"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-radius">
       <value value="10"/>
@@ -1693,49 +1719,15 @@ NetLogo 6.0.4
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-value-update">
       <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="scenario">
+      <value value="&quot;neukolln&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="website-access-probability">
       <value value="0.1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="community-side-length">
       <value value="40"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="testing-output" repetitions="3" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <timeLimit steps="100"/>
-    <metric>count citizens with [ recruited? ]</metric>
-    <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
-    <enumeratedValueSet variable="citizens-per-community">
-      <value value="100"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-radicalized">
-      <value value="10"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="alpha">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="radicalization-threshold">
-      <value value="0.9"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="num-communities">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="activity-radius">
-      <value value="10"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="work-socialization-probability">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="activity-value-update">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="website-access-probability">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community-side-length">
-      <value value="30"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
