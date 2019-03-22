@@ -85,7 +85,6 @@ to setup
   set-default-shape citizens "person"
   setup-police;
   setup-communities-citizens ; citizens are created and moved to their home
-  setup-police;
   setup-websites
   setup-opinions
   make-special-citizens ; extreme opinions as needed
@@ -1045,7 +1044,7 @@ CHOOSER
 police-interaction
 police-interaction
 "police" "cpo" "no police"
-2
+0
 
 SLIDER
 15
@@ -1056,7 +1055,7 @@ police-density
 police-density
 0
 1
-0.05
+0.1
 0.05
 1
 NIL
