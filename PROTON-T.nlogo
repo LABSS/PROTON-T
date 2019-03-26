@@ -85,7 +85,6 @@ to setup
   set-default-shape citizens "person"
   setup-police;
   setup-communities-citizens ; citizens are created and moved to their home
-  setup-police;
   setup-websites
   setup-opinions
   make-special-citizens ; extreme opinions as needed
