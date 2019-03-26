@@ -1044,7 +1044,7 @@ CHOOSER
 police-interaction
 police-interaction
 "police" "cpo" "no police"
-0
+2
 
 SLIDER
 15
@@ -1055,7 +1055,7 @@ police-density
 police-density
 0
 1
-0.1
+0.05
 0.05
 1
 NIL
