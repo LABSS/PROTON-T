@@ -8,7 +8,7 @@ show [ location-type ] of activity-types with [ is-job? ]
 [ list who count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] of citizens
 [ count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] of citizens
 ; people without a job
-citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ]
+citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ]
 
 ; community centers
 
@@ -37,7 +37,7 @@ citizens with [ any? activity-link-neighbors with [ [ is-job? ]  of my-activity-
 reduce sentence [ (list location-type "job" count citizens with [ [ my-activity-type ] of current-activity = myself ]) ] of activity-types with [ is-job? ] 
 
 ; what are people doing?
-show [location-type] of [ my-activity-type ] of [current-activity ] of citizen 1927 
+show [ location-type ] of [ my-activity-type ] of [current-activity ] of citizen 1927 
 ; note that all citizens have a current activity because nobodies are eliminated right into the go.
 ; the following gives you the community workers IF it is work time
 show citizens with [ [ is-job? and location-type = "community center" ] of [ my-activity-type ] of current-activity ] 

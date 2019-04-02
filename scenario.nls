@@ -72,23 +72,31 @@ to-report mandatory-activity-definition-list
   report (list
     ;     start-time duration location-type task         criteria
     (list          0        8 "residence"   [ -> sleep ] [ -> true ] )
-    ;(list          8        8 "school"      [ -> study ] [ -> age >= 5 and age <= 18 ])
   )
 end
 
 ; TODO double check
 to-report job-definition-list
   report (list
-    ;     num-jobs start-time duration location-type task          criteria                  priority
+    ;     num-jobs start-time duration location-type task          criteria             priority 
+    ;  inizialization
     (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" ]                                                                1
+      [ -> ]
     )
     (list        1          8       16 "radical mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" and opinion-on-topic "Institutional distrust" = 1 ] 0
-    )    (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
+    )    
+    (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
       opinion-on-topic "Institutional distrust" = -1]                                   0
     )     
     (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]             2)
+    ; recruiter
+    (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
+      get "muslim?" and get "male?" and opinion-on-topic "Institutional distrust" = 1
+     and opinion-on-topic "Non integration" = 1
+     and opinion-on-topic "Collective relative deprivation" = 1 ] 0
+    ) 
   )
 end
 

@@ -42,6 +42,7 @@ activity-types-own [
   criteria
   task
   priority
+  make-special
 ]
 
 breed [ activities activity ]
@@ -87,7 +88,7 @@ to setup
   setup-communities-citizens ; citizens are created and moved to their home
   setup-websites
   setup-opinions
-  make-special-citizens ; extreme opinions as needed
+  ;make-special-citizens ; extreme opinions as needed
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
@@ -334,6 +335,7 @@ to setup-activity-types
       set task          item 4 def
       set criteria      item 5 def
       set priority      item 6 def
+      set make-special  item 7 def
     ]
   ]
   foreach mandatory-activity-definition-list [ def ->
@@ -372,7 +374,9 @@ end
 to setup-jobs
   foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type ->
     let the-criteria [ criteria ] of the-type
-    let candidates citizens with [ runresult the-criteria ]
+    let n [ max-agents ] of my-activity-type
+    let candidates citizens with [ runresult the-criteria and schedule-free start-time duration ]
+    if count candidates >= n [
     ask activities with [ my-activity-type = the-type ] [
       let free-candidates candidates with [
         not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead ; doesn't seem to work
@@ -383,6 +387,10 @@ to setup-jobs
       ]
     ]
   ]
+end
+
+to report schedule-free [ start-time duration ]
+  report true
 end
 
 to setup-mandatory-activities ; citizen procedure
@@ -723,7 +731,7 @@ total-citizens
 total-citizens
 100
 2000
-400.0
+1580.0
 10
 1
 citizens
