@@ -72,24 +72,71 @@ to-report mandatory-activity-definition-list
   report (list
     ;     start-time duration location-type task         criteria
     (list          0        8 "residence"   [ -> sleep ] [ -> true ] )
-    ;(list          8        8 "school"      [ -> study ] [ -> age >= 5 and age <= 18 ])
   )
 end
 
 ; TODO double check
 to-report job-definition-list
   report (list
-    ;     num-jobs start-time duration location-type task          criteria                  priority
+    ;     num-jobs start-time duration location-type task          criteria             priority 
+    ;  inizialization
     (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" ]                                                                1
+      nobody
     )
     (list        1          8       16 "radical mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" and opinion-on-topic "Institutional distrust" = 1 ] 0
-    )    (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
-      opinion-on-topic "Institutional distrust" = -1]                                   0
+      nobody
+    )    
+    (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
+      opinion-on-topic "Institutional distrust" = -1 ]                                   0
+      nobody
     )     
-    (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]             2)
+    (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]             2
+      nobody
+    )
+    ; recruiter
+    (list        5          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
+      get "muslim?" and get "male?" and opinion-on-topic "Institutional distrust" = 1
+     and opinion-on-topic "Non integration" = 1
+     and opinion-on-topic "Collective relative deprivation" = 1 ] 0
+      [ the-activity -> 
+        let new-citizens nobody 
+        ask the-activity [ 
+          hatch-citizens [ [ max-agents ] of my-activity-type ] of the-activity [ 
+            set new-citizens (turtle-set new-citizens self )
+            show [ area ] of self
+            setup-citizen locations  with [ shape = "residence" ] in-radius activity-radius [ area-id ] of self   ; could end out residing a different area
+            create-topic-links-to topics [
+              set value 1
+            ] 
+          ]
+          ; [ value ] of out-topic-link-to the-topic = the-value
+          show new-citizens
+        ]
+      ]
+    ) 
   )
+end
+
+to setup-jobs
+  foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type -> 
+    ifelse [ make-special ] of the-type = nobody [
+      ask activities with [ my-activity-type = the-type ] [
+        let candidates citizens with [ runresult [ criteria ] of the-type and schedule-free [ start-time ] of the-type [ duration ] of the-type ]
+        let n min (list (count candidates) ([ max-agents ] of the-type))
+        ; this approach allows citizens to work in areas that are not their residence if they are on a border
+        ; we are assuming people are at their residence
+        ask rnd:weighted-n-of n candidates [ distance myself ^ 2 ] [
+          create-activity-link-to myself
+        ]
+      ]
+    ] [
+      ask activities with [ my-activity-type = the-type ] [
+        (run  [ make-special ] of the-type  self)  
+      ]
+    ]
+  ]
 end
 
 to-report free-time-activity-definition-list

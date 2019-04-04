@@ -42,6 +42,7 @@ activity-types-own [
   criteria
   task
   priority
+  make-special
 ]
 
 breed [ activities activity ]
@@ -83,11 +84,11 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
-  setup-police;
+  setup-police
   setup-communities-citizens ; citizens are created and moved to their home
+  ;make-special-citizens ; extreme opinions as needed
   setup-websites
   setup-opinions
-  make-special-citizens ; extreme opinions as needed
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
@@ -250,8 +251,10 @@ to setup-communities-citizens
       let residences setup-residences community-patches with [
         not any? locations in-radius 1.75 with [ shape != "residence" ]
       ]
-      setup-citizens residences the-area
-      if police-interaction = "cpo" [ setup-cpos community-patches ]
+      create-citizens table:get area-population the-area [
+        setup-citizen residences the-area
+        if police-interaction = "cpo" [ setup-cpos community-patches ]
+      ]
     ]
   ]
 end
@@ -307,8 +310,7 @@ to-report setup-residences [ target-patches ]
   report turtle-set residences
 end
 
-to setup-citizens [ residences the-area ]
-  create-citizens table:get area-population the-area [
+to setup-citizen [ residences the-area ]
     set attributes make-attributes-set the-area ; sets also age
     set area             the-area
     set color            lput 150 one-of teals
@@ -319,7 +321,6 @@ to setup-citizens [ residences the-area ]
     set propensity sum-factors propensity-factors
     set recruited? false
     move-to residence
-  ]
 end
 
 to setup-activity-types
@@ -334,6 +335,7 @@ to setup-activity-types
       set task          item 4 def
       set criteria      item 5 def
       set priority      item 6 def
+      set make-special  item 7 def
     ]
   ]
   foreach mandatory-activity-definition-list [ def ->
@@ -369,20 +371,15 @@ to setup-activity-types
   ]
 end
 
-to setup-jobs
-  foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type ->
-    let the-criteria [ criteria ] of the-type
-    let candidates citizens with [ runresult the-criteria ]
-    ask activities with [ my-activity-type = the-type ] [
-      let free-candidates candidates with [
-        not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead ; doesn't seem to work
-      ]
-      let n min (list (count free-candidates) ([ max-agents ] of my-activity-type))
-      ask rnd:weighted-n-of n free-candidates [ distance myself ^ 2 ] [
-        create-activity-link-to myself
-      ]
-    ]
-  ]
+; setup-jobs
+
+; citizen procedure
+to-report schedule-free [ the-start the-duration ]
+  let the-end the-start + the-duration
+  report ifelse-value all? activity-link-neighbors [
+    [ (start-time <= the-start and start-time + duration <= the-start) or
+      (start-time >= the-end and start-time + duration > the-end) ] of my-activity-type
+  ] [ true ] [ false ]
 end
 
 to setup-mandatory-activities ; citizen procedure
@@ -462,9 +459,6 @@ end
 
 to sleep
   ; do nothing
-end
-
-to study
 end
 
 to police-interact ; citizen procedure
