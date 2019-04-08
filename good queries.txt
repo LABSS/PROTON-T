@@ -16,7 +16,6 @@ my starting and ending times
 ; is hour 6 occupied for citizen 1730? 
 ask citizen 1730 [ show any? activity-link-neighbors with [ [ start-time <= 6 and start-time + duration <= 6 ] of my-activity-type ] ]
 
-
 ; community centers
 
 ; all the related activities.

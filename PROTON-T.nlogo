@@ -89,6 +89,7 @@ to setup
   ;make-special-citizens ; extreme opinions as needed
   setup-websites
   setup-opinions
+  ;make-special-citizens ; extreme opinions as needed
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
@@ -371,7 +372,25 @@ to setup-activity-types
   ]
 end
 
-; setup-jobs
+to setup-jobs
+  foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type ->
+    ifelse [ make-special ] of the-type = nobody [
+      ask activities with [ my-activity-type = the-type ] [
+        let candidates citizens with [ runresult [ criteria ] of the-type and schedule-free [ start-time ] of the-type [ duration ] of the-type ]
+        let n min (list (count candidates) ([ max-agents ] of the-type))
+        ; this approach allows citizens to work in areas that are not their residence if they are on a border
+        ; we are assuming people are at their residence
+        ask rnd:weighted-n-of n candidates [ distance myself ^ 2 ] [
+          create-activity-link-to myself
+        ]
+      ]
+    ] [
+      ask activities with [ my-activity-type = the-type ] [
+        (run  [ make-special ] of the-type  self)
+      ]
+    ]
+  ]
+end
 
 ; citizen procedure
 to-report schedule-free [ the-start the-duration ]
@@ -617,7 +636,7 @@ end
 ; called by behaviorspace
 to-report aggregate-citizens-opinions
   report
-    map [ i -> mean [ opinion-on-topic i ] of citizens] topics-list
+    map [ i  -> mean [ opinion-on-topic i ] of citizens] topics-list
 end
 
 ; called by the test subsystem, *TJobsTests.scala
@@ -717,7 +736,7 @@ total-citizens
 total-citizens
 100
 2000
-400.0
+0.0
 10
 1
 citizens
@@ -743,7 +762,7 @@ community-side-length
 community-side-length
 20
 100
-30.0
+0.0
 1
 1
 patches
@@ -820,7 +839,7 @@ activity-radius
 activity-radius
 1
 100
-11.0
+0.0
 1
 1
 patches
@@ -863,7 +882,7 @@ alpha
 alpha
 0
 1
-0.2
+0.0
 0.1
 1
 NIL
@@ -878,7 +897,7 @@ radicalization-threshold
 radicalization-threshold
 0
 1
-0.9
+0.0
 .1
 1
 NIL
@@ -947,7 +966,7 @@ website-access-probability
 website-access-probability
 0
 1
-0.1
+0.0
 0.05
 1
 NIL
@@ -962,7 +981,7 @@ work-socialization-probability
 work-socialization-probability
 0
 1
-0.1
+0.0
 0.05
 1
 NIL
@@ -977,7 +996,7 @@ activity-value-update
 activity-value-update
 0
 1
-0.5
+0.0
 0.05
 1
 NIL
@@ -1003,7 +1022,7 @@ initial-radicalized
 initial-radicalized
 0
 20
-10.0
+0.0
 1
 1
 NIL
@@ -1049,7 +1068,7 @@ police-density
 police-density
 0
 1
-0.05
+0.0
 0.05
 1
 NIL
@@ -1064,7 +1083,7 @@ police-distrust-effect
 police-distrust-effect
 -1
 1
--0.25
+0.0
 0.05
 1
 NIL
