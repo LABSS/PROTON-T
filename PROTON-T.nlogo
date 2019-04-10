@@ -86,11 +86,10 @@ to setup
   set-default-shape citizens "person"
   setup-police
   setup-communities-citizens ; citizens are created and moved to their home
-  ;make-special-citizens ; extreme opinions as needed
   setup-websites
   setup-opinions
-  ;make-special-citizens ; extreme opinions as needed
   setup-activity-types
+  make-specials
   setup-mandatory-activities
   setup-jobs
   setup-free-time-activities
@@ -101,6 +100,70 @@ to setup
   display
   ; TODO: write some test code to make sure the schedule is consistent.
 end
+
+; assumes citizens are at their residence after setup and assumes nobody has a job yet
+; some specials need to create their own activities
+to make-specials
+  make-radical-imams
+  make-community-workers
+  make-recruiters
+end
+
+;------------------------------------------------------------------------------------------------------------------------------------------------------------
+to make-radical-imams
+  ask locations with [ shape = "radical mosque" ] [ set color red ]
+  ask turtle-set [ activity-link-neighbors ] of activities with [
+    [ is-job? and location-type = "radical mosque" ] of my-activity-type
+  ] [
+    ask out-topic-link-to topic-by-name "Institutional distrust" [
+      set value 1
+    ]
+    show who
+  ]
+end
+
+to make-community-workers
+  ask turtle-set [ activity-link-neighbors ] of activities with [
+    [ is-job? and location-type = "community center" ] of my-activity-type
+  ] [
+    ask out-topic-link-to topic-by-name "Institutional distrust" [
+      set value -1
+    ]
+  ]
+end
+
+to make-recruiters
+  let be-positive min [ risk ] of citizens - 1E-15  ; overcoming small approximation errors
+  if be-positive > 0 [ set be-positive 0 ]
+  ask rnd:weighted-n-of initial-radicalized citizens [ risk - be-positive ] [set recruited? true]
+  let t nobody
+  create-activity-types 1 [
+    set is-job?       false
+    set is-mandatory? false
+    set start-time    8
+    set duration      20
+    set location-type "public space"
+    set task          "[ -> recruit ]"
+    set criteria      [ -> false ]
+    set t self
+  ]
+  ask n-of 5 locations with [ shape = "public space" ] [
+    hatch-activities 1 [
+      set my-activity-type t
+      ask one-of citizens in-radius activity-radius with [
+        age >= 21 and
+        get "muslim?" and
+        get "male?"
+      ] [
+        create-activity-link-to myself
+        ask out-topic-link-to topic-by-name "Institutional distrust" [
+          set value -1
+        ]
+      ]
+    ]
+  ]
+end
+
 
 to setup-police
   create-police 1
@@ -325,6 +388,7 @@ to setup-citizen [ residences the-area ]
 end
 
 to setup-activity-types
+  ; ok we keep the specials ALSO in here so we will have the activity in place at the location.
   foreach job-definition-list [ def ->
     create-activity-types 1 [
       set is-job?       true
@@ -336,7 +400,6 @@ to setup-activity-types
       set task          item 4 def
       set criteria      item 5 def
       set priority      item 6 def
-      set make-special  item 7 def
     ]
   ]
   foreach mandatory-activity-definition-list [ def ->
@@ -374,19 +437,13 @@ end
 
 to setup-jobs
   foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type ->
-    ifelse [ make-special ] of the-type = nobody [
-      ask activities with [ my-activity-type = the-type ] [
-        let candidates citizens with [ runresult [ criteria ] of the-type and schedule-free [ start-time ] of the-type [ duration ] of the-type ]
-        let n min (list (count candidates) ([ max-agents ] of the-type))
-        ; this approach allows citizens to work in areas that are not their residence if they are on a border
-        ; we are assuming people are at their residence
-        ask rnd:weighted-n-of n candidates [ distance myself ^ 2 ] [
-          create-activity-link-to myself
-        ]
-      ]
-    ] [
-      ask activities with [ my-activity-type = the-type ] [
-        (run  [ make-special ] of the-type  self)
+    ask activities with [ my-activity-type = the-type ] [
+      let candidates citizens with [ runresult [ criteria ] of the-type and schedule-free [ start-time ] of the-type [ duration ] of the-type ]
+      let n min (list (count candidates) ([ max-agents ] of the-type))
+      ; this approach allows citizens to work in areas that are not their residence if they are on a border
+      ; we are assuming people are at their residence
+      ask rnd:weighted-n-of n candidates [ distance myself ^ 2 ] [
+        create-activity-link-to myself
       ]
     ]
   ]
@@ -416,6 +473,8 @@ to setup-mandatory-activities ; citizen procedure
     ]
   ]
 end
+
+
 
 to setup-free-time-activities
   ask citizens [
@@ -595,7 +654,7 @@ to check-recruitment ; citizen procedure
     ]
   ]
 end
-j
+
 to-report get [ attribute-name ]
   report table:get attributes attribute-name
 end

@@ -103,6 +103,9 @@ class TJobsTests extends TModelSuite {
         all? citizens with [ any? locations-here with [ shape = "workplace" ] ] [ 
           [ [ location-type ] of my-activity-type ] of current-activity = "workplace" ]
         """) shouldBe true  
+      ws.rpt("""
+        max [length [ shape ] of locations-here  ] of activities = 1
+        """) shouldBe true        
     }
   }
 }
