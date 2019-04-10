@@ -29,6 +29,7 @@ citizens-own [
   countdown
   propensity
   current-activity
+  hours-with-recruiter
 ]
 
 breed [ activity-types activity-type ]
@@ -384,6 +385,7 @@ to setup-citizen [ residences the-area ]
     set residence one-of residences
     set propensity sum-factors propensity-factors
     set recruited? false
+    set hours-with-recruiter 0
     move-to residence
 end
 
@@ -473,8 +475,6 @@ to setup-mandatory-activities ; citizen procedure
     ]
   ]
 end
-
-
 
 to setup-free-time-activities
   ask citizens [
@@ -700,13 +700,17 @@ end
 
 ; called by the test subsystem, *TJobsTests.scala
 to-report mean-opinion-on-location [ the-topic-name location-name ]
-      report  mean [ value ] of link-set [
-        out-topic-link-to topic-by-name the-topic-name
-      ] of (citizens-on locations with [ shape = location-name ]) with [
-        [ not (is-job? and location-type = location-name) ] of [ my-activity-type ] of current-activity
-      ]
+  report  mean [ value ] of link-set [
+    out-topic-link-to topic-by-name the-topic-name
+  ] of (citizens-on locations with [ shape = location-name ]) with [
+    [ not (is-job? and location-type = location-name) ] of [ my-activity-type ] of current-activity
+  ]
 end
 
+; citizen reporter
+to-report scent-for-recruiter
+  report sum map  opinion-on-topic topics-list + hours-with-recruiter / 100
+end
 to-report employed?  ; citizen reporter
   report any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ]
 end
