@@ -76,6 +76,7 @@ to-report mandatory-activity-definition-list
 end
 
 ; TODO double check
+; maybe I should invert the game completely. Pepl
 to-report job-definition-list
   report (list
     ;     num-jobs start-time duration location-type task          criteria             priority 
@@ -96,7 +97,7 @@ to-report job-definition-list
       nobody
     )
     ; recruiter
-    (list        5          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
+    (list        1          8       23 "mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" and opinion-on-topic "Institutional distrust" = 1
      and opinion-on-topic "Non integration" = 1
      and opinion-on-topic "Collective relative deprivation" = 1 ] 0
@@ -109,7 +110,8 @@ to-report job-definition-list
             setup-citizen locations  with [ shape = "residence" ] in-radius activity-radius [ area-id ] of self   ; could end out residing a different area
             create-topic-links-to topics [
               set value 1
-            ] 
+            ]
+            
           ]
           ; [ value ] of out-topic-link-to the-topic = the-value
           show new-citizens
@@ -117,26 +119,6 @@ to-report job-definition-list
       ]
     ) 
   )
-end
-
-to setup-jobs
-  foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type -> 
-    ifelse [ make-special ] of the-type = nobody [
-      ask activities with [ my-activity-type = the-type ] [
-        let candidates citizens with [ runresult [ criteria ] of the-type and schedule-free [ start-time ] of the-type [ duration ] of the-type ]
-        let n min (list (count candidates) ([ max-agents ] of the-type))
-        ; this approach allows citizens to work in areas that are not their residence if they are on a border
-        ; we are assuming people are at their residence
-        ask rnd:weighted-n-of n candidates [ distance myself ^ 2 ] [
-          create-activity-link-to myself
-        ]
-      ]
-    ] [
-      ask activities with [ my-activity-type = the-type ] [
-        (run  [ make-special ] of the-type  self)  
-      ]
-    ]
-  ]
 end
 
 to-report free-time-activity-definition-list

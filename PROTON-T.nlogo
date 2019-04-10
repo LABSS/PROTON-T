@@ -1,4 +1,4 @@
-__includes [ "scenario.nls" ]
+ __includes [ "scenario.nls" ]
 
 extensions [ table profiler rnd csv ]
 
@@ -595,7 +595,7 @@ to check-recruitment ; citizen procedure
     ]
   ]
 end
-
+j
 to-report get [ attribute-name ]
   report table:get attributes attribute-name
 end
@@ -736,7 +736,7 @@ total-citizens
 total-citizens
 100
 2000
-0.0
+400.0
 10
 1
 citizens
@@ -762,7 +762,7 @@ community-side-length
 community-side-length
 20
 100
-0.0
+30.0
 1
 1
 patches
@@ -839,7 +839,7 @@ activity-radius
 activity-radius
 1
 100
-0.0
+11.0
 1
 1
 patches
@@ -882,7 +882,7 @@ alpha
 alpha
 0
 1
-0.0
+0.2
 0.1
 1
 NIL
@@ -897,7 +897,7 @@ radicalization-threshold
 radicalization-threshold
 0
 1
-0.0
+0.9
 .1
 1
 NIL
@@ -966,7 +966,7 @@ website-access-probability
 website-access-probability
 0
 1
-0.0
+0.1
 0.05
 1
 NIL
@@ -981,7 +981,7 @@ work-socialization-probability
 work-socialization-probability
 0
 1
-0.0
+0.1
 0.05
 1
 NIL
@@ -996,7 +996,7 @@ activity-value-update
 activity-value-update
 0
 1
-0.0
+0.5
 0.05
 1
 NIL
@@ -1022,7 +1022,7 @@ initial-radicalized
 initial-radicalized
 0
 20
-0.0
+10.0
 1
 1
 NIL
@@ -1068,7 +1068,7 @@ police-density
 police-density
 0
 1
-0.0
+0.05
 0.05
 1
 NIL
@@ -1083,7 +1083,7 @@ police-distrust-effect
 police-distrust-effect
 -1
 1
-0.0
+-0.25
 0.05
 1
 NIL
