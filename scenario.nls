@@ -72,7 +72,7 @@ end
 to-report mandatory-activity-definition-list
   report (list
     ;     start-time duration location-type task         criteria
-    (list          0        8 "residence"   [ -> sleep ] [ -> true ] )
+    (list          0        7 "residence"   [ -> sleep ] [ -> true ] )
   )
 end
 
@@ -81,13 +81,13 @@ to-report job-definition-list
   report (list
     ;     num-jobs start-time duration location-type task          criteria             priority 
     ;  inizialization
-    (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
+    (list        1          8       12 "mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" ]                                                                1
     )
-    (list        1          8       16 "radical mosque"      [ -> preach ] [ -> age >= 21 and
+    (list        1          8       12 "radical mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" ] 0
     )    
-    (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18
+    (list        1          8        12 "community center" [ -> preach ] [ -> age >= 18
       ]                                   0
     )     
     (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]             2
@@ -122,18 +122,11 @@ to-report topic-definitions
     ;      type                             value     criteria    risk-weight protective-weight
     (list "Non integration"                 uniform   [ -> true ]    0.188     0.178)
     (list "Institutional distrust"          uniform   [ -> true ]    0.277     0.153)
-    (list "Collective relative deprivation" uniform   both-muslims?  0.116     0    )
+    (list "Collective relative deprivation" uniform   [ -> get "muslim?" ] of myself and get "muslim?" ]  0.116     0    )
   )
 end
 
 to-report topics-list report map [ l -> first l ] topic-definitions end
-
-to-report both-muslims?
-  report [  -> 
-    [ get "muslim?" ] of myself and get "muslim?"  
-  ]
-end
-
 
 to post-opinions-setup [ the-places the-topic-name the-value the-criteria ]
   let n count the-places

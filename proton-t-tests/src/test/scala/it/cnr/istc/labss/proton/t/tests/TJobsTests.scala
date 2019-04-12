@@ -108,4 +108,12 @@ class TJobsTests extends TModelSuite {
         """) shouldBe true        
     }
   }
+
+  test("no homeless") { ws =>
+    setup(ws)
+    ws.cmd("go")
+    ws.rpt("""
+        any? citizens with [ not member? "residence" [ [ location-type ] of my-activity-type ] of activity-link-neighbors  ]
+     """) shouldBe false
+  }
 }

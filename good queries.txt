@@ -6,15 +6,29 @@ show [ location-type ] of activity-types
 show [ location-type ] of activity-types with [ is-job? ]
 ; number of jobs 
 [ list who count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] of citizens
-[ count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] of citizens
+sum [ count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] of citizens
 ; people without a job
 citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ]
 
 ; schedule
+; remember that free time has starting time nobody
 my starting and ending times
 [ [ start-time duration ] of my-activity-type ] of activity-link-neighbors ] of citizens
 ; is hour 6 occupied for citizen 1730? 
 ask citizen 1730 [ show any? activity-link-neighbors with [ [ start-time <= 6 and start-time + duration <= 6 ] of my-activity-type ] ]
+ask citizen 1730 [ show any? activity-link-neighbors with [ [ start-time != nobody and start-time <= 6 and start-time + duration <= 6 ] of my-activity-type ] ]
+; all tasks
+show remove-duplicates [ current-task ] of citizens
+; all activities 
+[ [ [ location-type ] of my-activity-type ] of activity-link-neighbors ] of citizens
+[ current-task ]  of citizens
+; homeless people?
+any? citizens with [ not member? "residence" [ [ location-type ] of my-activity-type ] of activity-link-neighbors ]
+; activities starting at midnight
+citizens with [ [ [ start-time ] of my-activity-type = 0 ] of activity-link-neighbors ]
+
+
+
 
 ; community centers
 
