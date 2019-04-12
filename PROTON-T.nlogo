@@ -581,15 +581,27 @@ to police-interact ; citizen procedure
     ]
   ]
 end
-
+                            ;agentset
 to-report prepare-and-talk [ receiver ]
   let speaker self
   let candidate-opinions my-opinions with [ meets-criteria? speaker receiver ]
   let the-object [ other-end ] of rnd:weighted-one-of candidate-opinions [ abs value ]
   let success? talk-to receiver the-object
-  update-activity-value success? self
-  update-activity-value success? receiver
-  report success?
+  ask link-with current-activity [ update-activity-value success? ]
+  ask receiver [
+    let a activities-here with [ in-link-neighbor? myself ]
+    ask one-of a [ ask one-of my-in-activity-links [
+      update-activity-value success?
+      ]
+    ]
+  ]
+;    ask receiver [
+;      ask one-of (my-activity-links with [
+;        member? other-end ([ turtles-here ] of myself) ]) [
+;        update-activity-value success?
+;      ]
+;    ]
+    report success?
 end
 
 to socialize; citizen procedure
@@ -601,7 +613,6 @@ to socialize; citizen procedure
 end
 
 to socialize-and-recruit; citizen procedure
-  show "!!"
   let receiver rnd:weighted-one-of other citizens-here [ recruit-allure ]
   if receiver != nobody [
     if prepare-and-talk turtle-set receiver [
@@ -613,14 +624,8 @@ end
 
 ; two guys talk at home but one of them doesn't have that home as a socialization place?
 
-to update-activity-value [ success? socialite ] ; citizen procedure
-  let the-link nobody
-  ask socialite [
-    set the-link link-with [ current-activity ] of myself
-  ]
-  ask the-link [
+to update-activity-value [ success? ] ; link procedure
     set value value + activity-value-update * (ifelse-value success? [ 1 ][ -1 ] - value)
-  ]
 end
 
 to-report find-criteria-by-breed ; link reporter
