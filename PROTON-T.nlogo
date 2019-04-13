@@ -224,15 +224,19 @@ to go
       set current-activity nobody
       ; first: try job or compulsory
       let new-job-or-mand one-of activity-link-neighbors with [
-        [ start-time = current-time and is-mandatory? ] of my-activity-type or
-        [ workday? ] of myself and [ start-time = current-time and is-job? ] of my-activity-type
+        [ start-time = current-time and is-mandatory? ] of my-activity-type
+      ]
+      if new-job-or-mand = nobody [
+        set new-job-or-mand one-of activity-link-neighbors with [
+          [ workday? ] of myself and [ start-time = current-time and is-job? ] of my-activity-type
+        ]
       ]
       ifelse new-job-or-mand  != nobody [
         start-activity new-job-or-mand
       ] [ ; otherwise find something to do. Worse thing you'll go back home.
 ;        ask activity-link-neighbors [
 ;          show [( list start-time   location-type       (start-time = current-time and is-mandatory?)
-;            ( start-time = current-time and is-job? )     not is-job?  (start-time = current-time)
+            ;            ( start-time = current-time and is-job? )     not is-job?  (start-time = current-time)
 ;        ) ] of my-activity-type ]
         let candidate-activities activity-link-neighbors with [
           [ not is-mandatory? and not is-job? ] of my-activity-type
