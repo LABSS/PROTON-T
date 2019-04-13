@@ -13,7 +13,6 @@ globals [
   soc-counter
   rec-counter
   printed
-  activity-debug?
 ]
 
 patches-own [
@@ -90,7 +89,6 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
-  set activity-debug? true
   setup-police
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
@@ -163,7 +161,6 @@ to make-recruiters
         get "muslim?" and
         get "male?"
       ] [
-        show count my-activity-links
         ask activity-link-neighbors with [ [ is-job? ] of my-activity-type ] [ die ]
         create-activity-link-to myself
         ask my-topic-links [
@@ -584,13 +581,7 @@ to-report prepare-and-talk [ receiver ]
       ]
     ]
   ]
-;    ask receiver [
-;      ask one-of (my-activity-links with [
-;        member? other-end ([ turtles-here ] of myself) ]) [
-;        update-activity-value success?
-;      ]
-;    ]
-    report success?
+  report success?
 end
 
 to socialize; citizen procedure
@@ -610,8 +601,6 @@ to socialize-and-recruit; citizen procedure
   ]
   set  rec-counter rec-counter + 1
 end
-
-; two guys talk at home but one of them doesn't have that home as a socialization place?
 
 to update-activity-value [ success? ] ; link procedure
     set value value + activity-value-update * (ifelse-value success? [ 1 ][ -1 ] - value)
@@ -1266,6 +1255,17 @@ OUTPUT
 1445
 325
 10
+
+SWITCH
+1270
+120
+1422
+153
+activity-debug?
+activity-debug?
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?

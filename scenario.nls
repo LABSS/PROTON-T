@@ -72,7 +72,7 @@ end
 to-report mandatory-activity-definition-list
   report (list
     ;     start-time duration location-type task         criteria
-    (list          0        7 "residence"   [ -> sleep ] [ -> true ] )
+    (list          0        8 "residence"   [ -> sleep ] [ -> true ] )
   )
 end
 
@@ -122,7 +122,7 @@ to-report topic-definitions
     ;      type                             value     criteria    risk-weight protective-weight
     (list "Non integration"                 uniform   [ -> true ]    0.188     0.178)
     (list "Institutional distrust"          uniform   [ -> true ]    0.277     0.153)
-    (list "Collective relative deprivation" uniform   [ -> get "muslim?" ] of myself and get "muslim?" ]  0.116     0    )
+    (list "Collective relative deprivation" uniform   [ -> [ get "muslim?" ] of myself and get "muslim?" ]  0.116     0    )
   )
 end
 
