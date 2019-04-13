@@ -13,6 +13,7 @@ globals [
   soc-counter
   rec-counter
   printed
+  activity-debug?
 ]
 
 patches-own [
@@ -33,6 +34,7 @@ citizens-own [
   propensity
   current-activity
   hours-with-recruiter
+  special-type
 ]
 
 breed [ activity-types activity-type ]
@@ -88,16 +90,16 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
+  set activity-debug? true
   setup-police
   setup-communities-citizens ; citizens are created and moved to their home
-    set printed one-of citizens
+  set printed (list one-of citizens)
   setup-websites
   setup-opinions
   setup-activity-types
-
   setup-mandatory-activities
   setup-jobs
-    make-specials
+  make-specials
   setup-free-time-activities
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
@@ -124,7 +126,8 @@ to make-radical-imams
     ask out-topic-link-to topic-by-name "Institutional distrust" [
       set value 1
     ]
-    show list "rad imam " who
+    set printed lput self printed
+    set special-type "RI"
   ]
 end
 
@@ -135,14 +138,12 @@ to make-community-workers
     ask out-topic-link-to topic-by-name "Institutional distrust" [
       set value -1
     ]
-    show list "comm qwork " who
+    set printed lput self printed
+    set special-type "CW"
   ]
 end
 
 to make-recruiters
-  ;let be-positive min [ risk ] of citizens - 1E-15  ; overcoming small approximation errors
-  ;if be-positive > 0 [ set be-positive 0 ]
-  ;ask rnd:weighted-n-of initial-radicalized citizens [ risk - be-positive ] [set recruited? true]
   let t nobody
   create-activity-types 1 [
     set is-job?       true
@@ -168,7 +169,8 @@ to make-recruiters
         ask my-topic-links [
           set value -1
         ]
-        set printed (turtle-set self printed)
+        set printed lput self printed
+        set special-type "R"
       ]
     ]
   ]
@@ -206,18 +208,6 @@ to go
   if any? cpos [ move-cpos ]
   ask citizens [
     police-interact
-    if member? self printed [
-      ask activity-link-neighbors [
-        if [is-job?] of my-activity-type [
-          show [( list start-time   location-type       (start-time = current-time and is-mandatory?)
-            ( start-time = current-time and is-job? )     not is-job?  (start-time = current-time)
-        ) ]of my-activity-type ]
-      ]
-      show workday?
-    ]
-
-
-
     assert [ -> countdown >= 0 ]
     if countdown = 0 [ ; end of activity or activity without duration
       set current-task nobody
@@ -231,31 +221,26 @@ to go
           [ workday? ] of myself and [ start-time = current-time and is-job? ] of my-activity-type
         ]
       ]
-      ifelse new-job-or-mand  != nobody [
+      ifelse new-job-or-mand != nobody [
         start-activity new-job-or-mand
-      ] [ ; otherwise find something to do. Worse thing you'll go back home.
-;        ask activity-link-neighbors [
-;          show [( list start-time   location-type       (start-time = current-time and is-mandatory?)
-            ;            ( start-time = current-time and is-job? )     not is-job?  (start-time = current-time)
-;        ) ] of my-activity-type ]
+      ] [  ; otherwise find something to do. Worse thing you'll go back home to socialize.
         let candidate-activities activity-link-neighbors with [
           [ not is-mandatory? and not is-job? ] of my-activity-type
         ]
         start-activity rnd:weighted-one-of candidate-activities [
           (([ value ] of link-with myself + 1) / 2) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
         ]
-        assert [ -> current-task != nobody and current-activity != nobody ]
-        ; here the citizen is on free time so he has a probability to browse the web.
-        if random-float 1 < website-access-probability [
-          access-website
-        ]
+      ]
+      assert [ -> current-task != nobody and current-activity != nobody ]
+      ; here the citizen is on free time so he has a probability to browse the web.
+      if random-float 1 < website-access-probability [
+        access-website
       ]
     ]
-    ;show current-task
     run current-task
     set countdown countdown - 1
   ]
-  ask printed [ show current-task ]
+  if activity-debug? [ update-output ]
   tick
   if behaviorspace-experiment-name != "" [
     show (word behaviorspace-run-number "." ticks)
@@ -796,6 +781,17 @@ to-report topic-by-name [ the-name ]
   report one-of topics with [ topic-name = the-name ]
 end
 
+to update-output
+  print ticks
+  foreach printed [ p ->
+    ask p [
+      output-print (word [ special-type ] of p "-" who ": "
+        [ shape ] of one-of locations-here ", "
+        current-task)
+      ]
+    ]
+end
+
 to assert [ f ]
   if not runresult f [ error (word "Assertion failed: " f) ]
 end
@@ -1058,10 +1054,10 @@ PENS
 "pen-1" 1.0 0 -7500403 true "" "if ticks > 0 [ plotxy ticks mean [ risk ] of citizens ]"
 
 PLOT
-1110
-95
-1639
-388
+1115
+335
+1450
+525
 Mean opinions
 NIL
 NIL
@@ -1146,10 +1142,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-1108
-12
-1240
-57
+1100
+15
+1205
+60
 mosque attendance
 count citizens with [ [ shape ] of locations-here = [ \"mosque\" ] ]
 0
@@ -1217,10 +1213,10 @@ cpo-numerousness
 0
 
 SLIDER
-1115
-435
-1317
-468
+1100
+65
+1302
+98
 recruit-hours-threshold
 recruit-hours-threshold
 1
@@ -1232,10 +1228,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-1120
-480
-1192
-525
+1105
+110
+1177
+155
 recruited
 count citizens with [ recruited? ]
 17
@@ -1243,10 +1239,10 @@ count citizens with [ recruited? ]
 11
 
 MONITOR
-1195
-480
-1277
-525
+1180
+110
+1262
+155
 susceptible
 count citizens with [ risk > radicalization-threshold ]
 17
@@ -1254,15 +1250,22 @@ count citizens with [ risk > radicalization-threshold ]
 11
 
 MONITOR
-1270
-25
-1367
-70
+1210
+15
+1300
+60
 PS attendance
 count citizens with [ [ shape ] of locations-here = [ \"public space\" ] ]
 17
 1
 11
+
+OUTPUT
+1110
+165
+1445
+325
+10
 
 @#$#@#$#@
 ## WHAT IS IT?
