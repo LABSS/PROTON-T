@@ -463,8 +463,8 @@ end
 to-report schedule-free [ the-start the-duration ]
   let the-end the-start + the-duration
   report ifelse-value all? activity-link-neighbors [
-    [ (start-time <= the-start and start-time + duration <= the-start) or
-      (start-time >= the-end and start-time + duration > the-end) ] of my-activity-type
+    [ (start-time < the-start and start-time + duration <= the-start) or
+      (start-time >= the-end) ] of my-activity-type
   ] [ true ] [ false ]
 end
 
