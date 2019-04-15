@@ -1,4 +1,4 @@
- __includes [ "scenario.nls" ]
+__includes [ "scenario.nls" ]
 
 extensions [ table profiler rnd csv ]
 
@@ -108,14 +108,12 @@ to setup
 end
 
 ; assumes citizens are at their residence after setup and assumes nobody has a job yet
-; some specials need to create their own activities
 to make-specials
   make-radical-imams
   make-community-workers
   make-recruiters
 end
 
-;------------------------------------------------------------------------------------------------------------------------------------------------------------
 to make-radical-imams
   ask locations with [ shape = "radical mosque" ] [ set color red ]
   ask turtle-set [ activity-link-neighbors ] of activities with [
@@ -447,13 +445,13 @@ to setup-activity-types
   ]
 end
 
+; assumes people are at their residence
 to setup-jobs
   foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type ->
     ask activities with [ my-activity-type = the-type ] [
       let candidates citizens with [ runresult [ criteria ] of the-type and schedule-free [ start-time ] of the-type [ duration ] of the-type ]
       let n min (list (count candidates) ([ max-agents ] of the-type))
       ; this approach allows citizens to work in areas that are not their residence if they are on a border
-      ; we are assuming people are at their residence
       ask rnd:weighted-n-of n candidates [ distance myself ^ 2 ] [
         create-activity-link-to myself
       ]
@@ -589,7 +587,7 @@ to socialize; citizen procedure
   if any? receiver [
     let dummy prepare-and-talk receiver
   ]
-  set  soc-counter soc-counter + 1
+  set soc-counter soc-counter + 1
 end
 
 to socialize-and-recruit; citizen procedure
@@ -1266,6 +1264,28 @@ activity-debug?
 1
 1
 -1000
+
+MONITOR
+1310
+15
+1442
+60
+recruiting attempts
+rec-counter
+0
+1
+11
+
+MONITOR
+1310
+60
+1440
+105
+socialization attempts
+soc-counter
+0
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?

@@ -76,7 +76,6 @@ to-report mandatory-activity-definition-list
   )
 end
 
-; Here we only add the jobs for "normals"
 to-report job-definition-list
   report (list
     ;     num-jobs start-time duration location-type task          criteria             priority 
