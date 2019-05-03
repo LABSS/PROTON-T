@@ -33,6 +33,7 @@ to-report local-table-by [ name the-area ]
   report table:get table:from-list table:get local name the-area
 end 
 
+; this runs before resize, so it should not operate on turtles or links.
 to load-totals
   set local group-by-first-item read-csv "neighborhoods"
   set population group-by-first-item read-csv "neukolln-totals"
@@ -46,7 +47,7 @@ to load-totals
 end 
 
 to-report location-names
-  report (list "mosque" "community center" "workplace" "public space")
+  report (list "radical mosque" "mosque" "community center" "workplace" "public space")
 end
 
 to-report location-definitions [ the-area ]
@@ -72,23 +73,24 @@ to-report mandatory-activity-definition-list
   report (list
     ;     start-time duration location-type task         criteria
     (list          0        8 "residence"   [ -> sleep ] [ -> true ] )
-    ;(list          8        8 "school"      [ -> study ] [ -> age >= 5 and age <= 18 ])
   )
 end
 
-; TODO double check
 to-report job-definition-list
   report (list
-    ;     num-jobs start-time duration location-type task          criteria                  priority
-    (list        1          8       16 "mosque"      [ -> preach ] [ -> age >= 21 and
+    ;     num-jobs start-time duration location-type task          criteria             priority 
+    ;  inizialization
+    (list        1          8       12 "mosque"      [ -> preach ] [ -> age >= 21 and
       get "muslim?" and get "male?" ]                                                                1
     )
-    (list        1          8       16 "radical mosque"      [ -> preach ] [ -> age >= 21 and
-      get "muslim?" and get "male?" and opinion-on-topic "Institutional distrust" = 1 ] 0
-    )    (list        1          8        16 "community center" [ -> preach ] [ -> age >= 18 and 
-      opinion-on-topic "Institutional distrust" = -1]                                   0
+    (list        1          8       12 "radical mosque"      [ -> preach ] [ -> age >= 21 and
+      get "muslim?" and get "male?" ] 0
+    )    
+    (list        1          8        12 "community center" [ -> preach ] [ -> age >= 18
+      ]                                   0
     )     
-    (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]             2)
+    (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]             2
+    )
   )
 end
 
@@ -119,38 +121,15 @@ to-report topic-definitions
     ;      type                             value     criteria    risk-weight protective-weight
     (list "Non integration"                 uniform   [ -> true ]    0.188     0.178)
     (list "Institutional distrust"          uniform   [ -> true ]    0.277     0.153)
-    (list "Collective relative deprivation" uniform   both-muslims?  0.116     0    )
+    (list "Collective relative deprivation" uniform   [ -> [ get "muslim?" ] of myself and get "muslim?" ]  0.116     0    )
   )
 end
 
 to-report topics-list report map [ l -> first l ] topic-definitions end
 
-to-report both-muslims?
-  report [  -> 
-    [ get "muslim?" ] of myself and get "muslim?"  
-  ]
-end
-
-to make-special-citizens
-  foreach areas [ the-area ->
-    let radical-mosques (locations with [ shape =  "radical mosque"])
-    ask radical-mosques [ set color red ]
-    post-opinions-setup radical-mosques "Institutional distrust" 1 [
-      -> age >= 21 and get "muslim?" and get "male?" 
-    ]
-    ; next special citizens should not erase the ones just made
-    post-opinions-setup (locations with [ shape =  "community center" ]) "Institutional distrust" -1 [ ; need to specify area
-      -> age >= 18 and opinion-on-topic "Institutional distrust" != 1 
-      ]
-    ]
-    let be-positive min [ risk ] of citizens - 1E-15  ; overcoming small approximation errors
-    if be-positive > 0 [ set be-positive 0 ]
-    ask rnd:weighted-n-of initial-radicalized citizens [ risk - be-positive ] [set recruited? true]
-end
-
 to post-opinions-setup [ the-places the-topic-name the-value the-criteria ]
   let n count the-places
-  let the-topic one-of topics with [ topic-name = the-topic-name ]
+  let the-topic topic-by-name the-topic-name
   ; initialize opinions about extremist websites
   let the-websites websites with [
     out-topic-link-to the-topic != nobody and

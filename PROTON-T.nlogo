@@ -10,6 +10,9 @@ globals [
   population
   population-details
   migrant-muslims-ratio
+  soc-counter
+  rec-counter
+  printed
 ]
 
 patches-own [
@@ -29,6 +32,8 @@ citizens-own [
   countdown
   propensity
   current-activity
+  hours-with-recruiter
+  special-type
 ]
 
 breed [ activity-types activity-type ]
@@ -42,6 +47,7 @@ activity-types-own [
   criteria
   task
   priority
+  make-special
 ]
 
 breed [ activities activity ]
@@ -83,14 +89,15 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
-  setup-police;
+  setup-police
   setup-communities-citizens ; citizens are created and moved to their home
+  set printed (list one-of citizens)
   setup-websites
   setup-opinions
-  make-special-citizens ; extreme opinions as needed
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
+  make-specials
   setup-free-time-activities
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
@@ -98,6 +105,70 @@ to setup
   update-plots
   display
   ; TODO: write some test code to make sure the schedule is consistent.
+end
+
+; assumes citizens are at their residence after setup and assumes nobody has a job yet
+to make-specials
+  make-radical-imams
+  make-community-workers
+  make-recruiters
+end
+
+to make-radical-imams
+  ask locations with [ shape = "radical mosque" ] [ set color red ]
+  ask turtle-set [ activity-link-neighbors ] of activities with [
+    [ is-job? and location-type = "radical mosque" ] of my-activity-type
+  ] [
+    ask out-topic-link-to topic-by-name "Institutional distrust" [
+      set value 1
+    ]
+    set printed lput self printed
+    set special-type "RI"
+  ]
+end
+
+to make-community-workers
+  ask turtle-set [ activity-link-neighbors ] of activities with [
+    [ is-job? and location-type = "community center" ] of my-activity-type
+  ] [
+    ask out-topic-link-to topic-by-name "Institutional distrust" [
+      set value -1
+    ]
+    set printed lput self printed
+    set special-type "CW"
+  ]
+end
+
+to make-recruiters
+  let t nobody
+  create-activity-types 1 [
+    set is-job?       true
+    set is-mandatory? false
+    set start-time    8
+    set duration      12
+    set location-type "public space"
+    set task          [ -> socialize-and-recruit ]
+    set criteria      [ -> false ]
+    set t self
+  ]
+  ask n-of 5 locations with [ shape = "public space" ] [
+    hatch-activities 1 [
+      set my-activity-type t
+      ask one-of citizens in-radius activity-radius with [
+        age >= 21 and
+        get "muslim?" and
+        get "male?"
+      ] [
+        ask activity-link-neighbors with [ [ is-job? ] of my-activity-type ] [ die ]
+        create-activity-link-to myself
+        ask my-topic-links [
+          set value -1
+        ]
+        set printed lput self printed
+        set special-type "R"
+      ]
+    ]
+  ]
 end
 
 to setup-police
@@ -132,28 +203,30 @@ to go
   if any? cpos [ move-cpos ]
   ask citizens [
     police-interact
-    let new-activity one-of activity-link-neighbors with [
-      [ start-time = current-time and is-mandatory? ] of my-activity-type and (
-      [ workday? ] of myself and [ is-job? ] of my-activity-type or
-      [ not is-job? ] of my-activity-type)
-    ]
-    if new-activity != nobody [
-      start-activity new-activity
-    ]
     assert [ -> countdown >= 0 ]
-    if countdown = 0 [
+    if countdown = 0 [ ; end of activity or activity without duration
       set current-task nobody
       set current-activity nobody
-    ]
-    if current-activity = nobody [ ; free time!
-      let the-citizen self
-      let candidate-links my-activity-links with [
-        [ not is-mandatory? ] of [ my-activity-type ] of other-end and
-        [ can-do? other-end ] of the-citizen
+      ; first: try job or compulsory
+      let new-job-or-mand one-of activity-link-neighbors with [
+        [ start-time = current-time and is-mandatory? ] of my-activity-type
       ]
-      start-activity [ other-end ] of rnd:weighted-one-of candidate-links [
-        ((value + 1) / 2) + (1 / (1 + [ distance other-end ] of myself)) ; this weights value the same as inverse distance.
+      if new-job-or-mand = nobody [
+        set new-job-or-mand one-of activity-link-neighbors with [
+          [ workday? ] of myself and [ start-time = current-time and is-job? ] of my-activity-type
+        ]
       ]
+      ifelse new-job-or-mand != nobody [
+        start-activity new-job-or-mand
+      ] [  ; otherwise find something to do. Worse thing you'll go back home to socialize.
+        let candidate-activities activity-link-neighbors with [
+          [ not is-mandatory? and not is-job? ] of my-activity-type
+        ]
+        start-activity rnd:weighted-one-of candidate-activities [
+          (([ value ] of link-with myself + 1) / 2) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
+        ]
+      ]
+      assert [ -> current-task != nobody and current-activity != nobody ]
       ; here the citizen is on free time so he has a probability to browse the web.
       if random-float 1 < website-access-probability [
         access-website
@@ -162,6 +235,7 @@ to go
     run current-task
     set countdown countdown - 1
   ]
+  if activity-debug? [ update-output ]
   tick
   if behaviorspace-experiment-name != "" [
     show (word behaviorspace-run-number "." ticks)
@@ -250,8 +324,10 @@ to setup-communities-citizens
       let residences setup-residences community-patches with [
         not any? locations in-radius 1.75 with [ shape != "residence" ]
       ]
-      setup-citizens residences the-area
-      if police-interaction = "cpo" [ setup-cpos community-patches ]
+      create-citizens table:get area-population the-area [
+        setup-citizen residences the-area
+        if police-interaction = "cpo" [ setup-cpos community-patches ]
+      ]
     ]
   ]
 end
@@ -307,8 +383,7 @@ to-report setup-residences [ target-patches ]
   report turtle-set residences
 end
 
-to setup-citizens [ residences the-area ]
-  create-citizens table:get area-population the-area [
+to setup-citizen [ residences the-area ]
     set attributes make-attributes-set the-area ; sets also age
     set area             the-area
     set color            lput 150 one-of teals
@@ -318,11 +393,12 @@ to setup-citizens [ residences the-area ]
     set residence one-of residences
     set propensity sum-factors propensity-factors
     set recruited? false
+    set hours-with-recruiter 0
     move-to residence
-  ]
 end
 
 to setup-activity-types
+  ; ok we keep the specials ALSO in here so we will have the activity in place at the location.
   foreach job-definition-list [ def ->
     create-activity-types 1 [
       set is-job?       true
@@ -369,20 +445,27 @@ to setup-activity-types
   ]
 end
 
+; assumes people are at their residence
 to setup-jobs
   foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type ->
-    let the-criteria [ criteria ] of the-type
-    let candidates citizens with [ runresult the-criteria ]
     ask activities with [ my-activity-type = the-type ] [
-      let free-candidates candidates with [
-        not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ; TODO this should be a schedule check instead ; doesn't seem to work
-      ]
-      let n min (list (count free-candidates) ([ max-agents ] of my-activity-type))
-      ask rnd:weighted-n-of n free-candidates [ distance myself ^ 2 ] [
+      let candidates citizens with [ runresult [ criteria ] of the-type and schedule-free [ start-time ] of the-type [ duration ] of the-type ]
+      let n min (list (count candidates) ([ max-agents ] of the-type))
+      ; this approach allows citizens to work in areas that are not their residence if they are on a border
+      ask rnd:weighted-n-of n candidates [ distance myself ^ 2 ] [
         create-activity-link-to myself
       ]
     ]
   ]
+end
+
+; citizen procedure
+to-report schedule-free [ the-start the-duration ]
+  let the-end the-start + the-duration
+  report ifelse-value all? activity-link-neighbors [
+    [ (start-time < the-start and start-time + duration <= the-start) or
+      (start-time >= the-end) ] of my-activity-type
+  ] [ true ] [ false ]
 end
 
 to setup-mandatory-activities ; citizen procedure
@@ -464,9 +547,6 @@ to sleep
   ; do nothing
 end
 
-to study
-end
-
 to police-interact ; citizen procedure
   if police-interaction = "police" [
     if police-density > (random-float 1) [
@@ -485,30 +565,43 @@ to police-interact ; citizen procedure
     ]
   ]
 end
-
-to socialize ; citizen procedure
-  let receiver turtle-set one-of other citizens-here
-  if any? receiver [
-    let speaker self
-    let candidate-opinions my-opinions with [ meets-criteria? speaker receiver ]
-    let the-object [ other-end ] of rnd:weighted-one-of candidate-opinions [ abs value ]
-    let success? talk-to receiver the-object
-    if success? [ ; if the interaction is successful
-      ask receiver [ check-recruitment ]
+                            ;agentset
+to-report prepare-and-talk [ receiver ]
+  let speaker self
+  let candidate-opinions my-opinions with [ meets-criteria? speaker receiver ]
+  let the-object [ other-end ] of rnd:weighted-one-of candidate-opinions [ abs value ]
+  let success? talk-to receiver the-object
+  ask link-with current-activity [ update-activity-value success? ]
+  ask receiver [
+    let a activities-here with [ in-link-neighbor? myself ]
+    ask one-of a [ ask one-of my-in-activity-links [
+      update-activity-value success?
+      ]
     ]
-    update-activity-value success? self
-    update-activity-value success? receiver
   ]
+  report success?
 end
 
-to update-activity-value [ success? socialite ] ; citizen procedure
-  let the-link nobody
-  ask socialite [
-    set the-link link-with current-activity
+to socialize; citizen procedure
+  let receiver turtle-set one-of other citizens-here
+  if any? receiver [
+    let dummy prepare-and-talk receiver
   ]
-  ask the-link [
+  set soc-counter soc-counter + 1
+end
+
+to socialize-and-recruit; citizen procedure
+  let receiver rnd:weighted-one-of other citizens-here [ recruit-allure ]
+  if receiver != nobody [
+    if prepare-and-talk turtle-set receiver [
+      check-recruitment
+    ]
+  ]
+  set  rec-counter rec-counter + 1
+end
+
+to update-activity-value [ success? ] ; link procedure
     set value value + activity-value-update * (ifelse-value success? [ 1 ][ -1 ] - value)
-  ]
 end
 
 to-report find-criteria-by-breed ; link reporter
@@ -525,7 +618,13 @@ end
 
 to-report meets-criteria? [ speaker receiver ]; link reporter
   let the-criteria find-criteria-by-breed
-  report reduce and [ [ runresult the-criteria ] of receiver ] of speaker
+  let result [ [ runresult the-criteria ] of receiver ]  of speaker
+  ifelse is-list? result [
+   report reduce and result
+  ] [
+   report result
+  ]
+  ; report item 0 [ [ runresult the-criteria ] of receiver ] of speaker
 end
 
 to-report my-opinions ; citizen reporter
@@ -575,11 +674,10 @@ end
 
 to check-recruitment ; citizen procedure
   ; Self is the receiver in the opinion dynamic. Myself is the speaker.
-  if [ recruited? ] of myself [
-    if risk > radicalization-threshold [
+  set hours-with-recruiter hours-with-recruiter + 1
+    if risk > radicalization-threshold and hours-with-recruiter > recruit-hours-threshold [
       set recruited? true
       set color lput 150 hsb 360 100 (item 2 extract-hsb color)
-    ]
   ]
 end
 
@@ -623,18 +721,22 @@ end
 ; called by behaviorspace
 to-report aggregate-citizens-opinions
   report
-    map [ i -> mean [ opinion-on-topic i ] of citizens] topics-list
+    map [ i  -> mean [ opinion-on-topic i ] of citizens] topics-list
 end
 
 ; called by the test subsystem, *TJobsTests.scala
 to-report mean-opinion-on-location [ the-topic-name location-name ]
-      report  mean [ value ] of link-set [
-        out-topic-link-to topic-by-name the-topic-name
-      ] of (citizens-on locations with [ shape = location-name ]) with [
-        [ not (is-job? and location-type = location-name) ] of [ my-activity-type ] of current-activity
-      ]
+  report  mean [ value ] of link-set [
+    out-topic-link-to topic-by-name the-topic-name
+  ] of (citizens-on locations with [ shape = location-name ]) with [
+    [ not (is-job? and location-type = location-name) ] of [ my-activity-type ] of current-activity
+  ]
 end
 
+; citizen reporter
+to-report recruit-allure
+  report (sum map opinion-on-topic topics-list + 3) / 6 + hours-with-recruiter / 100
+end
 to-report employed?  ; citizen reporter
   report any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ]
 end
@@ -664,6 +766,17 @@ end
 
 to-report topic-by-name [ the-name ]
   report one-of topics with [ topic-name = the-name ]
+end
+
+to update-output
+  print ticks
+  foreach printed [ p ->
+    ask p [
+      output-print (word [ special-type ] of p "-" who ": "
+        [ shape ] of one-of locations-here ", "
+        current-task)
+      ]
+    ]
 end
 
 to assert [ f ]
@@ -928,10 +1041,10 @@ PENS
 "pen-1" 1.0 0 -7500403 true "" "if ticks > 0 [ plotxy ticks mean [ risk ] of citizens ]"
 
 PLOT
-1110
-95
-1639
-388
+1115
+335
+1450
+525
 Mean opinions
 NIL
 NIL
@@ -1016,10 +1129,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-1108
-12
-1240
-57
+1100
+15
+1205
+60
 mosque attendance
 count citizens with [ [ shape ] of locations-here = [ \"mosque\" ] ]
 0
@@ -1085,6 +1198,94 @@ cpo-numerousness
 cpo-numerousness
 1 2
 0
+
+SLIDER
+1100
+65
+1302
+98
+recruit-hours-threshold
+recruit-hours-threshold
+1
+300
+3.0
+1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+1105
+110
+1177
+155
+recruited
+count citizens with [ recruited? ]
+17
+1
+11
+
+MONITOR
+1180
+110
+1262
+155
+susceptible
+count citizens with [ risk > radicalization-threshold ]
+17
+1
+11
+
+MONITOR
+1210
+15
+1300
+60
+PS attendance
+count citizens with [ [ shape ] of locations-here = [ \"public space\" ] ]
+17
+1
+11
+
+OUTPUT
+1110
+165
+1445
+325
+10
+
+SWITCH
+1270
+120
+1422
+153
+activity-debug?
+activity-debug?
+1
+1
+-1000
+
+MONITOR
+1310
+15
+1442
+60
+recruiting attempts
+rec-counter
+0
+1
+11
+
+MONITOR
+1310
+60
+1440
+105
+socialization attempts
+soc-counter
+0
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?

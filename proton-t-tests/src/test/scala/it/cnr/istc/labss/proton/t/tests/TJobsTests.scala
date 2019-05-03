@@ -28,7 +28,7 @@ class TJobsTests extends TModelSuite {
     setup(ws)
     ws.cmd("""
       set alpha 0.1
-      repeat 24 * 3 + 22 [ go ]
+      repeat 24 * 3 + 18 [ go ]
       ask n-of 
         count locations with [ shape = "community center" ] 
         citizens with [
@@ -60,7 +60,7 @@ class TJobsTests extends TModelSuite {
     setup(ws)
     ws.cmd("""
       set alpha 0.1
-      repeat 24 * 3 + 22 [ go ] 
+      repeat 24 * 3 + 18 [ go ] 
       ask n-of (10 * 
         count locations with [ shape = "radical mosque" ])
         citizens with [
@@ -103,6 +103,17 @@ class TJobsTests extends TModelSuite {
         all? citizens with [ any? locations-here with [ shape = "workplace" ] ] [ 
           [ [ location-type ] of my-activity-type ] of current-activity = "workplace" ]
         """) shouldBe true  
+      ws.rpt("""
+        max [length [ shape ] of locations-here  ] of activities = 1
+        """) shouldBe true        
     }
+  }
+
+  test("no homeless") { ws =>
+    setup(ws)
+    ws.cmd("go")
+    ws.rpt("""
+        any? citizens with [ not member? "residence" [ [ location-type ] of my-activity-type ] of activity-link-neighbors  ]
+     """) shouldBe false
   }
 }
