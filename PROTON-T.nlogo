@@ -326,14 +326,14 @@ to setup-communities-citizens
       ]
       create-citizens table:get area-population the-area [
         setup-citizen residences the-area
-        if police-interaction = "cpo" [ setup-cpos community-patches ]
       ]
+      if police-interaction = "cpo" [ setup-cpos community-patches ]
     ]
   ]
 end
 
 to setup-cpos [ the-patches ]
-ask n-of cpo-numerousness the-patches [
+  ask n-of cpo-numerousness the-patches [
   sprout-cpos 1 [
     set shape "flag"
     set color red
