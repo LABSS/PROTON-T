@@ -220,7 +220,7 @@ to go
         start-activity new-job-or-mand
       ] [  ; otherwise find something to do. Worse thing you'll go back home to socialize.
         let candidate-activities activity-link-neighbors with [
-          [ not is-mandatory? and not is-job? ] of my-activity-type
+          [ not is-mandatory? and not is-job? ] of my-activity-type and not is-full?
         ]
         start-activity rnd:weighted-one-of candidate-activities [
           (([ value ] of link-with myself + 1) / 2) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
@@ -239,6 +239,15 @@ to go
   tick
   if behaviorspace-experiment-name != "" [
     show (word behaviorspace-run-number "." ticks)
+  ]
+end
+
+; activity reporter
+to-report is-full?
+  report ifelse-value ([location-type] of my-activity-type = "coffee") [
+    count citizens-here >= 20
+  ] [
+    false
   ]
 end
 
@@ -322,18 +331,18 @@ to setup-communities-citizens
       ]
       setup-locations community-patches the-area
       let residences setup-residences community-patches with [
-        not any? locations in-radius 1.75 with [ shape != "residence" ]
+        not any? locations-here with [ shape = "coffee" ] and not any? locations in-radius 1.75 with [ shape != "residence" and shape != "coffee" ]
       ]
       create-citizens table:get area-population the-area [
         setup-citizen residences the-area
+        if police-interaction = "cpo" [ setup-cpos community-patches ]
       ]
-      if police-interaction = "cpo" [ setup-cpos community-patches ]
     ]
   ]
 end
 
 to setup-cpos [ the-patches ]
-  ask n-of cpo-numerousness the-patches [
+ask n-of cpo-numerousness the-patches [
   sprout-cpos 1 [
     set shape "flag"
     set color red
@@ -348,12 +357,12 @@ to setup-locations [ target-patches the-area ]
     repeat item 0 def [
       ; locations need to be created one at a time so `territory` is initialized
       create-locations 1 [
-        set size 3
-        set shape         item 1 def
-        set color         change-brightness peach random 10
+        set size       item 2 def
+        set shape      item 1 def
+        set color      change-brightness peach random 10
         let candidates target-patches with [
           not any? other locations with [
-            abs (pxcor - [pxcor] of myself) < 3 and abs (pycor - [pycor] of myself) < 3
+            abs (pxcor - [ pxcor ] of myself) < 3 and abs (pycor - [ pycor ] of myself) < 3
           ]
         ]
         move-to rnd:weighted-one-of candidates [ 1 / (1 + (distance center ^ 2)) ]
@@ -786,11 +795,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1088
-799
+1108
+819
 -1
 -1
-13.0
+10.0
 1
 10
 1
@@ -801,9 +810,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-59
+79
 0
-59
+79
 1
 1
 1
@@ -836,7 +845,7 @@ total-citizens
 total-citizens
 100
 2000
-400.0
+2000.0
 10
 1
 citizens
@@ -862,7 +871,7 @@ community-side-length
 community-side-length
 20
 100
-30.0
+40.0
 1
 1
 patches
@@ -997,7 +1006,7 @@ radicalization-threshold
 radicalization-threshold
 0
 1
-0.9
+1.0
 .1
 1
 NIL
@@ -1022,10 +1031,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Institutional distrust\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
 
 PLOT
-1120
-540
-1409
-788
+1115
+690
+1404
+820
 Propensity and risk
 NIL
 NIL
@@ -1042,9 +1051,9 @@ PENS
 
 PLOT
 1115
-335
+485
 1450
-525
+675
 Mean opinions
 NIL
 NIL
@@ -1066,7 +1075,7 @@ website-access-probability
 website-access-probability
 0
 1
-0.1
+0.05
 0.05
 1
 NIL
@@ -1248,10 +1257,10 @@ count citizens with [ [ shape ] of locations-here = [ \"public space\" ] ]
 11
 
 OUTPUT
-1110
-165
-1445
-325
+1115
+320
+1450
+480
 10
 
 SWITCH
@@ -1284,6 +1293,17 @@ MONITOR
 socialization attempts
 soc-counter
 0
+1
+11
+
+MONITOR
+1110
+165
+1267
+210
+coffee mean attendance
+count citizens with [ [ shape ] of locations-here = [ \"coffee\" ] ] / count locations with [ shape = \"coffee\" ]
+17
 1
 11
 
@@ -1406,6 +1426,20 @@ false
 Circle -7500403 true true 0 0 300
 Circle -16777216 true false 30 30 240
 
+coffee
+false
+0
+Rectangle -14835848 true false 210 75 225 255
+Rectangle -10899396 true false 90 135 210 255
+Rectangle -16777216 true false 165 195 195 255
+Line -16777216 false 210 135 210 255
+Rectangle -16777216 true false 105 202 135 240
+Polygon -13840069 true false 225 150 75 150 150 75
+Line -16777216 false 75 150 225 150
+Line -16777216 false 195 120 225 150
+Polygon -16777216 false false 165 195 150 195 180 165 210 195
+Rectangle -16777216 true false 135 105 165 135
+
 community center
 false
 0
@@ -1525,20 +1559,6 @@ Rectangle -7500403 true true 45 120 255 285
 Rectangle -16777216 true false 120 210 180 285
 Polygon -7500403 true true 15 120 150 15 285 120
 Line -16777216 false 30 120 270 120
-
-house bungalow
-false
-0
-Rectangle -7500403 true true 210 75 225 255
-Rectangle -7500403 true true 90 135 210 255
-Rectangle -16777216 true false 165 195 195 255
-Line -16777216 false 210 135 210 255
-Rectangle -16777216 true false 105 202 135 240
-Polygon -7500403 true true 225 150 75 150 150 75
-Line -16777216 false 75 150 225 150
-Line -16777216 false 195 120 225 150
-Polygon -16777216 false false 165 195 150 195 180 165 210 195
-Rectangle -16777216 true false 135 105 165 135
 
 house efficiency
 false
