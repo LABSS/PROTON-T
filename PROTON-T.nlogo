@@ -145,7 +145,7 @@ to make-recruiters
     set is-job?       true
     set is-mandatory? false
     set start-time    8
-    set duration      12
+    set duration      16
     set location-type test-location-type
     set task          [ -> socialize-and-recruit ]
     set criteria      [ -> false ]
@@ -1220,7 +1220,7 @@ recruit-hours-threshold
 recruit-hours-threshold
 1
 300
-100.0
+20.0
 1
 1
 NIL
@@ -1273,7 +1273,7 @@ SWITCH
 153
 activity-debug?
 activity-debug?
-0
+1
 1
 -1000
 
@@ -1318,7 +1318,7 @@ CHOOSER
 test-location-type
 test-location-type
 "public space" "coffee"
-0
+1
 
 MONITOR
 1275
