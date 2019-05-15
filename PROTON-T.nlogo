@@ -146,12 +146,12 @@ to make-recruiters
     set is-mandatory? false
     set start-time    8
     set duration      12
-    set location-type "public space"
+    set location-type test-location-type
     set task          [ -> socialize-and-recruit ]
     set criteria      [ -> false ]
     set t self
   ]
-  ask n-of 5 locations with [ shape = "public space" ] [
+  ask n-of 5 locations with [ shape = [ location-type ] of t ] [
     hatch-activities 1 [
       set my-activity-type t
       ask one-of citizens in-radius activity-radius with [
@@ -606,7 +606,7 @@ to socialize-and-recruit; citizen procedure
       check-recruitment
     ]
   ]
-  set  rec-counter rec-counter + 1
+  set rec-counter rec-counter + 1
 end
 
 to update-activity-value [ success? ] ; link procedure
@@ -744,8 +744,11 @@ end
 
 ; citizen reporter
 to-report recruit-allure
-  report (sum map opinion-on-topic topics-list + 3) / 6 + hours-with-recruiter / 100
+  report ifelse-value recruited?
+  [ 0 ]
+  [ (sum map opinion-on-topic topics-list + 3) / 6 + hours-with-recruiter / 100 ]
 end
+
 to-report employed?  ; citizen reporter
   report any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ]
 end
@@ -795,11 +798,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1108
-819
+1078
+789
 -1
 -1
-10.0
+11.0
 1
 10
 1
@@ -810,9 +813,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-79
+69
 0
-79
+69
 1
 1
 1
@@ -845,7 +848,7 @@ total-citizens
 total-citizens
 100
 2000
-2000.0
+1000.0
 10
 1
 citizens
@@ -871,7 +874,7 @@ community-side-length
 community-side-length
 20
 100
-40.0
+35.0
 1
 1
 patches
@@ -1217,7 +1220,7 @@ recruit-hours-threshold
 recruit-hours-threshold
 1
 300
-3.0
+100.0
 1
 1
 NIL
@@ -1303,6 +1306,38 @@ MONITOR
 210
 coffee mean attendance
 count citizens with [ [ shape ] of locations-here = [ \"coffee\" ] ] / count locations with [ shape = \"coffee\" ]
+17
+1
+11
+
+CHOOSER
+1200
+255
+1338
+300
+test-location-type
+test-location-type
+"public space" "coffee"
+1
+
+MONITOR
+1305
+170
+1497
+215
+NIL
+max [rec-counter] of citizens
+17
+1
+11
+
+MONITOR
+1385
+235
+1632
+280
+NIL
+max [hours-with-recruiter] of citizens
 17
 1
 11
