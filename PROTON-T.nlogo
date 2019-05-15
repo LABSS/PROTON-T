@@ -610,6 +610,7 @@ to socialize-and-recruit; citizen procedure
 end
 
 to update-activity-value [ success? ] ; link procedure
+  ;if [ special-type ] of myself = 0 [
     set value value + activity-value-update * (ifelse-value success? [ 1 ][ -1 ] - value)
 end
 
@@ -745,7 +746,7 @@ end
 to-report recruit-allure
   report ifelse-value recruited?
   [ 0 ]
-  [ (sum map opinion-on-topic topics-list + 3) / 6 + hours-with-recruiter / 100 ]
+  [ (sum map opinion-on-topic topics-list + 3) / 6 + hours-with-recruiter  ]
 end
 
 to-report employed?  ; citizen reporter
@@ -847,7 +848,7 @@ total-citizens
 total-citizens
 100
 2000
-1000.0
+750.0
 10
 1
 citizens
@@ -950,7 +951,7 @@ activity-radius
 activity-radius
 1
 100
-11.0
+10.0
 1
 1
 patches
@@ -1272,7 +1273,7 @@ SWITCH
 153
 activity-debug?
 activity-debug?
-1
+0
 1
 -1000
 
@@ -1317,7 +1318,7 @@ CHOOSER
 test-location-type
 test-location-type
 "public space" "coffee"
-1
+0
 
 MONITOR
 1275
