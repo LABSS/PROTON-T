@@ -600,10 +600,10 @@ to socialize; citizen procedure
 end
 
 to socialize-and-recruit; citizen procedure
-  let receiver rnd:weighted-one-of other citizens-here [ recruit-allure ]
+  let receiver rnd:weighted-one-of other citizens-here with [ special-type = 0 ] [ recruit-allure ]
   if receiver != nobody [
     if prepare-and-talk turtle-set receiver [
-      check-recruitment
+      ask receiver [ check-recruitment ]
     ]
   ]
   set rec-counter rec-counter + 1
@@ -682,7 +682,6 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
 end
 
 to check-recruitment ; citizen procedure
-  ; Self is the receiver in the opinion dynamic. Myself is the speaker.
   set hours-with-recruiter hours-with-recruiter + 1
     if risk > radicalization-threshold and hours-with-recruiter > recruit-hours-threshold [
       set recruited? true
@@ -1009,7 +1008,7 @@ radicalization-threshold
 radicalization-threshold
 0
 1
-1.0
+0.8
 .1
 1
 NIL
@@ -1321,10 +1320,10 @@ test-location-type
 1
 
 MONITOR
-1305
-170
-1497
-215
+1275
+165
+1425
+210
 NIL
 max [rec-counter] of citizens
 17
@@ -1332,12 +1331,23 @@ max [rec-counter] of citizens
 11
 
 MONITOR
-1385
-235
-1632
-280
+1435
+165
+1600
+210
 NIL
 max [hours-with-recruiter] of citizens
+17
+1
+11
+
+MONITOR
+1450
+15
+1527
+60
+NIL
+count links
 17
 1
 11
