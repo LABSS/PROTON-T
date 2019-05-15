@@ -1009,7 +1009,7 @@ radicalization-threshold
 radicalization-threshold
 0
 1
-0.8
+0.7
 .1
 1
 NIL
@@ -1323,10 +1323,10 @@ test-location-type
 MONITOR
 1275
 165
-1425
+1422
 210
 NIL
-max [rec-counter] of citizens
+rec-counter
 17
 1
 11
