@@ -10,6 +10,13 @@ sum [ count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] o
 ; people without a job
 citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ]
 
+
+; recruiters
+show reverse sort [ hours-with-recruiter ] of citizens
+show [(list who risk  hours-with-recruiter)] of [citizens-here] of citizen 6322
+ask citizen 6322 [socialize-and-recruit]
+show sort-by  [ [a b] -> item 2 a > item 2 b] [(list who risk  hours-with-recruiter)] of [citizens-here] of citizen 6322
+
 ; schedule
 ; remember that free time has starting time nobody
 my starting and ending times
