@@ -34,6 +34,7 @@ citizens-own [
   current-activity
   hours-with-recruiter
   special-type
+  recruit-target
 ]
 
 breed [ activity-types activity-type ]
@@ -393,17 +394,18 @@ to-report setup-residences [ target-patches ]
 end
 
 to setup-citizen [ residences the-area ]
-    set attributes make-attributes-set the-area ; sets also age
-    set area             the-area
-    set color            lput 150 one-of teals
-    set current-task     nobody ; used to indicate "none"
-    set current-activity nobody
-    set countdown        0
-    set residence one-of residences
-    set propensity sum-factors propensity-factors
-    set recruited? false
-    set hours-with-recruiter 0
-    move-to residence
+  set attributes make-attributes-set the-area ; sets also age
+  set area             the-area
+  set color            lput 150 one-of teals
+  set current-task     nobody ; used to indicate "none"
+  set current-activity nobody
+  set countdown        0
+  set residence        one-of residences
+  set propensity       sum-factors propensity-factors
+  set recruited?       false
+  set hours-with-recruiter 0
+  set recruit-target    nobody
+  move-to residence
 end
 
 to setup-activity-types
@@ -600,9 +602,10 @@ to socialize; citizen procedure
 end
 
 to socialize-and-recruit; citizen procedure
-  let receiver rnd:weighted-one-of other citizens-here with [ special-type = 0 ] [ recruit-allure ]
+  let receiver rnd:weighted-one-of other citizens-here with [ special-type = 0 and not recruited? and risk > radicalization-threshold ] [ recruit-allure ]
   if receiver != nobody [
     if prepare-and-talk turtle-set receiver [
+      if recruit-target = nobody [ set recruit-target receiver ]
       ask receiver [ check-recruitment ]
     ]
   ]
@@ -684,9 +687,10 @@ end
 
 to check-recruitment ; citizen procedure
   set hours-with-recruiter hours-with-recruiter + 1
-    if risk > radicalization-threshold and hours-with-recruiter > recruit-hours-threshold [
-      set recruited? true
-      set color lput 150 hsb 360 100 (item 2 extract-hsb color)
+  if risk > radicalization-threshold and hours-with-recruiter > recruit-hours-threshold [
+    set recruited? true
+    ask citizens with [ recruit-target = myself ] [ set recruit-target nobody ]
+    set color lput 150 hsb 360 100 (item 2 extract-hsb color)
   ]
 end
 
@@ -744,9 +748,9 @@ end
 
 ; citizen reporter
 to-report recruit-allure
-  report ifelse-value recruited?
-  [ 0 ]
-  [ (sum map opinion-on-topic topics-list + 3) / 6 + hours-with-recruiter  ]
+  report (sum map opinion-on-topic topics-list + 3) / 6 +
+  hours-with-recruiter +
+  ifelse-value (self = [ recruit-target ] of myself) [ 1000 ] [ 0 ]
 end
 
 to-report employed?  ; citizen reporter
@@ -786,7 +790,7 @@ to update-output
     ask p [
       output-print (word [ special-type ] of p "-" who ": "
         [ shape ] of one-of locations-here ", "
-        current-task)
+        current-task ", " ifelse-value (recruit-target = nobody) [ "" ][ [ who ] of recruit-target ])
       ]
     ]
 end
