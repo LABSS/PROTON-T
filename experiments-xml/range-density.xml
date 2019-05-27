@@ -7,7 +7,24 @@
     </final>   
     <!--                                assuming 1 year  -->
     <timeLimit steps="8640"/>
-    <!--                                variable parameters (and population) -->
+   <!--                               Metrics -->
+    <metric>count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]</metric>
+    <metric>count citizens with [ [ shape ] of locations-here = [ "public space" ] ]</metric>
+    <metric>count citizens with [ [ shape ] of locations-here = [ "coffee" ] ] / count locations with [ shape = "coffee" ]</metric>
+    <metric>count citizens with [ recruited? ]</metric>
+    <metric>count citizens with [ risk > radicalization-threshold ]</metric>
+    <metric>max [hours-with-recruiter] of citizens</metric>
+    <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Institutional distrust" ]</metric>
+    <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Non integration" ]</metric>
+    <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Collective relative deprivation" ]</metric>
+    <metric>standard-deviation [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Institutional distrust" ]</metric>
+    <metric>standard-deviation [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Non integration" ]</metric>
+    <metric>standard-deviation [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Collective relative deprivation" ]</metric> 
+    <metric>mean [ propensity ] of citizens</metric>
+    <metric>mean [ risk ] of citizens</metric>
+    <metric>standard-deviation [ propensity ] of citizens</metric>
+    <metric>standard-deviation [ risk ] of citizens</metric>
+    <metric>count links</metric>   <!--                                variable parameters (and population) -->
     <enumeratedValueSet variable="total-citizens">
       <value value="10000"/>
     </enumeratedValueSet>
@@ -31,8 +48,6 @@
       <value value="20"/>
       <value value="200"/>
     </enumeratedValueSet>
-    <!--                               Metrics -->
-    <metric>count turtles</metric>
     <enumeratedValueSet variable="activity-debug?">
       <value value="false"/>
     </enumeratedValueSet>
