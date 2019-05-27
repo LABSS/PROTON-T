@@ -1129,21 +1129,6 @@ weekday
 1
 11
 
-SLIDER
-15
-665
-285
-698
-initial-radicalized
-initial-radicalized
-0
-20
-10.0
-1
-1
-NIL
-HORIZONTAL
-
 MONITOR
 1100
 15
@@ -1280,17 +1265,6 @@ activity-debug?
 1
 1
 -1000
-
-MONITOR
-1310
-15
-1442
-60
-recruiting attempts
-rec-counter
-0
-1
-11
 
 MONITOR
 1310
@@ -1946,61 +1920,6 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
-<experiments>
-  <experiment name="test-compactsave" repetitions="5" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <final>show "Time elapsed:"
-show timer</final>
-    <timeLimit steps="1000"/>
-    <metric>count citizens with [ recruited? ]</metric>
-    <metric>count citizens with [ risk &gt; radicalization-threshold ]</metric>
-    <metric>mean [ propensity ] of citizens</metric>
-    <metric>mean [ risk ] of citizens</metric>
-    <metric>count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]</metric>
-    <metric>aggregate-citizens-opinions</metric>
-    <enumeratedValueSet variable="total-citizens">
-      <value value="10000"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="police-interaction">
-      <value value="&quot;no police&quot;"/>
-      <value value="&quot;police&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-radicalized">
-      <value value="10"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="police-density">
-      <value value="0.01"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="alpha">
-      <value value="0.2"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="radicalization-threshold">
-      <value value="0.9"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="police-interaction-quality">
-      <value value="0.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="activity-radius">
-      <value value="10"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="work-socialization-probability">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="activity-value-update">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="scenario">
-      <value value="&quot;neukolln&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="website-access-probability">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community-side-length">
-      <value value="40"/>
-    </enumeratedValueSet>
-  </experiment>
-</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default

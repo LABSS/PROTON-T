@@ -1,0 +1,67 @@
+<experiments>
+   <!--                               120 runs -->
+  <experiment name="the-experiment" repetitions="5" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <final>show (word "Time elapsed:" timer)
+    </final>   
+    <!--                                assuming 1 year  -->
+    <timeLimit steps="8640"/>
+    <!--                                variable parameters (and population) -->
+    <enumeratedValueSet variable="total-citizens">
+      <value value="10000"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-density">
+      <value value="0.05"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="alpha">
+      <value value="0.2"/>
+      <value value="0.8"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-radius">
+      <value value="10"/>
+      <value value="8"/>
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="community-side-length">
+      <value value="35"/>
+      <value value="45"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="recruit-hours-threshold">
+      <value value="20"/>
+      <value value="200"/>
+    </enumeratedValueSet>
+    <!--                               Metrics -->
+    <metric>count turtles</metric>
+    <enumeratedValueSet variable="activity-debug?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-interaction">
+      <value value="&quot;no police&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="test-location-type">
+      <value value="&quot;coffee&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="cpo-numerousness">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="radicalization-threshold">
+      <value value="0.7"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-value-update">
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-distrust-effect">
+      <value value="-0.25"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="scenario">
+      <value value="&quot;neukolln&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="website-access-probability">
+      <value value="0.05"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
