@@ -3,7 +3,7 @@
 
 # this is the simulation
 cp /extdisk/exp-T.xml .
-/opt/netlogo/netlogo-headless.sh --model PROTON-T.nlogo --setup-file exp-T.xml --table table-output.csv > netlogo.log
+/opt/netlogo/netlogo-headless.sh --model PROTON-T.nlogo --setup-file exp-T.xml --table table-output.csv > netlogo.log 2> netlogo.log
 
 # now we save both result and experiment file
 #https://unix.stackexchange.com/questions/340010/how-do-i-create-sequentially-numbered-file-names-in-bash
