@@ -498,18 +498,22 @@ end
 to setup-free-time-activities
   ask citizens [
     ; look for possible free-time activities around current activities
-    let nearby-activities my-nearby-activities
     let the-citizen self
-    create-activity-links-to nearby-activities with [
+    let reachable-activities my-nearby-activities with [
       [ not is-mandatory? and not is-job? ] of my-activity-type and [ can-do? myself ] of the-citizen
-    ] [
+    ]
+    create-activity-links-to n-of min list links-cap count reachable-activities reachable-activities [
       set value -1 + random-float 2 ; TODO: how should this be initialized?
     ]
   ]
 end
 
 to-report my-nearby-activities ; citizen reporter
-  report turtle-set [ other activities in-radius activity-radius ] of activity-link-neighbors
+  let reachable-activities turtle-set [ other activities in-radius activity-radius ] of
+  activity-link-neighbors with [
+    not member? self [ activity-link-neighbors ] of myself
+  ]
+  report reachable-activities
 end
 
 to-report can-do? [ the-activity ] ; citizen reporter
@@ -674,7 +678,15 @@ end
 to-report get-or-create-link-with [ the-object ] ; citizen reporter
   let the-link link-with the-object
   if the-link = nobody [
-    if is-activity? the-object [ create-activity-link-to the-object [ set the-link self ] ]
+    if is-activity? the-object [
+      create-activity-link-to the-object [ set the-link self ]
+      if count my-activity-links > links-cap [
+        ask min-one-of my-activity-links with [
+          [ [ not is-mandatory? and not is-job? ] of my-activity-type
+          ] of other-end and not member? other-end [ turtles-here ] of myself and not (the-link = self)
+        ] [ value ] [ die ]
+      ]
+    ]
     if is-topic?    the-object [ create-topic-link-to    the-object [ set the-link self ] ]
     if is-website?  the-object [ create-website-link-to  the-object [ set the-link self ] ]
     ask the-link [
@@ -955,7 +967,7 @@ activity-radius
 activity-radius
 1
 100
-10.0
+11.0
 1
 1
 patches
@@ -1330,6 +1342,21 @@ count links
 17
 1
 11
+
+SLIDER
+15
+665
+285
+698
+links-cap
+links-cap
+5
+100
+20.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
