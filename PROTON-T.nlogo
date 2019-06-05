@@ -32,7 +32,7 @@ citizens-own [
   countdown
   propensity
   current-activity
-  hours-with-recruiter
+  hours-to-recruit
   special-type
   recruit-target
 ]
@@ -300,15 +300,6 @@ to setup-opinions
   ]
 end
 
-to-report clipped-random-normal [ the-mean the-std-dev the-min the-max ]
-  ; TODO: extension candidate
-  let result random-normal the-mean the-std-dev
-  while [ not (result >= the-min and result <= the-max) ] [
-    set result random-normal the-mean the-std-dev
-  ]
-  report result
-end
-
 to setup-world
   let world-side community-side-length * sqrt length areas
   resize-world 0 (world-side - 1) 0 (world-side - 1)
@@ -403,7 +394,7 @@ to setup-citizen [ residences the-area ]
   set residence        one-of residences
   set propensity       sum-factors propensity-factors
   set recruited?       false
-  set hours-with-recruiter 0
+  set hours-to-recruit random (2 * recruit-hours-threshold)
   set recruit-target    nobody
   move-to residence
 end
@@ -509,8 +500,9 @@ to setup-free-time-activities
 end
 
 to-report my-nearby-activities ; citizen reporter
-  let reachable-activities turtle-set [ other activities in-radius activity-radius ] of
-  activity-link-neighbors with [
+  let reachable-activities (turtle-set [
+    other activities in-radius activity-radius
+  ] of activity-link-neighbors) with [
     not member? self [ activity-link-neighbors ] of myself
   ]
   report reachable-activities
@@ -698,8 +690,8 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
 end
 
 to check-recruitment ; citizen procedure
-  set hours-with-recruiter hours-with-recruiter + 1
-  if risk > radicalization-threshold and hours-with-recruiter > recruit-hours-threshold [
+  set hours-to-recruit hours-to-recruit - 1
+  if risk > radicalization-threshold and hours-to-recruit <= 0 [
     set recruited? true
     ask citizens with [ recruit-target = myself ] [ set recruit-target nobody ]
     set color lput 150 hsb 360 100 (item 2 extract-hsb color)
@@ -761,7 +753,7 @@ end
 ; citizen reporter
 to-report recruit-allure
   report (sum map opinion-on-topic topics-list + 3) / 6 +
-  hours-with-recruiter +
+  (2 * recruit-hours-threshold - hours-to-recruit) / recruit-hours-threshold +
   ifelse-value (self = [ recruit-target ] of myself) [ 1000 ] [ 0 ]
 end
 
@@ -1301,10 +1293,10 @@ count citizens with [ [ shape ] of locations-here = [ \"coffee\" ] ] / count loc
 11
 
 CHOOSER
-1200
-255
-1338
-300
+1110
+260
+1248
+305
 test-location-type
 test-location-type
 "public space" "coffee"
@@ -1322,12 +1314,12 @@ rec-counter
 11
 
 MONITOR
-1435
-165
-1600
+1110
 210
+1330
+255
 NIL
-max [hours-with-recruiter] of citizens
+min [hours-to-recruit] of citizens
 17
 1
 11
