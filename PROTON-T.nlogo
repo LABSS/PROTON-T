@@ -223,10 +223,9 @@ to go
         let candidate-activities activity-link-neighbors with [
           [ not is-mandatory? and not is-job? ] of my-activity-type and not is-full?
         ]
-        if any? candidate-activities [
         start-activity rnd:weighted-one-of candidate-activities [
           (([ value ] of link-with myself + 1) / 2) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
-        ] ]
+        ]
       ]
       assert [ -> current-task != nobody and current-activity != nobody ]
       ; here the citizen is on free time so he has a probability to browse the web.
@@ -299,15 +298,6 @@ to setup-opinions
       set value [ runresult new-value ] of other-end
     ]
   ]
-end
-
-to-report clipped-random-normal [ the-mean the-std-dev the-min the-max ]
-  ; TODO: extension candidate
-  let result random-normal the-mean the-std-dev
-  while [ not (result >= the-min and result <= the-max) ] [
-    set result random-normal the-mean the-std-dev
-  ]
-  report result
 end
 
 to setup-world
@@ -404,7 +394,7 @@ to setup-citizen [ residences the-area ]
   set residence        one-of residences
   set propensity       sum-factors propensity-factors
   set recruited?       false
-  set hours-to-recruit random 2 * recruit-hours-threshold
+  set hours-to-recruit random (2 * recruit-hours-threshold)
   set recruit-target    nobody
   move-to residence
 end
@@ -969,7 +959,7 @@ activity-radius
 activity-radius
 1
 100
-11.0
+3.0
 1
 1
 patches
@@ -1223,7 +1213,7 @@ recruit-hours-threshold
 recruit-hours-threshold
 1
 300
-201.0
+20.0
 1
 1
 NIL
