@@ -223,9 +223,10 @@ to go
         let candidate-activities activity-link-neighbors with [
           [ not is-mandatory? and not is-job? ] of my-activity-type and not is-full?
         ]
+        if any? candidate-activities [
         start-activity rnd:weighted-one-of candidate-activities [
           (([ value ] of link-with myself + 1) / 2) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
-        ]
+        ] ]
       ]
       assert [ -> current-task != nobody and current-activity != nobody ]
       ; here the citizen is on free time so he has a probability to browse the web.
@@ -509,8 +510,9 @@ to setup-free-time-activities
 end
 
 to-report my-nearby-activities ; citizen reporter
-  let reachable-activities turtle-set [ other activities in-radius activity-radius ] of
-  activity-link-neighbors with [
+  let reachable-activities (turtle-set [
+    other activities in-radius activity-radius
+  ] of activity-link-neighbors) with [
     not member? self [ activity-link-neighbors ] of myself
   ]
   report reachable-activities
@@ -1221,7 +1223,7 @@ recruit-hours-threshold
 recruit-hours-threshold
 1
 300
-20.0
+201.0
 1
 1
 NIL
@@ -1301,10 +1303,10 @@ count citizens with [ [ shape ] of locations-here = [ \"coffee\" ] ] / count loc
 11
 
 CHOOSER
-1200
-255
-1338
-300
+1110
+260
+1248
+305
 test-location-type
 test-location-type
 "public space" "coffee"
@@ -1322,12 +1324,12 @@ rec-counter
 11
 
 MONITOR
-1435
-165
-1600
+1110
 210
+1330
+255
 NIL
-max [hours-with-recruiter] of citizens
+min [hours-to-recruit] of citizens
 17
 1
 11
