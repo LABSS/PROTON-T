@@ -959,7 +959,7 @@ activity-radius
 activity-radius
 1
 100
-3.0
+11.0
 1
 1
 patches
