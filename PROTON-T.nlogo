@@ -32,7 +32,7 @@ citizens-own [
   countdown
   propensity
   current-activity
-  hours-with-recruiter
+  hours-to-recruit
   special-type
   recruit-target
 ]
@@ -300,15 +300,6 @@ to setup-opinions
   ]
 end
 
-to-report clipped-random-normal [ the-mean the-std-dev the-min the-max ]
-  ; TODO: extension candidate
-  let result random-normal the-mean the-std-dev
-  while [ not (result >= the-min and result <= the-max) ] [
-    set result random-normal the-mean the-std-dev
-  ]
-  report result
-end
-
 to setup-world
   let world-side community-side-length * sqrt length areas
   resize-world 0 (world-side - 1) 0 (world-side - 1)
@@ -403,7 +394,7 @@ to setup-citizen [ residences the-area ]
   set residence        one-of residences
   set propensity       sum-factors propensity-factors
   set recruited?       false
-  set hours-with-recruiter 0
+  set hours-to-recruit random (2 * recruit-hours-threshold)
   set recruit-target    nobody
   move-to residence
 end
@@ -498,18 +489,23 @@ end
 to setup-free-time-activities
   ask citizens [
     ; look for possible free-time activities around current activities
-    let nearby-activities my-nearby-activities
     let the-citizen self
-    create-activity-links-to nearby-activities with [
+    let reachable-activities my-nearby-activities with [
       [ not is-mandatory? and not is-job? ] of my-activity-type and [ can-do? myself ] of the-citizen
-    ] [
+    ]
+    create-activity-links-to n-of min list links-cap count reachable-activities reachable-activities [
       set value -1 + random-float 2 ; TODO: how should this be initialized?
     ]
   ]
 end
 
 to-report my-nearby-activities ; citizen reporter
-  report turtle-set [ other activities in-radius activity-radius ] of activity-link-neighbors
+  let reachable-activities (turtle-set [
+    other activities in-radius activity-radius
+  ] of activity-link-neighbors) with [
+    not member? self [ activity-link-neighbors ] of myself
+  ]
+  report reachable-activities
 end
 
 to-report can-do? [ the-activity ] ; citizen reporter
@@ -674,7 +670,15 @@ end
 to-report get-or-create-link-with [ the-object ] ; citizen reporter
   let the-link link-with the-object
   if the-link = nobody [
-    if is-activity? the-object [ create-activity-link-to the-object [ set the-link self ] ]
+    if is-activity? the-object [
+      create-activity-link-to the-object [ set the-link self ]
+      if count my-activity-links > links-cap [
+        ask min-one-of my-activity-links with [
+          [ [ not is-mandatory? and not is-job? ] of my-activity-type
+          ] of other-end and not member? other-end [ turtles-here ] of myself and not (the-link = self)
+        ] [ value ] [ die ]
+      ]
+    ]
     if is-topic?    the-object [ create-topic-link-to    the-object [ set the-link self ] ]
     if is-website?  the-object [ create-website-link-to  the-object [ set the-link self ] ]
     ask the-link [
@@ -686,8 +690,8 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
 end
 
 to check-recruitment ; citizen procedure
-  set hours-with-recruiter hours-with-recruiter + 1
-  if risk > radicalization-threshold and hours-with-recruiter > recruit-hours-threshold [
+  set hours-to-recruit hours-to-recruit - 1
+  if risk > radicalization-threshold and hours-to-recruit <= 0 [
     set recruited? true
     ask citizens with [ recruit-target = myself ] [ set recruit-target nobody ]
     set color lput 150 hsb 360 100 (item 2 extract-hsb color)
@@ -749,7 +753,7 @@ end
 ; citizen reporter
 to-report recruit-allure
   report (sum map opinion-on-topic topics-list + 3) / 6 +
-  hours-with-recruiter +
+  (2 * recruit-hours-threshold - hours-to-recruit) / recruit-hours-threshold +
   ifelse-value (self = [ recruit-target ] of myself) [ 1000 ] [ 0 ]
 end
 
@@ -955,7 +959,7 @@ activity-radius
 activity-radius
 1
 100
-10.0
+11.0
 1
 1
 patches
@@ -1289,10 +1293,10 @@ count citizens with [ [ shape ] of locations-here = [ \"coffee\" ] ] / count loc
 11
 
 CHOOSER
-1200
-255
-1338
-300
+1110
+260
+1248
+305
 test-location-type
 test-location-type
 "public space" "coffee"
@@ -1310,12 +1314,12 @@ rec-counter
 11
 
 MONITOR
-1435
-165
-1600
+1110
 210
+1330
+255
 NIL
-max [hours-with-recruiter] of citizens
+min [hours-to-recruit] of citizens
 17
 1
 11
@@ -1330,6 +1334,21 @@ count links
 17
 1
 11
+
+SLIDER
+15
+665
+285
+698
+links-cap
+links-cap
+5
+100
+20.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

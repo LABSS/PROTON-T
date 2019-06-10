@@ -15,6 +15,7 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 f <- paste0( "./outputs/",name, ".csv") 
 f <- "/Users/mariopaolucci/Downloads/table-output-fail-v04T.csv"
+f <- "/Users/paolucci/Downloads/table-output-dens.csv"
 
 
 testload <-
@@ -46,7 +47,10 @@ names(testload) <-
     "count_links")
 
 opinions <- testload %>%
-  gather("opinion", "type", starts_with("mean")) 
+  gather("type","opinion", c(    "mean_distrust", 
+    "mean_nonintegration", 
+    "mean_crd")) 
+
 
 unique(testload$run_number)
 hist(testload$step)
@@ -68,8 +72,9 @@ ggp
 # opinions
 ggp<-ggplot(data=
   opinions,
-  aes(x=step,y=opinion, group=type) ) + scale_fill_brewer(palette="Dark2") + 
-  geom_line() 
+  aes(x=step,y=opinion, group=type, color=type ) ) + 
+  geom_line() + 
+  facet_wrap( ~ run_number)  
 ggp
 
 
@@ -78,22 +83,6 @@ ggp<-ggplot(data=
             aes(x=step,y=count_links, group= run_number , color=run_number) 
 )  +  geom_line() +
 facet_wrap(  ~ activity_radius )  
-
-
-
-#scale_color_distiller(palette = "Greens") + 
-#facet_wrap(  ~  age.weight   , scales = "free")  + 
-#scale_y_log10() +
-#theme(legend.position="none") +
-#ylab("Difference in quality (PR - REP)") + 
-#scale_y_continuous(labels = scientific)
-# ggtitle("Difference between peer review and reputation.")
-
-
-# all the risk histograms
-risks %>%
-  ggplot(aes(x = extr_risk)) + geom_histogram() + coord_flip() +
-  facet_grid(~ X.step. )
 
 
 

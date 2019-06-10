@@ -1,6 +1,6 @@
 <experiments>
-   <!--                               120 runs -->
-  <experiment name="the-experiment" repetitions="5" runMetricsEveryStep="true">
+   <!--                               48*2 runs -->
+  <experiment name="the-experiment" repetitions="2" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <final>show (word "Time elapsed:" timer)
@@ -13,7 +13,8 @@
     <metric>count citizens with [ [ shape ] of locations-here = [ "coffee" ] ] / count locations with [ shape = "coffee" ]</metric>
     <metric>count citizens with [ recruited? ]</metric>
     <metric>count citizens with [ risk > radicalization-threshold ]</metric>
-    <metric>max [hours-with-recruiter] of citizens</metric>
+    <metric>min [hours-to-recruit] of citizens</metric>
+    <metric>mean [hours-to-recruit] of citizens</metric>
     <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Institutional distrust" ]</metric>
     <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Non integration" ]</metric>
     <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Collective relative deprivation" ]</metric>
@@ -38,14 +39,14 @@
     <enumeratedValueSet variable="activity-radius">
       <value value="10"/>
       <value value="8"/>
-      <value value="5"/>
+      <value value="4"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="community-side-length">
       <value value="35"/>
       <value value="45"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="recruit-hours-threshold">
-      <value value="20"/>
+      <value value="50"/>
       <value value="200"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-debug?">
@@ -62,6 +63,7 @@
     </enumeratedValueSet>
     <enumeratedValueSet variable="cpo-numerousness">
       <value value="1"/>
+      <value value="2"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="radicalization-threshold">
       <value value="0.7"/>
