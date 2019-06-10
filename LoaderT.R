@@ -6,14 +6,16 @@ library(magrittr)
 
 name<-"PROTON-T testing-output-fat-table"
 
-set_project_wd <- function(folder_nm){
-  if(Sys.info()[[4]]=="mylaptopname") setwd(paste0('~/workspace/',folder_nm))
-  else setwd(paste0('D:/workspace/',folder_nm))
-}
+# set_project_wd <- function(folder_nm){
+#   if(Sys.info()[[4]]=="mylaptopname") setwd(paste0('~/workspace/',folder_nm))
+#   else setwd(paste0('D:/workspace/',folder_nm))
+# }
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 f <- paste0( "./outputs/",name, ".csv") 
+f <- "/Users/mariopaolucci/Downloads/table-output-fail-v04T.csv"
+
 
 testload <-
 readLines(f) %>%
@@ -23,23 +25,70 @@ read.csv(text=., skip=6, header=TRUE)
 
 dput(names(testload)) # to correct
 names(testload) <-
-  c("X.run.number.", "citizens.per.community", "initial.radicalized", 
-"alpha", "radicalization.threshold", "num.communities", "activity.radius", 
-"work.socialization.probability", "activity.value.update", "website.access.probability", 
-"community.side.length", "X.step.", "weekday", "X.word..ticks.mod.24...00.", 
-"count.citizens.with...recruited...", "count.citizens.with...risk...radicalization.threshold..", 
-"X..age...of.citizens", "risk", "citizens.opinions", 
-"citizens.occupations.hist")
+  c("run_number", "total.citizens", "police.density", "alpha", 
+    "activity_radius", "community.side.length", "recruit.hours.threshold", 
+    "activity.debug.", "work.socialization.probability", "police.interaction", 
+    "test.location.type", "cpo.numerousness", "radicalization.threshold", 
+    "activity.value.update", "police.distrust.effect", "scenario", 
+    "website.access.probability", "step", "count.citizens.with.....shape...of.locations.here.....mosque....", 
+    "count.citizens.with.....shape...of.locations.here.....public.space....", 
+    "count.citizens.with.....shape...of.locations.here.....coffee.......count.locations.with...shape...coffee..", 
+    "recruited", "at_risk", 
+    "max..hours.with.recruiter..of.citizens", 
+    "mean_distrust", 
+    "mean_nonintegration", 
+    "mean_crd", 
+    "std_distrust", 
+    "std_nonintegration", 
+    "std_crd", 
+    "mean...propensity...of.citizens", "mean...risk...of.citizens", 
+    "standard.deviation...propensity...of.citizens", "standard.deviation...risk...of.citizens", 
+    "count_links")
 
-risks <-
-  testload %>%
-mutate(
-  extr_risk = risk %>%
-  str_extract_all("[-+]?[0-9]*\\.?[0-9]+") %>%       
-    map(as.numeric) 
-  ) %>%
-  unnest(extr_risk) %>%
-  select(X.run.number., X.step., extr_risk)
+opinions <- testload %>%
+  gather("opinion", "type", starts_with("mean")) 
+
+unique(testload$run_number)
+hist(testload$step)
+
+# recruits
+ggp<-ggplot(data=
+              testload,
+            aes(x=step,y=recruited, group= run_number , color=run_number) 
+)  +  geom_line()
+ggp
+
+# links
+ggp<-ggplot(data=
+              testload,
+            aes(x=step,y=count_links, group= run_number , color=run_number) 
+)  +  geom_line()
+ggp
+
+# opinions
+ggp<-ggplot(data=
+  opinions,
+  aes(x=step,y=opinion, group=type) ) + scale_fill_brewer(palette="Dark2") + 
+  geom_line() 
+ggp
+
+
+ggp<-ggplot(data=
+              testload,
+            aes(x=step,y=count_links, group= run_number , color=run_number) 
+)  +  geom_line() +
+facet_wrap(  ~ activity_radius )  
+
+
+
+#scale_color_distiller(palette = "Greens") + 
+#facet_wrap(  ~  age.weight   , scales = "free")  + 
+#scale_y_log10() +
+#theme(legend.position="none") +
+#ylab("Difference in quality (PR - REP)") + 
+#scale_y_continuous(labels = scientific)
+# ggtitle("Difference between peer review and reputation.")
+
 
 # all the risk histograms
 risks %>%
