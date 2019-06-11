@@ -13,6 +13,7 @@ globals [
   soc-counter
   rec-counter
   printed
+  fail-activity-counter
 ]
 
 patches-own [
@@ -223,18 +224,23 @@ to go
         let candidate-activities activity-link-neighbors with [
           [ not is-mandatory? and not is-job? ] of my-activity-type and not is-full?
         ]
-        start-activity rnd:weighted-one-of candidate-activities [
-          (([ value ] of link-with myself + 1) / 2) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
+        if any? candidate-activities [
+          start-activity rnd:weighted-one-of candidate-activities  [
+            (([ value ] of link-with myself + 1) / 2) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
+          ]
         ]
       ]
-      assert [ -> current-task != nobody and current-activity != nobody ]
+      ;assert [ -> current-task != nobody and current-activity != nobody ]
       ; here the citizen is on free time so he has a probability to browse the web.
       if random-float 1 < website-access-probability [
         access-website
       ]
     ]
-    run current-task
-    set countdown countdown - 1
+    if current-task != nobody [
+      set fail-activity-counter fail-activity-counter + 1
+      run current-task
+      set countdown countdown - 1
+    ]
   ]
   if activity-debug? [ update-output ]
   tick

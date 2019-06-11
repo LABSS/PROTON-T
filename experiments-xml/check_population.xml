@@ -29,6 +29,7 @@
     <metric>count links</metric>   
     <metric>count citizens with [ get "male?" = true ] / count citizens</metric>
     <metric>count citizens with [ get "immigrant?" = true ] / count citizens</metric>
+    <metric>fail-activity-counter</metric>
 <!--                                variable parameters (and population) -->
     <enumeratedValueSet variable="total-citizens">
       <value value="10000"/>
