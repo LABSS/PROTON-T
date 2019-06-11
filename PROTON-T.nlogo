@@ -1017,7 +1017,7 @@ radicalization-threshold
 radicalization-threshold
 0
 1
-0.7
+0.9
 .1
 1
 NIL
