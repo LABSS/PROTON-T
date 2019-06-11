@@ -4,8 +4,8 @@ library(tidyverse)
 library(readxl)
 
 
-gender_mod <- 1.0     # multiplier - 2 means twice the women
-migrant_mod <- 2.0 # 2 means twice the immigrants
+gender_mod <- 2.0     # multiplier - 2 means twice the women
+migrant_mod <- 1.0 # 2 means twice the immigrants
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
