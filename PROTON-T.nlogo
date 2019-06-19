@@ -174,16 +174,9 @@ to make-recruiters
 end
 
 to setup-police
-  create-police 1
-  ask one-of police [
+  create-police 1 [
     let police-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
     ask police-topic-link [ set value police-distrust-effect ]
-  ]
-  if any? cpos [
-    ask cpos [
-      let cpo-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
-      ask cpo-topic-link [ set value -1 ]
-    ]
   ]
 end
 
