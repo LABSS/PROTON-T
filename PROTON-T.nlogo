@@ -334,12 +334,15 @@ to setup-communities-citizens
 end
 
 to setup-cpos [ the-patches ]
-ask n-of cpo-numerousness the-patches [
-  sprout-cpos 1 [
-    set shape "flag"
-    set color red
+  ask n-of cpo-numerousness the-patches [
+    sprout-cpos 1 [
+      set shape "flag"
+      set color red
+      create-topic-link-to topic-by-name "Institutional distrust" [
+        set value -1
+      ]
+    ]
   ]
-]
 end
 
 to setup-locations [ target-patches the-area ]
@@ -1162,7 +1165,7 @@ CHOOSER
 police-interaction
 police-interaction
 "police" "cpo" "no police"
-1
+2
 
 SLIDER
 15
