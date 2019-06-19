@@ -192,11 +192,12 @@ to move-cpos
     set number-of-interactions 0
     let best-patches patches with [ count citizens-here >= 4 and area-id =
       [ area-id ] of [ patch-here ] of myself ]
-    if-else any? best-patches [
+    if not any? best-patches [
+      set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+      if not any? best-patches [
+        set best-patches patch-here; if none, can as well stay there
+      ]
       move-to one-of best-patches
-    ] [
-      set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself]
-      if any? best-patches [ move-to one-of best-patches ] ; if none, can as well stay there
     ]
   ]
 end
@@ -333,8 +334,8 @@ to setup-communities-citizens
       ]
       create-citizens table:get area-population the-area [
         setup-citizen residences the-area
-        if police-interaction = "cpo" [ setup-cpos community-patches ]
       ]
+      if police-interaction = "cpo" [ setup-cpos community-patches ]
     ]
   ]
 end
@@ -1168,7 +1169,7 @@ CHOOSER
 police-interaction
 police-interaction
 "police" "cpo" "no police"
-2
+1
 
 SLIDER
 15
@@ -1355,6 +1356,17 @@ links-cap
 1
 NIL
 HORIZONTAL
+
+MONITOR
+1310
+15
+1372
+60
+at home
+count citizens with [ [ shape ] of locations-here = [ \"residence\" ] ]
+0
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
