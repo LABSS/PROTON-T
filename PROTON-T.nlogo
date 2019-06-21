@@ -190,8 +190,8 @@ to move-cpos
       if not any? best-patches [
         set best-patches patch-here; if none, can as well stay there
       ]
-      move-to one-of best-patches
     ]
+    move-to one-of best-patches
   ]
 end
 
