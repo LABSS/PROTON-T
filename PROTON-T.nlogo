@@ -174,16 +174,9 @@ to make-recruiters
 end
 
 to setup-police
-  create-police 1
-  ask one-of police [
+  create-police 1 [
     let police-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
     ask police-topic-link [ set value police-distrust-effect ]
-  ]
-  if any? cpos [
-    ask cpos [
-      let cpo-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
-      ask cpo-topic-link [ set value -1 ]
-    ]
   ]
 end
 
@@ -192,12 +185,13 @@ to move-cpos
     set number-of-interactions 0
     let best-patches patches with [ count citizens-here >= 4 and area-id =
       [ area-id ] of [ patch-here ] of myself ]
-    if-else any? best-patches [
-      move-to one-of best-patches
-    ] [
-      set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself]
-      if any? best-patches [ move-to one-of best-patches ] ; if none, can as well stay there
+    if not any? best-patches [
+      set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+      if not any? best-patches [
+        set best-patches patch-here; if none, can as well stay there
+      ]
     ]
+    move-to one-of best-patches
   ]
 end
 
@@ -333,19 +327,22 @@ to setup-communities-citizens
       ]
       create-citizens table:get area-population the-area [
         setup-citizen residences the-area
-        if police-interaction = "cpo" [ setup-cpos community-patches ]
       ]
+      if police-interaction = "cpo" [ setup-cpos community-patches ]
     ]
   ]
 end
 
 to setup-cpos [ the-patches ]
-ask n-of cpo-numerousness the-patches [
-  sprout-cpos 1 [
-    set shape "flag"
-    set color red
+  ask n-of cpo-numerousness the-patches [
+    sprout-cpos 1 [
+      set shape "flag"
+      set color red
+      create-topic-link-to topic-by-name "Institutional distrust" [
+        set value -1
+      ]
+    ]
   ]
-]
 end
 
 to setup-locations [ target-patches the-area ]
@@ -1355,6 +1352,17 @@ links-cap
 1
 NIL
 HORIZONTAL
+
+MONITOR
+1310
+15
+1372
+60
+at home
+count citizens with [ [ shape ] of locations-here = [ \"residence\" ] ]
+0
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
