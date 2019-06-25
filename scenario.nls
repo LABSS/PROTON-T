@@ -1,3 +1,8 @@
+to load-opinions
+  let opinions group-by-4-keys read-csv "bootstrap"
+end
+
+
 to-report propensity-factors ; citizen reporter
                              ; first item is weight (in R+), second item is value (in [-1, 1])
                              ; todo: confirm weight for attribute factors
