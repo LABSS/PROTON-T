@@ -637,6 +637,7 @@ to-report my-opinions ; citizen reporter
   )
 end
 
+; https://arxiv.org/ftp/arxiv/papers/0803/0803.3879.pdf
 to-report talk-to [ recipients the-object ] ; citizen procedure
   let success? false
   if any? recipients [
@@ -649,9 +650,6 @@ to-report talk-to [ recipients the-object ] ; citizen procedure
       if abs (v1 - v2) < t [
         ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
         set success? true
-        ; show talk-to effect
-        ; show v2
-        ; ask l2 [show value]
       ]
     ]
   ]
