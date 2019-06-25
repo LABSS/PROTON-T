@@ -100,6 +100,7 @@ to setup
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
+  set radicalization-threshold calc-radicalization-threshold
   make-specials
   setup-free-time-activities
   ask links [ set hidden? true ]

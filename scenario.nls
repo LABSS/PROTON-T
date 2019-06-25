@@ -148,8 +148,8 @@ to post-opinions-setup [ the-places the-topic-name the-value the-criteria ]
 end
 
 to-report calc-radicalization-threshold
-  let big-list sort-by [ -1 * risk ] citizens
-  report [ risk ] of item 10 big-list
+  let big-list sort-on [ -1 * risk ] citizens
+  report [ risk ] of item (radicalization-percentage * count citizens) big-list
 end
 
 to-report workday-nonmuslim? report member? week-num (range 1 6)                                                             end ; citizen reporter
