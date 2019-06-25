@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(foreign)\n# read data from SPSS\ndata <- read.spss(\"EVS_ABM1.sav\", to.data.frame=TRUE)\nwarnings()\nwrite.csv2(x = data,file = \"germany.csv\")\n\n",
+    "created" : 1557266885824.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2107512254",
+    "id" : "4A156493",
+    "lastKnownWriteTime" : 1559812019,
+    "last_content_update" : 1559812019806,
+    "path" : "~/Documents/clients/LABSS-ISTC-CNR/surveydata/analysis.R",
+    "project_path" : "analysis.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
