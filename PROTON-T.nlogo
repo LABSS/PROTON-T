@@ -14,6 +14,7 @@ globals [
   rec-counter
   printed
   fail-activity-counter
+  radicalization-threshold
 ]
 
 patches-own [
@@ -99,6 +100,7 @@ to setup
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
+  set radicalization-threshold calc-radicalization-threshold
   make-specials
   setup-free-time-activities
   ask links [ set hidden? true ]
@@ -1016,11 +1018,11 @@ SLIDER
 225
 290
 258
-radicalization-threshold
-radicalization-threshold
+radicalization-percentage
+radicalization-percentage
 0
 1
-0.9
+0.1
 .1
 1
 NIL
