@@ -1,4 +1,4 @@
-__includes [ "scenario.nls" ]
+__includes [ "scenario.nls" "reporters.nls" ]
 
 extensions [ table profiler rnd csv ]
 
@@ -1157,7 +1157,7 @@ CHOOSER
 scenario
 scenario
 "neukolln" "neukolln_females_x_2" "neukolln_migrants_x_2"
-0
+2
 
 CHOOSER
 15
