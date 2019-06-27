@@ -1156,7 +1156,7 @@ CHOOSER
 60
 scenario
 scenario
-"neukolln" "test"
+"neukolln" "neukolln_females_x_2" "neukolln_migrants_x_2"
 0
 
 CHOOSER
