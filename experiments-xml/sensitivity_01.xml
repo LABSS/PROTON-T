@@ -1,11 +1,11 @@
 <experiments>
-   <!--                               48*2 runs -->
+   <!--                               32*3*10 = 960 runs -->
   <experiment name="sensitivity_01" repetitions="10" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <final>show (word "Time elapsed:" timer)
     </final>   
-    <!--                                assuming 1 year  -->
+    <!--                                assuming 1 year, 8640 steps, or three, 25920  -->
     <timeLimit steps="8640"/>
     <!--                               Metrics for the wizard   -->
     <!-- t1 recruited citizens -->
@@ -28,39 +28,50 @@
     <metric>t3 "mean" 4</metric>
     <metric>t3 "median" 4</metric>
     <metric>t3 "standard-deviation" 4</metric>
+    <metric>t3.bins</metric>
+
+    <metric>t5 "mean" "Institutional distrust" 0</metric>
+    <metric>t5 "mean" "Institutional distrust" 0</metric>
+    <metric>t5 "mean" "Institutional distrust" 0</metric>
+    <metric>t5 "mean" "Non integration" 0</metric>
+    <metric>t5 "mean" "Non integration" 0</metric>
+    <metric>t5 "mean" "Non integration" 0</metric>
+    <metric>t5 "mean" "Collective relative deprivation" 0</metric>
+    <metric>t5 "mean" "Collective relative deprivation" 0</metric>
+    <metric>t5 "mean" "Collective relative deprivation" 0</metric>  
+    <metric>t5 "median" "Institutional distrust" 0</metric>
+    <metric>t5 "median" "Institutional distrust" 0</metric>
+    <metric>t5 "median" "Institutional distrust" 0</metric>
+    <metric>t5 "median" "Non integration" 0</metric>
+    <metric>t5 "median" "Non integration" 0</metric>
+    <metric>t5 "median" "Non integration" 0</metric>
+    <metric>t5 "median" "Collective relative deprivation" 0</metric>
+    <metric>t5 "median" "Collective relative deprivation" 0</metric>
+    <metric>t5 "median" "Collective relative deprivation" 0</metric> 
+
    <!--                               Other Metrics -->
     <metric>count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]</metric>
     <metric>count citizens with [ [ shape ] of locations-here = [ "public space" ] ]</metric>
     <metric>count citizens with [ [ shape ] of locations-here = [ "coffee" ] ] / count locations with [ shape = "coffee" ]</metric>
     <metric>min [hours-to-recruit] of citizens</metric>
     <metric>mean [hours-to-recruit] of citizens</metric>
-    <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Institutional distrust" ]</metric>
-    <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Non integration" ]</metric>
-    <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Collective relative deprivation" ]</metric>
-    <metric>standard-deviation [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Institutional distrust" ]</metric>
-    <metric>standard-deviation [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Non integration" ]</metric>
-    <metric>standard-deviation [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Collective relative deprivation" ]</metric> 
-    <metric>mean [ propensity ] of citizens</metric>
-    <metric>standard-deviation [ propensity ] of citizens</metric>
     <metric>count links</metric>   
     <!--                                variable parameters (and population) -->
     <enumeratedValueSet variable="total-citizens">
-      <value value="10000"/>
+      <value value="40000"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="police-density">
       <value value="0.05"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
-      <value value="0.2"/>
-      <value value="0.8"/>
+      <value value="0.0"/>
+      <value value="1.0"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-radius">
       <value value="10"/>
-      <value value="8"/>
-      <value value="4"/>
+      <value value="15"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="community-side-length">
-      <value value="35"/>
       <value value="45"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="recruit-hours-threshold">
@@ -72,6 +83,7 @@
     </enumeratedValueSet>
     <enumeratedValueSet variable="work-socialization-probability">
       <value value="0.1"/>
+      <value value="0.3"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="police-interaction">
       <value value="&quot;no police&quot;"/>
@@ -94,9 +106,11 @@
     </enumeratedValueSet>
     <enumeratedValueSet variable="scenario">
       <value value="&quot;neukolln&quot;"/>
+      <value value="&quot;neukolln_females_x_2&quot;"/>
+      <value value="&quot;neukolln_migrants_x_2&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="website-access-probability">
-      <value value="0.05"/>
+      <value value="0.01"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>

@@ -8,7 +8,7 @@ to-report t2
   report count citizens with [ risk > radicalization-threshold ]
 end
 
-;t3.mean mean risk of citizens
+;t3 risk of citizens
 to-report t3.mean
   report mean [ risk ] of citizens
 end
@@ -18,7 +18,6 @@ end
 to-report t3.sd
   report standard-deviation [ risk ] of citizens
 end
-
 to-report t3 [ operator the-area ]
   ifelse the-area = 0 [
     report runresult (word operator " [ risk ] of citizens")
@@ -26,10 +25,26 @@ to-report t3 [ operator the-area ]
     report runresult (word operator " [ risk ] of citizens with [ area = " the-area " ]")
   ]
 end
+to-report t3.bins
+  report make-histo " risk " 10 -0.662 3.05
+end
 
-;t3.median
-;t3.ds Standard deviation of t3
 ;t4.mean, t4.median, t4.sd mean, median and standard deviation of propensity of citizens (constants)
+to-report t4 [ operator the-area ]
+  ifelse the-area = 0 [
+    report runresult (word operator " [ propensity ] of citizens")
+  ] [
+    report runresult (word operator " [ propensity ] of citizens with [ area = " the-area " ]")
+  ]
+end
+
+; t5, opinions
+to-report t5 [ operator opinion the-area ]
+  let query (word operator " [ value ] of link-set [ my-in-topic-links with [ [ breed ] of other-end = citizens")
+  if the-area != 0 [ set query (word query " and [ area ] of other-end = " the-area) ]
+  set query (word query " ] ] of topic-by-name \"" opinion "\"")
+  report runresult query
+end
   
 ;  
 ;      <metric>count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]</metric>
@@ -38,15 +53,25 @@ end
 ;    <metric>count citizens with [ recruited? ]</metric>
 ;    <metric>count citizens with [ risk > radicalization-threshold ]</metric>
 ;    <metric>min [hours-to-recruit] of citizens</metric>
-;    <metric>mean [hours-to-recruit] of citizens</metric>
-;    <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Institutional distrust" ]</metric>
-;    <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Non integration" ]</metric>
-;    <metric>mean [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Collective relative deprivation" ]</metric>
-;    <metric>standard-deviation [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Institutional distrust" ]</metric>
-;    <metric>standard-deviation [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Non integration" ]</metric>
-;    <metric>standard-deviation [ value ] of [ my-in-topic-links ] of one-of topics with [ topic-name = "Collective relative deprivation" ]</metric> 
 ;    <metric>mean [ propensity ] of citizens</metric>
 ;    
 ;    <metric>standard-deviation [ propensity ] of citizens</metric>
 
 ;    <metric>count links</metric> 
+
+
+; this procedure creates a list of values counting the number of citizens in the bins as created. For example,
+; [[-0.662 3] [-0.2 34] [0.07 80]] means that in the second bin, the one from -0.2 to 0.07, there are 34 cases.
+; objects falling outside of bins are not counted
+to-report make-histo [ citizen-reporter bins min-v max-v ]
+  let values filter [ i -> i >= min-v and i  < max-v ] [ runresult citizen-reporter ] of citizens
+  let counts n-values bins [ 0 ]
+  let thresholds (sentence (range min-v max-v ((max-v - min-v) / bins)) max-v)
+  let i 0 
+  foreach values [ v ->
+    set i 0
+    while [ v > item (i + 1) thresholds  ] [ set i i + 1 ]
+    set counts replace-item i counts (item i counts + 1)
+  ]
+  report (map [ [ a b ] -> (list a b) ] but-last thresholds counts)
+end

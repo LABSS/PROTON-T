@@ -177,7 +177,7 @@ end
 
 to setup-police
   create-police 1 [
-    let police-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
+    let police-topic-link get-or-create-link-with topic-by-name "Institutional distrust"
     ask police-topic-link [ set value police-distrust-effect ]
   ]
 end
@@ -563,7 +563,7 @@ to police-interact ; citizen procedure
   if police-interaction = "police" [
     if police-density > (random-float 1) [
       ask one-of police [
-        let result? talk-to (turtle-set myself) (one-of topics with [topic-name = "Institutional distrust"])
+        let result? talk-to (turtle-set myself) topic-by-name "Institutional distrust"
       ]
     ]
   ]
@@ -1157,7 +1157,7 @@ CHOOSER
 scenario
 scenario
 "neukolln" "neukolln_females_x_2" "neukolln_migrants_x_2"
-2
+0
 
 CHOOSER
 15
