@@ -87,6 +87,7 @@ topic-links-own [ value ]                            ; opinion dynamics score fr
 
 to setup
   clear-all
+  reset-timer
   load-totals
   setup-world  ; warning: this kills all turtles and links in case of resize
   setup-topics ; topic names are needed for plots
