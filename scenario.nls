@@ -1,5 +1,5 @@
 to load-opinions
-  let opinions group-by-4-keys read-csv "bootstrap"
+  let opinions group-by-4-keys read-csv "bootstrapped_data"
 end
 
 
