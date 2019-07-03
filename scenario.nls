@@ -1,5 +1,22 @@
 to load-opinions
-  let opinions group-by-4-keys read-csv "bootstrapped_data"
+  let opinions read-csv "bootstrapped_data"
+  ask one-of citizens [
+    let my-key (list
+      age-class
+      ifelse-value get "male?"      [ 1 ] [ 0 ]
+      ifelse-value get "immigrant?" [ 1 ] [ 0 ]
+      ifelse-value get "muslim?"    [ 1 ] [ 0 ])
+    show my-key
+    let my-prototype one-of filter [ line -> sublist line 0 4 = my-key ] opinions
+    show my-prototype
+    foreach range 3  [ i -> 
+      set-opinion-value item i topics-list item (i + 4) my-prototype
+    ]
+  ]
+end
+
+to-report age-class
+  report floor age / 10
 end
 
 
@@ -156,6 +173,13 @@ to-report calc-radicalization-threshold
   let big-list sort-on [ -1 * risk ] citizens
   report [ risk ] of item (radicalization-percentage * count citizens) big-list
 end
+
+; citizen procedure
+to set-opinion-value [ the-topic the-value ]
+  ask out-topic-link-to topic-by-name the-topic [
+    set value the-value
+  ]
+end  
 
 to-report workday-nonmuslim? report member? week-num (range 1 6)                                                             end ; citizen reporter
 to-report weekday            report item week-num [ "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" ] end ; citizen reporter
