@@ -1,19 +1,21 @@
 to load-opinions
-  let opinions read-csv "bootstrapped_data"
-  ask citizens [
+  let opinions read-csv "combination_data"  
+  let table table:group-items opinions [ line -> sublist line 0 4 ]; group the rows by lists with initial 4 items
+  ask  citizens [
     let my-key (list
       age-class
       ifelse-value get "male?"      [ 1 ] [ 0 ]
       ifelse-value get "immigrant?" [ 1 ] [ 0 ]
       ifelse-value get "muslim?"    [ 1 ] [ 0 ])
-    ;show my-key
-    let l filter [ line -> sublist line 0 4 = my-key ] opinions
-    if length l = 0 [ show my-key ]
-    let my-prototype one-of filter [ line -> sublist line 0 4 = my-key ] opinions
-    ;show my-prototype
+    let l table:get table my-key
+    ;show l
+    let f-list runresult remove "," item 7 item 0 l 
+    let j random length f-list
+    set fundamentalism-score item j f-list
     foreach range 3  [ i -> 
-      set-opinion-value item i topics-list item (i + 4) my-prototype
+      set-opinion-value item i topics-list item j runresult remove "," item (i + 4) item 0 l
     ]
+    set fundamentalism-score item j runresult remove "," item 7 item 0 l
   ]
 end
 
@@ -173,6 +175,7 @@ end
 
 ; citizen procedure
 to set-opinion-value [ the-topic the-value ]
+  assert [ -> is-number? the-value ]
   ask out-topic-link-to topic-by-name the-topic [
     set value the-value
   ]
