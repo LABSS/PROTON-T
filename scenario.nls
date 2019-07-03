@@ -1,24 +1,28 @@
 to load-opinions
   let opinions read-csv "bootstrapped_data"
-  ask one-of citizens [
+  ask citizens [
     let my-key (list
       age-class
       ifelse-value get "male?"      [ 1 ] [ 0 ]
       ifelse-value get "immigrant?" [ 1 ] [ 0 ]
       ifelse-value get "muslim?"    [ 1 ] [ 0 ])
-    show my-key
+    ;show my-key
+    let l filter [ line -> sublist line 0 4 = my-key ] opinions
+    if length l = 0 [ show my-key ]
     let my-prototype one-of filter [ line -> sublist line 0 4 = my-key ] opinions
-    show my-prototype
+    ;show my-prototype
     foreach range 3  [ i -> 
       set-opinion-value item i topics-list item (i + 4) my-prototype
     ]
   ]
 end
 
-to-report age-class
-  report floor age / 10
-end
-
+to-report age-class; citizen reporter. Classes from ZA4584_cdb.pdf page 1224
+  let thresholds [ 29 44 59 74 89 999 ]
+  let i 0
+  while [ age > item i thresholds ] [ set i i + 1 ]
+  report i + 1
+end 
 
 to-report propensity-factors ; citizen reporter
                              ; first item is weight (in R+), second item is value (in [-1, 1])
