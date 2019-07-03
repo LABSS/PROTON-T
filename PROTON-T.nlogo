@@ -38,6 +38,7 @@ citizens-own [
   hours-to-recruit
   special-type
   recruit-target
+  fundamentalism-score ; this exists only to calculate the value of authoritarian?
 ]
 
 breed [ activity-types activity-type ]
@@ -785,12 +786,6 @@ to-report group-by-5-keys [ csv-data ]
   report table-map table [ rows -> map last rows ]
 end
 
-to-report group-by-4-keys [ csv-data ]
-  let table table:group-items csv-data [ line -> sublist line 0 4 ]; group the rows by lists with initial 4 items
-  ;report table-map table [ rows -> map [ i -> last i ] rows ]
-  report table-map table [ rows -> map last rows ]
-end
-
 to-report table-map [ tbl fn ]
   ; from https://github.com/NetLogo/Table-Extension/issues/6#issuecomment-276109136
   ; (if `table:map` is ever added to the table extension, this could be replaced by it)
@@ -871,7 +866,7 @@ total-citizens
 total-citizens
 100
 2000
-750.0
+550.0
 10
 1
 citizens
