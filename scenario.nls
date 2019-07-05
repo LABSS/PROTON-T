@@ -3,10 +3,10 @@ to load-opinions
   let table table:group-items opinions [ line -> sublist line 0 4 ]; group the rows by lists with initial 4 items
   ask  citizens [
     let my-key (list
-      age-class
-      ifelse-value get "male?"      [ 1 ] [ 0 ]
       ifelse-value get "immigrant?" [ 1 ] [ 0 ]
-      ifelse-value get "muslim?"    [ 1 ] [ 0 ])
+      ifelse-value get "male?"      [ 1 ] [ 0 ]
+      ifelse-value get "muslim?"    [ 1 ] [ 0 ]
+      age-class)
     let l table:get table my-key
     ;show l
     let f-list runresult remove "," item 7 item 0 l 
@@ -17,6 +17,16 @@ to load-opinions
     ]
     set fundamentalism-score item j runresult remove "," item 7 item 0 l
   ]
+end
+
+to export-opinions 
+  csv:to-file (word "topics.csv") [ 
+    (list
+      opinion-on-topic "Non integration"         
+      opinion-on-topic "Institutional distrust"    
+      opinion-on-topic "Collective relative deprivation"
+      fundamentalism-score) 
+  ] of citizens
 end
 
 to-report age-class; citizen reporter. Classes from ZA4584_cdb.pdf page 1224
