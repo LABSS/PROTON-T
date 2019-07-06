@@ -29,6 +29,16 @@ to export-opinions
   ] of citizens
 end
 
+to export-opinions-c 
+  csv:to-file (word "topics.csv") [ 
+    (list
+      is-number? opinion-on-topic "Non integration"         
+      is-number? opinion-on-topic "Institutional distrust"    
+      is-number? opinion-on-topic "Collective relative deprivation"
+      is-number? fundamentalism-score) 
+  ] of citizens
+end
+
 to-report age-class; citizen reporter. Classes from ZA4584_cdb.pdf page 1224
   let thresholds [ 29 44 59 74 89 999 ]
   let i 0
