@@ -20,7 +20,7 @@ to load-opinions
 end
 
 to export-opinions 
-  csv:to-file (word "topics.csv") [ 
+  csv:to-file (word "opinions-at-" ticks ".csv") [ 
     (list
       opinion-on-topic "Non integration"         
       opinion-on-topic "Institutional distrust"    
