@@ -94,7 +94,7 @@ to setup
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
   setup-websites
-  setup-opinions
+  load-opinions ; also sets fundamentalism
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
@@ -279,14 +279,6 @@ to setup-websites
         set value item 1 def
       ]
       set hidden? true
-    ]
-  ]
-end
-
-to setup-opinions
-  ask citizens [
-    create-topic-links-to topics [
-      set value [ runresult new-value ] of other-end
     ]
   ]
 end
@@ -787,11 +779,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1088
-799
+1028
+739
 -1
 -1
-13.0
+8.0
 1
 10
 1
@@ -802,9 +794,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-59
+89
 0
-59
+89
 1
 1
 1
@@ -863,7 +855,7 @@ community-side-length
 community-side-length
 20
 100
-30.0
+35.0
 1
 1
 patches

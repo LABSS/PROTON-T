@@ -19,23 +19,13 @@ to load-opinions
   ]
 end
 
-to export-opinions 
-  csv:to-file (word "opinions-at-" ticks ".csv") [ 
+to export-opinions [ id ]
+  csv:to-file (word "opinions-at-" ticks "-" id ".csv") [ 
     (list
       opinion-on-topic "Non integration"         
       opinion-on-topic "Institutional distrust"    
       opinion-on-topic "Collective relative deprivation"
       fundamentalism-score) 
-  ] of citizens
-end
-
-to export-opinions-c 
-  csv:to-file (word "topics.csv") [ 
-    (list
-      is-number? opinion-on-topic "Non integration"         
-      is-number? opinion-on-topic "Institutional distrust"    
-      is-number? opinion-on-topic "Collective relative deprivation"
-      is-number? fundamentalism-score) 
   ] of citizens
 end
 
@@ -161,15 +151,14 @@ to preach
 end
 
 to-report topic-definitions
-  let uniform [ -> -1 + random-float 2 ]
   ; Criteria are reporters with one speaker (myself) and one listener (self). 
   ; This makes the criteria compatible with the ones in activities.
   ; the risk and protection are used in risk calculation.
   report (list
-    ;      type                             value     criteria    risk-weight protective-weight
-    (list "Non integration"                 uniform   [ -> true ]    0.188     0.178)
-    (list "Institutional distrust"          uniform   [ -> true ]    0.277     0.153)
-    (list "Collective relative deprivation" uniform   [ -> [ get "muslim?" ] of myself and get "muslim?" ]  0.116     0    )
+    ;      type                             criteria    risk-weight protective-weight
+    (list "Non integration"                 [ -> true ]    0.188     0.178)
+    (list "Institutional distrust"          [ -> true ]    0.277     0.153)
+    (list "Collective relative deprivation" [ -> [ get "muslim?" ] of myself and get "muslim?" ]  0.116     0    )
   )
 end
 
@@ -196,11 +185,10 @@ end
 ; citizen procedure
 to set-opinion-value [ the-topic the-value ]
   assert [ -> is-number? the-value ]
-  ask out-topic-link-to topic-by-name the-topic [
+  create-topic-link-to topic-by-name the-topic [
     set value the-value
   ]
 end  
-  
 
 to-report workday-nonmuslim? report member? week-num (range 1 6)                                                             end ; citizen reporter
 to-report weekday            report item week-num [ "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" ] end ; citizen reporter
