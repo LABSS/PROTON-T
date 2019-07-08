@@ -45,24 +45,19 @@ to-report t5 [ operator opinion the-area ]
   set query (word query " ] ] of topic-by-name \"" opinion "\"")
   report runresult query
 end
+
+; t6, locations
+to-report t6 [ building the-area ]
+  ifelse the-area = 0 [
+    report count citizens with [ [ shape ] of locations-here = (list building) ]
+  ] [
+    report count citizens with [ [ shape ] of locations-here = (list building) and [ area-id ] of patch-here = the-area ]
+  ]
+end
   
-;  
-;      <metric>count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]</metric>
-;    <metric>count citizens with [ [ shape ] of locations-here = [ "public space" ] ]</metric>
-;    <metric>count citizens with [ [ shape ] of locations-here = [ "coffee" ] ] / count locations with [ shape = "coffee" ]</metric>
-;    <metric>count citizens with [ recruited? ]</metric>
-;    <metric>count citizens with [ risk > radicalization-threshold ]</metric>
-;    <metric>min [hours-to-recruit] of citizens</metric>
-;    <metric>mean [ propensity ] of citizens</metric>
-;    
-;    <metric>standard-deviation [ propensity ] of citizens</metric>
-
-;    <metric>count links</metric> 
-
-
 ; this procedure creates a list of values counting the number of citizens in the bins as created. For example,
 ; [[-0.662 3] [-0.2 34] [0.07 80]] means that in the second bin, the one from -0.2 to 0.07, there are 34 cases.
-; objects falling outside of bins are not counted
+; objects falling outside of bins are not counte
 to-report make-histo [ citizen-reporter bins min-v max-v ]
   let values filter [ i -> i >= min-v and i  < max-v ] [ runresult citizen-reporter ] of citizens
   let counts n-values bins [ 0 ]
