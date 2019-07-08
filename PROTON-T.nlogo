@@ -101,7 +101,7 @@ to setup
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
   setup-websites
-  setup-opinions
+  load-opinions ; also sets fundamentalism
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
@@ -299,12 +299,13 @@ to setup-websites
   ]
 end
 
-to setup-opinions
-  ask citizens [
-    create-topic-links-to topics [
-      set value [ runresult new-value ] of other-end
-    ]
+to-report clipped-random-normal [ the-mean the-std-dev the-min the-max ]
+  ; TODO: extension candidate
+  let result random-normal the-mean the-std-dev
+  while [ not (result >= the-min and result <= the-max) ] [
+    set result random-normal the-mean the-std-dev
   ]
+  report result
 end
 
 to setup-world
