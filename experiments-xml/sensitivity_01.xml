@@ -106,8 +106,9 @@
    <!--                               Other Metrics -->
    <metric>min [hours-to-recruit] of citizens</metric>
    <metric>mean [hours-to-recruit] of citizens</metric>
-    <metric>count links</metric>   
-    <!--                                variable parameters (and population) -->
+   <metric>initial-random-seed</metric>
+   <metric>count links</metric>   
+  <!--                                variable parameters (and population) -->
     <enumeratedValueSet variable="total-citizens">
       <value value="40000"/>
     </enumeratedValueSet>

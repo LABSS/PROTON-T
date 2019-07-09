@@ -3,6 +3,7 @@ __includes [ "scenario.nls" "reporters.nls" ]
 extensions [ table profiler rnd csv ]
 
 globals [
+  initial-random-seed
   local           ; table with values for setup
   areas
   area-names
@@ -88,6 +89,8 @@ topic-links-own [ value ]                            ; opinion dynamics score fr
 to setup
   clear-all
   reset-timer
+  set initial-random-seed random 4294967295 - 2147483648
+  random-seed initial-random-seed
   load-totals
   setup-world  ; warning: this kills all turtles and links in case of resize
   setup-topics ; topic names are needed for plots
