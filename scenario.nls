@@ -22,6 +22,10 @@ end
 to export-opinions [ id ]
   csv:to-file (word "opinions-at-" ticks "-" id ".csv") [ 
     (list
+      get "immigrant?" 
+      get "male?"     
+      get "muslim?"   
+      age-class
       opinion-on-topic "Non integration"         
       opinion-on-topic "Institutional distrust"    
       opinion-on-topic "Collective relative deprivation"

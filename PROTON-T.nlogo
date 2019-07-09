@@ -59,7 +59,6 @@ activities-own [
 breed [ topics topic ]
 topics-own  [
   topic-name
-  new-value ; the initialisation function
   criteria  ; a boolean reporter taking a speaker and a listener
   risk-weight
   protective-weight ; weights that contribute or protect against risk
@@ -263,10 +262,9 @@ to setup-topics
   foreach topic-definitions [ def ->
     create-topics 1 [
       set topic-name        item 0 def
-      set new-value         item 1 def
-      set criteria          item 2 def
-      set risk-weight       item 3 def
-      set protective-weight item 4 def
+      set criteria          item 1 def
+      set risk-weight       item 2 def
+      set protective-weight item 3 def
       set hidden? true
     ]
   ]
@@ -779,11 +777,11 @@ end
 GRAPHICS-WINDOW
 300
 10
-1028
-739
+1078
+789
 -1
 -1
-8.0
+11.0
 1
 10
 1
@@ -794,9 +792,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-89
+69
 0
-89
+69
 1
 1
 1
