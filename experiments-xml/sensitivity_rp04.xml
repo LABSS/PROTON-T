@@ -44,7 +44,6 @@
     <metric>t4 "mean" 4</metric>
     <metric>t4 "median" 4</metric>
     <metric>t4 "standard-deviation" 4</metric>
-    <metric>t4.bins</metric>        
     <metric>t5 "mean" "Non integration" 0</metric>
     <metric>t5 "mean" "Non integration" 1</metric>
     <metric>t5 "mean" "Non integration" 2</metric>
