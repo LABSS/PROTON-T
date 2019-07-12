@@ -38,7 +38,7 @@ citizens-own [
   hours-to-recruit
   special-type
   recruit-target
-  activity-cap
+  my-links-cap
 ]
 
 breed [ activity-types activity-type ]
@@ -406,7 +406,7 @@ to setup-citizen [ residences the-area ]
   set recruited?       false
   set hours-to-recruit random (2 * recruit-hours-threshold)
   set recruit-target   nobody
-  set activity-cap     random 50
+  set my-links-cap     1 + random links-cap
   move-to residence
 end
 
@@ -504,11 +504,8 @@ to setup-free-time-activities
     let reachable-activities my-nearby-activities with [
       [ not is-mandatory? and not is-job? ] of my-activity-type and [ can-do? myself ] of the-citizen
     ]
-    create-activity-links-to n-of min list links-cap count reachable-activities reachable-activities [
+    create-activity-links-to n-of min list my-links-cap count reachable-activities reachable-activities [
       set value -1 + random-float 2 ; TODO: how should this be initialized?
-    ]
-    if count activity-link-neighbors < activity-cap [
-      ask n-of (activity-cap - count activity-link-neighbors) my-activity-links [] [die]
     ]
   ]
 end
