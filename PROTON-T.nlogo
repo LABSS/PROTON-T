@@ -68,8 +68,6 @@ topics-own  [
   protective-weight ; weights that contribute or protect against risk
 ]
 
-breed [ websites website ]
-
 breed [ police the-police ]
 
 breed [ cpos cpo ]
@@ -79,9 +77,6 @@ cpos-own [
 
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
 activity-links-own [ value ]                         ; value of activity for the citizen
-
-directed-link-breed [ website-links website-link ]   ; links from citizens to websites
-website-links-own [ value ]                          ; value of website for the citizen
 
 directed-link-breed [ topic-links topic-link ]       ; links from citizens to topics
 topic-links-own [ value ]                            ; opinion dynamics score from -1 to 1
@@ -99,7 +94,6 @@ to setup
   setup-police
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
-  setup-websites
   setup-opinions
   setup-activity-types
   setup-mandatory-activities
@@ -232,9 +226,6 @@ to go
       ]
       ;assert [ -> current-task != nobody and current-activity != nobody ]
       ; here the citizen is on free time so he has a probability to browse the web.
-      if random-float 1 < website-access-probability [
-        access-website
-      ]
     ]
     if current-task != nobody [
       set fail-activity-counter fail-activity-counter + 1
@@ -265,13 +256,15 @@ to start-activity [ new-activity ] ; citizen procedure
   set current-task [ task ] of [ my-activity-type ] of new-activity
 end
 
-to access-website ; citizen context
-  let the-citizen self
-  ask link-set rnd:weighted-one-of my-website-links with [ value >= 0 ] [ value ] [
-    ask other-end [ ; the other end is the website.
-      let result talk-to turtle-set the-citizen one-of out-topic-link-neighbors
-    ]
-  ]
+; finds at random simlilar people and talk with them. The interaction has only 50% of the effect it would have when face to face.
+to socialize-online ; citizen context
+  let potential-contacts n-of 50 other citizens
+  ; limit contacts to avoid sorting long lists of citizens
+  let the-topic one-of topics
+  let my-opinion [ value ] of out-topic-link-to the-topic
+  let the-contact rnd:weighted-one-of potential-contacts [ abs ([ value ] of out-topic-link-to the-topic - my-opinion) ]
+  let dummy talk-to-tuned turtle-set the-contact the-topic 0.5
+  ask the-contact [ set dummy talk-to-tuned turtle-set self the-topic 0.5 ]
 end
 
 to setup-topics
@@ -282,17 +275,6 @@ to setup-topics
       set criteria          item 2 def
       set risk-weight       item 3 def
       set protective-weight item 4 def
-      set hidden? true
-    ]
-  ]
-end
-
-to setup-websites
-  foreach website-definitions [ def ->
-    create-websites 1 [
-      create-topic-link-to topic-by-name item 0 def [
-        set value item 1 def
-      ]
       set hidden? true
     ]
   ]
@@ -626,9 +608,6 @@ to-report find-criteria-by-breed ; link reporter
   if breed = activity-links [
     report [ criteria ] of [ my-activity-type ] of other-end
   ]
-  if breed = website-links [
-    report [ -> true ]
-  ]
   if breed = topic-links [
     report [ criteria ] of other-end
   ]
@@ -651,11 +630,14 @@ to-report my-opinions ; citizen reporter
     my-activity-links with [
       [ not is-mandatory? and location-type != "residence" ] of [ my-activity-type ] of other-end
     ]
-    my-website-links
   )
 end
 
 to-report talk-to [ recipients the-object ] ; citizen procedure
+  report talk-to-tuned recipients the-object 1
+end
+
+to-report talk-to-tuned [ recipients the-object effect-size ] ; citizen procedure
   let success? false
   if any? recipients [
     let l1 link-with the-object
@@ -665,7 +647,7 @@ to-report talk-to [ recipients the-object ] ; citizen procedure
       let v2 [ value ] of l2
       let t 1 - alpha * abs v2
       if abs (v1 - v2) < t [
-        ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
+        ask l2 [ set value v2 + t * (v1 - v2) / 2 * effect-size ]
         set success? true
         ; show talk-to effect
         ; show v2
@@ -689,7 +671,6 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
       ]
     ]
     if is-topic?    the-object [ create-topic-link-to    the-object [ set the-link self ] ]
-    if is-website?  the-object [ create-website-link-to  the-object [ set the-link self ] ]
     ask the-link [
       hide-link
       set value 0
