@@ -849,7 +849,7 @@ total-citizens
 total-citizens
 100
 2000
-390.0
+750.0
 10
 1
 citizens

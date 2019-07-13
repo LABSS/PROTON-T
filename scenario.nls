@@ -90,7 +90,7 @@ end
 
 to-report free-time-activity-definition-list
   report (list
-    ;     location-type task             criteria
+    ;     location-type      task             criteria
     (list "residence"        [ -> socialize ]        [ -> true ])
     (list "residence"        [ -> socialize-online ] [ -> true ])
     (list "coffee"           [ -> socialize ]        [ -> true ])
