@@ -406,7 +406,7 @@ to setup-citizen [ residences the-area ]
   set recruited?       false
   set hours-to-recruit random (2 * recruit-hours-threshold)
   set recruit-target   nobody
-  set my-links-cap     1 + random links-cap
+  set my-links-cap     5 + random (2 * links-cap-mean - 5)
   move-to residence
 end
 
@@ -683,11 +683,15 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
   if the-link = nobody [
     if is-activity? the-object [
       create-activity-link-to the-object [ set the-link self ]
-      if count my-activity-links > links-cap [
-        ask min-one-of my-activity-links with [
-          [ [ not is-mandatory? and not is-job? ] of my-activity-type
-          ] of other-end and not member? other-end [ turtles-here ] of myself and not (the-link = self)
-        ] [ value ] [ die ]
+      if count my-activity-links > my-links-cap [
+        carefully [
+          ask min-one-of my-activity-links with [
+            [ [ not is-mandatory? and not is-job? ] of my-activity-type
+            ] of other-end and not member? other-end [ turtles-here ] of myself and not (the-link = self)
+          ] [ value ] [ die ]
+        ][
+          ; TODO: better handling here
+        ]
       ]
     ]
     if is-topic?    the-object [ create-topic-link-to    the-object [ set the-link self ] ]
@@ -1351,11 +1355,11 @@ SLIDER
 665
 285
 698
-links-cap
-links-cap
+links-cap-mean
+links-cap-mean
 5
 100
-20.0
+10.0
 1
 1
 NIL

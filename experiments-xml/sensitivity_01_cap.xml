@@ -1,0 +1,110 @@
+<experiments>
+   <!--                               32*3*10 = 960 runs -->
+  <experiment name="sensitivity_01" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <final>show (word "Time elapsed:" timer)
+    </final>   
+    <!--                                assuming 1 year, 8640 steps, or three, 25920  -->
+    <timeLimit steps="600"/>
+    <!--                               Metrics for the wizard   -->
+    <!-- t1 recruited citizens -->
+    <metric>t1</metric>
+    <!-- t2 citizen at risk (over threshold) -->
+    <metric>t2</metric>
+    <!-- t3 risk of citizens -->
+    <metric>t3 "mean" 0</metric>
+    <metric>t3 "median" 0</metric>
+    <metric>t3 "standard-deviation" 0</metric>
+    <metric>t3 "mean" 1</metric>
+    <metric>t3 "median" 1</metric>
+    <metric>t3 "standard-deviation" 1</metric>
+    <metric>t3 "mean" 2</metric>
+    <metric>t3 "median" 2</metric>
+    <metric>t3 "standard-deviation" 2</metric>
+    <metric>t3 "mean" 3</metric>
+    <metric>t3 "median" 3</metric>
+    <metric>t3 "standard-deviation" 3</metric>
+    <metric>t3 "mean" 4</metric>
+    <metric>t3 "median" 4</metric>
+    <metric>t3 "standard-deviation" 4</metric>
+    <metric>t3.bins</metric>
+
+    <metric>t5 "mean" "Institutional distrust" 0</metric>
+    <metric>t5 "mean" "Institutional distrust" 0</metric>
+    <metric>t5 "mean" "Institutional distrust" 0</metric>
+    <metric>t5 "mean" "Non integration" 0</metric>
+    <metric>t5 "mean" "Non integration" 0</metric>
+    <metric>t5 "mean" "Non integration" 0</metric>
+    <metric>t5 "mean" "Collective relative deprivation" 0</metric>
+    <metric>t5 "mean" "Collective relative deprivation" 0</metric>
+    <metric>t5 "mean" "Collective relative deprivation" 0</metric>  
+    <metric>t5 "median" "Institutional distrust" 0</metric>
+    <metric>t5 "median" "Institutional distrust" 0</metric>
+    <metric>t5 "median" "Institutional distrust" 0</metric>
+    <metric>t5 "median" "Non integration" 0</metric>
+    <metric>t5 "median" "Non integration" 0</metric>
+    <metric>t5 "median" "Non integration" 0</metric>
+    <metric>t5 "median" "Collective relative deprivation" 0</metric>
+    <metric>t5 "median" "Collective relative deprivation" 0</metric>
+    <metric>t5 "median" "Collective relative deprivation" 0</metric> 
+
+   <!--                               Other Metrics -->
+    <metric>count citizens with [ [ shape ] of locations-here = [ "mosque" ] ]</metric>
+    <metric>count citizens with [ [ shape ] of locations-here = [ "public space" ] ]</metric>
+    <metric>count citizens with [ [ shape ] of locations-here = [ "coffee" ] ] / count locations with [ shape = "coffee" ]</metric>
+    <metric>min [hours-to-recruit] of citizens</metric>
+    <metric>mean [hours-to-recruit] of citizens</metric>
+    <metric>count links</metric>   
+    <!--                                variable parameters (and population) -->
+    <enumeratedValueSet variable="total-citizens">
+      <value value="40000"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-density">
+      <value value="0.05"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="alpha">
+      <value value="0.0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-radius">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="community-side-length">
+      <value value="45"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="recruit-hours-threshold">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-debug?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-interaction">
+      <value value="&quot;no police&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="test-location-type">
+      <value value="&quot;coffee&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="cpo-numerousness">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="radicalization-threshold">
+      <value value="0.7"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="activity-value-update">
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="police-distrust-effect">
+      <value value="-0.25"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="scenario">
+      <value value="&quot;neukolln&quot;"/>
+      <value value="&quot;neukolln_females_x_2&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="website-access-probability">
+      <value value="0.01"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
