@@ -258,8 +258,7 @@ end
 
 ; finds at random simlilar people and talk with them. The interaction has only 50% of the effect it would have when face to face.
 to socialize-online ; citizen context
-  let potential-contacts n-of 50 other citizens
-  ; limit contacts to avoid sorting long lists of citizens
+  let potential-contacts n-of 50 other citizens  ; limit contacts to avoid sorting long lists of citizens
   let the-topic one-of topics
   let my-opinion [ value ] of out-topic-link-to the-topic
   let the-contact rnd:weighted-one-of potential-contacts [ abs ([ value ] of out-topic-link-to the-topic - my-opinion) ]
@@ -637,6 +636,7 @@ to-report talk-to [ recipients the-object ] ; citizen procedure
   report talk-to-tuned recipients the-object 1
 end
 
+; introduced to allow interaction at a reduced rate of persuasion). In most cases, effect-size should be 1.
 to-report talk-to-tuned [ recipients the-object effect-size ] ; citizen procedure
   let success? false
   if any? recipients [
