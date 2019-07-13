@@ -12,6 +12,7 @@ globals [
   population-details
   migrant-muslims-ratio
   soc-counter
+  soc-online-counter
   rec-counter
   printed
   fail-activity-counter
@@ -264,6 +265,7 @@ to socialize-online ; citizen context
   let the-contact rnd:weighted-one-of potential-contacts [ abs ([ value ] of out-topic-link-to the-topic - my-opinion) ]
   let dummy talk-to-tuned turtle-set the-contact the-topic 0.5
   ask the-contact [ set dummy talk-to-tuned turtle-set self the-topic 0.5 ]
+  set soc-online-counter soc-online-counter + 1
 end
 
 to setup-topics
@@ -570,7 +572,7 @@ to-report prepare-and-talk [ receiver ]
   let success? talk-to receiver the-object
   ask link-with current-activity [ update-activity-value success? ]
   ask receiver [
-    let a activities-here with [ in-link-neighbor? myself ]
+    let a activities-here with [ in-link-neighbor? myself ]  ; watch out, this won't get the right activity in case of multiples
     ask one-of a [ ask one-of my-in-activity-links [
       update-activity-value success?
       ]
