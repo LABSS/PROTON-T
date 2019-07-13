@@ -106,6 +106,7 @@ to setup
   ask activity-types [ set hidden? true ]
   update-plots
   display
+  file-open "activity-list"
   ; TODO: write some test code to make sure the schedule is consistent.
 end
 
@@ -250,6 +251,10 @@ to-report is-full?
 end
 
 to start-activity [ new-activity ] ; citizen procedure
+  if [ not is-mandatory? and not is-job? ] of [ my-activity-type ] of new-activity [
+    file-open "activity-list"
+    file-print [ word location-type task ] of [ my-activity-type ] of new-activity
+  ]
   move-to new-activity
   set countdown [ duration ] of [ my-activity-type ] of new-activity
   set current-activity new-activity
@@ -846,7 +851,7 @@ total-citizens
 total-citizens
 100
 2000
-750.0
+390.0
 10
 1
 citizens

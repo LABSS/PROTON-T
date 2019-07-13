@@ -91,12 +91,12 @@ end
 to-report free-time-activity-definition-list
   report (list
     ;     location-type task             criteria
-    (list "residence"        [ -> socialize ]       [ -> true ])
-    (list "residence"        [ -> socialze-online ] [ -> true ])
-    (list "coffee"           [ -> socialize ]       [ -> true ])
-    (list "public space"     [ -> socialize ]       [ -> true ])
-    (list "mosque"           [ -> socialize ]       [ -> get "muslim?" ])
-    (list "community center" [ -> socialize ]       [ -> true ])
+    (list "residence"        [ -> socialize ]        [ -> true ])
+    (list "residence"        [ -> socialize-online ] [ -> true ])
+    (list "coffee"           [ -> socialize ]        [ -> true ])
+    (list "public space"     [ -> socialize ]        [ -> true ])
+    (list "mosque"           [ -> socialize ]        [ -> get "muslim?" ])
+    (list "community center" [ -> socialize ]        [ -> true ])
   )
 end
 
