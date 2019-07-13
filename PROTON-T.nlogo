@@ -564,17 +564,18 @@ to police-interact ; citizen procedure
     ]
   ]
 end
-                            ;agentset
-to-report prepare-and-talk [ receiver ]
+                                   ;agentset
+to-report select-opinion-and-talk [ receiver ]
   let speaker self
   let candidate-opinions my-opinions with [ meets-criteria? speaker receiver ]
   let the-object [ other-end ] of rnd:weighted-one-of candidate-opinions [ abs value ]
   let success? talk-to receiver the-object
   ask link-with current-activity [ update-activity-value success? ]
   ask receiver [
-    let a activities-here with [ in-link-neighbor? myself ]  ; watch out, this won't get the right activity in case of multiples
-    ask one-of a [ ask one-of my-in-activity-links [
-      update-activity-value success?
+    ; the receiver will enjoy the place via any of the activities that brought him there
+    ask one-of activities-here with [ in-link-neighbor? myself ] [
+      ask my-in-activity-links [
+        update-activity-value success?
       ]
     ]
   ]
@@ -584,7 +585,7 @@ end
 to socialize; citizen procedure
   let receiver turtle-set one-of other citizens-here
   if any? receiver [
-    let dummy prepare-and-talk receiver
+    let dummy select-opinion-and-talk receiver
   ]
   set soc-counter soc-counter + 1
 end
@@ -592,7 +593,7 @@ end
 to socialize-and-recruit; citizen procedure
   let receiver rnd:weighted-one-of other citizens-here with [ special-type = 0 and not recruited? and risk > radicalization-threshold ] [ recruit-allure ]
   if receiver != nobody [
-    if prepare-and-talk turtle-set receiver [
+    if select-opinion-and-talk turtle-set receiver [
       if recruit-target = nobody [ set recruit-target receiver ]
       ask receiver [ check-recruitment ]
     ]
