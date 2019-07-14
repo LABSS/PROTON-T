@@ -39,6 +39,7 @@ citizens-own [
   hours-to-recruit
   special-type
   recruit-target
+  fundamentalism-score ; this exists only to calculate the value of authoritarian?
 ]
 
 breed [ activity-types activity-type ]
@@ -63,7 +64,6 @@ activities-own [
 breed [ topics topic ]
 topics-own  [
   topic-name
-  new-value ; the initialisation function
   criteria  ; a boolean reporter taking a speaker and a listener
   risk-weight
   protective-weight ; weights that contribute or protect against risk
@@ -95,7 +95,7 @@ to setup
   setup-police
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
-  setup-opinions
+  load-opinions ; also sets fundamentalism
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
@@ -123,7 +123,7 @@ to make-radical-imams
     [ is-job? and location-type = "radical mosque" ] of my-activity-type
   ] [
     ask out-topic-link-to topic-by-name "Institutional distrust" [
-      set value 1
+      set value 2
     ]
     set printed lput self printed
     set special-type "RI"
@@ -135,7 +135,7 @@ to make-community-workers
     [ is-job? and location-type = "community center" ] of my-activity-type
   ] [
     ask out-topic-link-to topic-by-name "Institutional distrust" [
-      set value -1
+      set value -2
     ]
     set printed lput self printed
     set special-type "CW"
@@ -165,7 +165,7 @@ to make-recruiters
         ask activity-link-neighbors with [ [ is-job? ] of my-activity-type ] [ die ]
         create-activity-link-to myself
         ask my-topic-links [
-          set value -1
+          set value 2
         ]
         set printed lput self printed
         set special-type "R"
@@ -178,6 +178,12 @@ to setup-police
   create-police 1 [
     let police-topic-link get-or-create-link-with topic-by-name "Institutional distrust"
     ask police-topic-link [ set value police-distrust-effect ]
+  ]
+  if any? cpos [
+    ask cpos [
+      let cpo-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
+      ask cpo-topic-link [ set value -2 ]
+    ]
   ]
 end
 
@@ -219,10 +225,8 @@ to go
         let candidate-activities activity-link-neighbors with [
           [ not is-mandatory? and not is-job? ] of my-activity-type and not is-full?
         ]
-        if any? candidate-activities [
-          start-activity rnd:weighted-one-of candidate-activities  [
-            (([ value ] of link-with myself + 1) / 2) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
-          ]
+        start-activity rnd:weighted-one-of candidate-activities [
+          (([ value ] of link-with myself + 2) / 4) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
         ]
       ]
       ;assert [ -> current-task != nobody and current-activity != nobody ]
@@ -272,19 +276,10 @@ to setup-topics
   foreach topic-definitions [ def ->
     create-topics 1 [
       set topic-name        item 0 def
-      set new-value         item 1 def
-      set criteria          item 2 def
-      set risk-weight       item 3 def
-      set protective-weight item 4 def
+      set criteria          item 1 def
+      set risk-weight       item 2 def
+      set protective-weight item 3 def
       set hidden? true
-    ]
-  ]
-end
-
-to setup-opinions
-  ask citizens [
-    create-topic-links-to topics [
-      set value [ runresult new-value ] of other-end
     ]
   ]
 end
@@ -486,7 +481,7 @@ to setup-free-time-activities
       [ not is-mandatory? and not is-job? ] of my-activity-type and [ can-do? myself ] of the-citizen
     ]
     create-activity-links-to n-of min list links-cap count reachable-activities reachable-activities [
-      set value -1 + random-float 2 ; TODO: how should this be initialized?
+      set value -2 + random-float 4 ; TODO: how should this be initialized?
     ]
   ]
 end
@@ -535,7 +530,7 @@ end
 
 to-report topic-risk-contribution ; opinion-on-topic reporter.
   ; The link must have been called from a citizen in order to make use of other-end.
-  report 2 * value * ifelse-value (value > 0) [ [ risk-weight ] of other-end ] [ [ protective-weight ] of other-end ]
+  report value * ifelse-value (value > 0) [ [ risk-weight ] of other-end ] [ [ protective-weight ] of other-end ]
 end
 
 to-report risk ; citizen reporter
@@ -603,7 +598,7 @@ end
 
 to update-activity-value [ success? ] ; link procedure
   ;if [ special-type ] of myself = 0 [
-    set value value + activity-value-update * (ifelse-value success? [ 1 ][ -1 ] - value)
+    set value value + activity-value-update * (ifelse-value success? [ 2 ][ -2 ] - value)
 end
 
 to-report find-criteria-by-breed ; link reporter
@@ -648,7 +643,7 @@ to-report talk-to-tuned [ recipients the-object effect-size ] ; citizen procedur
     ask recipients [
       let l2 get-or-create-link-with the-object
       let v2 [ value ] of l2
-      let t 1 - alpha * abs v2
+      let t 2 - alpha * abs v2
       if abs (v1 - v2) < t [
         ask l2 [ set value v2 + t * (v1 - v2) / 2 * effect-size ]
         set success? true
@@ -745,7 +740,7 @@ end
 
 ; citizen reporter
 to-report recruit-allure
-  report (sum map opinion-on-topic topics-list + 3) / 6 +
+  report (sum map opinion-on-topic topics-list + 6) / 12 +
   (2 * recruit-hours-threshold - hours-to-recruit) / recruit-hours-threshold +
   ifelse-value (self = [ recruit-target ] of myself) [ 1000 ] [ 0 ]
 end
@@ -849,7 +844,7 @@ total-citizens
 total-citizens
 100
 2000
-750.0
+500.0
 10
 1
 citizens
@@ -995,7 +990,7 @@ alpha
 alpha
 0
 1
-0.2
+1.0
 0.1
 1
 NIL

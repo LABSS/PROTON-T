@@ -28,8 +28,8 @@ class TJobsTests extends TModelSuite {
     setup(ws)
     ws.cmd("""
       set alpha 0.1
-      repeat 24 * 3 + 18 [ go ]
-      ask n-of 
+      repeat 24 * 2 + 8 [ go ]
+      ask n-of count citizens / 5 * 
         count locations with [ shape = "community center" ] 
         citizens with [
           [ shape ] of locations-here != [ "community center" ] 
@@ -64,7 +64,8 @@ class TJobsTests extends TModelSuite {
     }
     ws.cmd("""
       set alpha 0.1
-      ask n-of (10 * 
+      repeat 24 * 2 + 18 [ go ] 
+      ask n-of (count citizens / 5 * 
         count locations with [ shape = "radical mosque" ])
         citizens with [
           [ shape ] of locations-here != [ "radical mosque" ] 
