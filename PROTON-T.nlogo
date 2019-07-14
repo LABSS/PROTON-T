@@ -667,7 +667,7 @@ to-report talk-to [ recipients the-object ] ; citizen procedure
     ask recipients [
       let l2 get-or-create-link-with the-object
       let v2 [ value ] of l2
-      let t 1 - alpha * abs v2
+      let t 2 - alpha * abs v2
       if abs (v1 - v2) < t [
         ask l2 [ set value v2 + t * (v1 - v2) / 2 ]
         set success? true
