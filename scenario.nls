@@ -6,16 +6,19 @@ to load-opinions
       ifelse-value get "immigrant?" [ 1 ] [ 0 ]
       ifelse-value get "male?"      [ 1 ] [ 0 ]
       ifelse-value get "muslim?"    [ 1 ] [ 0 ]
-      age-class)
-    let l table:get table my-key
-    ;show l
-    let f-list runresult remove "," item 7 item 0 l 
+                   age-class)
+    let l item 0 table:get table my-key
+    ; l looks like this: [0 0 1 5 "[-0.06, ..]" "[0.89,..]" "[0.70,..]" "[0.91,..]"]
+    ; netlogo does not understand commas, but once removed them, 
+    ; the runresult of the string is the list we need. 
+    let f-list runresult remove "," item 7 l 
+    ; j is the individual chosen at random
     let j random length f-list
     set fundamentalism-score item j f-list
-    foreach range 3  [ i -> 
-      set-opinion-value item i topics-list item j runresult remove "," item (i + 4) item 0 l
-    ]
-    set fundamentalism-score item j runresult remove "," item 7 item 0 l
+    ; then we set the three opinions to the same individual j, inverting when needed    
+    set-opinion-value "Non integration" -1 * item j runresult remove "," item 4 l
+    set-opinion-value "Institutional distrust" -1 * item j runresult remove "," item 5 l    
+    set-opinion-value "Collective relative deprivation" item j runresult remove "," item 6 l
   ]
 end
 
