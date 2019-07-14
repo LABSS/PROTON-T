@@ -9,6 +9,7 @@ class TJobsTests extends TModelSuite {
  def setup(ws: HeadlessWorkspace): Unit = {
     ws.cmd("""
       set total-citizens 1000
+      set alpha 0.1
       setup
     """)
   }
@@ -26,11 +27,13 @@ class TJobsTests extends TModelSuite {
 
   test("Community workers preach to an effect") { ws =>
     setup(ws)
+    for (fid <- 1 to 24 * 3 + 18) {
+      ws.cmd(" go ")
+      if (fid % 10 == 0) println(fid)    
+    }
     ws.cmd("""
-      set alpha 0.1
-      repeat 24 * 2 + 8 [ go ]
-      ask n-of count citizens / 5 * 
-        count locations with [ shape = "community center" ] 
+      ask n-of (count citizens / 20 * 
+        count locations with [ shape = "community center" ]) 
         citizens with [
           [ shape ] of locations-here != [ "community center" ] 
         ] [
@@ -60,11 +63,9 @@ class TJobsTests extends TModelSuite {
     setup(ws) 
     for (fid <- 1 to 24 * 3 + 18) {
       ws.cmd(" go ")
-      println(fid)
+      if (fid % 10 == 0) println(fid)    
     }
     ws.cmd("""
-      set alpha 0.1
-      repeat 24 * 2 + 18 [ go ] 
       ask n-of (count citizens / 5 * 
         count locations with [ shape = "radical mosque" ])
         citizens with [
