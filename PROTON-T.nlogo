@@ -761,7 +761,7 @@ end
 
 ; citizen reporter
 to-report recruit-allure
-  report (sum map opinion-on-topic topics-list + 3) / 6 +
+  report (sum map opinion-on-topic topics-list + 6) / 12 +
   (2 * recruit-hours-threshold - hours-to-recruit) / recruit-hours-threshold +
   ifelse-value (self = [ recruit-target ] of myself) [ 1000 ] [ 0 ]
 end
@@ -865,7 +865,7 @@ total-citizens
 total-citizens
 100
 2000
-550.0
+500.0
 10
 1
 citizens
@@ -1011,7 +1011,7 @@ alpha
 alpha
 0
 1
-0.2
+1.0
 0.1
 1
 NIL
