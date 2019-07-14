@@ -54,11 +54,6 @@ to-report propensity-factors ; citizen reporter
   )
 end
 
-to-report normalized-opinion-on-topic [ the-topic ]
-  report [ (value + 1) / 2 ] of opinion-on-topic the-topic
-end
-
-
 to-report make-attributes-set [ the-area ] ; citizen procedure. Warning: sets age as a side effect.
   let my-group rnd:weighted-one-of-list table:get population-details the-area [ i -> last i ]
   set birth-year -1 * item 3 my-group

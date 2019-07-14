@@ -128,7 +128,7 @@ to make-radical-imams
     [ is-job? and location-type = "radical mosque" ] of my-activity-type
   ] [
     ask out-topic-link-to topic-by-name "Institutional distrust" [
-      set value 1
+      set value 2
     ]
     set printed lput self printed
     set special-type "RI"
@@ -140,7 +140,7 @@ to make-community-workers
     [ is-job? and location-type = "community center" ] of my-activity-type
   ] [
     ask out-topic-link-to topic-by-name "Institutional distrust" [
-      set value -1
+      set value -2
     ]
     set printed lput self printed
     set special-type "CW"
@@ -170,7 +170,7 @@ to make-recruiters
         ask activity-link-neighbors with [ [ is-job? ] of my-activity-type ] [ die ]
         create-activity-link-to myself
         ask my-topic-links [
-          set value -1
+          set value 2
         ]
         set printed lput self printed
         set special-type "R"
@@ -183,6 +183,12 @@ to setup-police
   create-police 1 [
     let police-topic-link get-or-create-link-with topic-by-name "Institutional distrust"
     ask police-topic-link [ set value police-distrust-effect ]
+  ]
+  if any? cpos [
+    ask cpos [
+      let cpo-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
+      ask cpo-topic-link [ set value -2 ]
+    ]
   ]
 end
 
@@ -224,10 +230,8 @@ to go
         let candidate-activities activity-link-neighbors with [
           [ not is-mandatory? and not is-job? ] of my-activity-type and not is-full?
         ]
-        if any? candidate-activities [
-          start-activity rnd:weighted-one-of candidate-activities  [
-            (([ value ] of link-with myself + 1) / 2) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
-          ]
+        start-activity rnd:weighted-one-of candidate-activities [
+          (([ value ] of link-with myself + 2) / 4) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
         ]
       ]
       ;assert [ -> current-task != nobody and current-activity != nobody ]
@@ -503,7 +507,7 @@ to setup-free-time-activities
       [ not is-mandatory? and not is-job? ] of my-activity-type and [ can-do? myself ] of the-citizen
     ]
     create-activity-links-to n-of min list links-cap count reachable-activities reachable-activities [
-      set value -1 + random-float 2 ; TODO: how should this be initialized?
+      set value -2 + random-float 4 ; TODO: how should this be initialized?
     ]
   ]
 end
@@ -552,7 +556,7 @@ end
 
 to-report topic-risk-contribution ; opinion-on-topic reporter.
   ; The link must have been called from a citizen in order to make use of other-end.
-  report 2 * value * ifelse-value (value > 0) [ [ risk-weight ] of other-end ] [ [ protective-weight ] of other-end ]
+  report value * ifelse-value (value > 0) [ [ risk-weight ] of other-end ] [ [ protective-weight ] of other-end ]
 end
 
 to-report risk ; citizen reporter
@@ -619,7 +623,7 @@ end
 
 to update-activity-value [ success? ] ; link procedure
   ;if [ special-type ] of myself = 0 [
-    set value value + activity-value-update * (ifelse-value success? [ 1 ][ -1 ] - value)
+    set value value + activity-value-update * (ifelse-value success? [ 2 ][ -2 ] - value)
 end
 
 to-report find-criteria-by-breed ; link reporter
