@@ -263,8 +263,8 @@ to socialize-online ; citizen context
   let the-topic one-of topics
   let my-opinion [ value ] of out-topic-link-to the-topic
   let the-contact rnd:weighted-one-of potential-contacts [ abs ([ value ] of out-topic-link-to the-topic - my-opinion) ]
-  let dummy talk-to-tuned turtle-set the-contact the-topic 0.5
-  ask the-contact [ set dummy talk-to-tuned turtle-set self the-topic 0.5 ]
+  let _unused talk-to-tuned turtle-set the-contact the-topic 0.5
+  ask the-contact [ set _unused talk-to-tuned turtle-set self the-topic 0.5 ]
   set soc-online-counter soc-online-counter + 1
 end
 
@@ -585,7 +585,7 @@ end
 to socialize; citizen procedure
   let receiver turtle-set one-of other citizens-here
   if any? receiver [
-    let dummy select-opinion-and-talk receiver
+    let _unused select-opinion-and-talk receiver
   ]
   set soc-counter soc-counter + 1
 end
