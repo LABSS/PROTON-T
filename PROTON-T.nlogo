@@ -97,7 +97,8 @@ to setup
   setup-police
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
-  load-opinions ; also sets fundamentalism
+  load-opinions ; also sets fundamentalism, so that we can
+  calculate-propensity
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
@@ -381,11 +382,14 @@ to setup-citizen [ residences the-area ]
   set current-activity nobody
   set countdown        0
   set residence        one-of residences
-  set propensity       sum-factors propensity-factors
   set recruited?       false
   set hours-to-recruit random (2 * recruit-hours-threshold)
   set recruit-target   nobody
   move-to residence
+end
+
+to calculate-propensity
+  ask citizens [ set propensity sum-factors propensity-factors ]
 end
 
 to setup-activity-types
@@ -847,7 +851,7 @@ total-citizens
 100
 2000
 500.0
-10
+50
 1
 citizens
 HORIZONTAL

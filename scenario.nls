@@ -20,6 +20,11 @@ to load-opinions
     set-opinion-value "Institutional distrust" -1 * item j runresult remove "," item 5 l    
     set-opinion-value "Collective relative deprivation" item j runresult remove "," item 6 l
   ]
+  let auth-threshold mean [ fundamentalism-score ] of citizens + 
+    standard-deviation [ fundamentalism-score ] of citizens
+  ask citizens [ 
+    table:put attributes "authoritarian?" fundamentalism-score >= auth-threshold
+  ]
 end
 
 to export-opinions [ id ]
@@ -87,7 +92,6 @@ to-report make-attributes-set [ the-area ] ; citizen procedure. Warning: sets ag
     (list "immigrant?" item 0 my-group)
     (list "male?"      item 1 my-group)
     (list "muslim?"    item 2 my-group)    
-    (list "authoritarian?" one-of [true false])
     (list "criminal-history?" one-of [true false])
   )
 end
