@@ -115,12 +115,12 @@ end
 
 ; assumes citizens are at their residence after setup and assumes nobody has a job yet
 to make-specials
-  make-radical-imams
+  make-radical-preachers
   make-community-workers
   make-recruiters
 end
 
-to make-radical-imams
+to make-radical-preachers
   ask locations with [ shape = "radical mosque" ] [ set color red ]
   ask turtle-set [ activity-link-neighbors ] of activities with [
     [ is-job? and location-type = "radical mosque" ] of my-activity-type

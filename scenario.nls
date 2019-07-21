@@ -123,12 +123,10 @@ end
 to-report location-definitions [ the-area ]
     report (list
     ;                        number                                  name/shape size
-    (list (local-table-by "num of mosques"          the-area - 
-      local-table-by "numof radical mosques"        the-area)          "mosque"    3)
+    (list local-table-by "num of mosques"           the-area "propaganda-place"    3)
     (list local-table-by "num of community centers" the-area "community center"    3)      
     (list local-table-by "num of parks"             the-area     "public space"    3)  
     (list  5                                                        "workplace"    3)
-    (list local-table-by "numof radical mosques"    the-area   "radical mosque"    3)
     (list local-table-by "numof coffees"            the-area           "coffee"    1)
   )
 end
