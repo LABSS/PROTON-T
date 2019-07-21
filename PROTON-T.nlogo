@@ -92,7 +92,6 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
-  setup-police
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
   load-opinions ; also sets fundamentalism, so that we can
@@ -103,6 +102,7 @@ to setup
   setup-jobs
   set radicalization-threshold calc-radicalization-threshold
   make-specials
+  setup-police
   setup-free-time-activities
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
@@ -197,8 +197,7 @@ end
 
 to move-police
   ask police [
-    let best-patches patches with [ count citizens-here >= 4 and area-id =
-      [ area-id ] of [ patch-here ] of myself ]
+    let best-patches patches with [ count citizens-here >= 4 and area-id = [ area-id ] of [ patch-here ] of myself ]
     if not any? best-patches [
       set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
       if not any? best-patches [
@@ -1135,16 +1134,6 @@ scenario
 "neukolln"
 0
 
-CHOOSER
-15
-760
-145
-805
-cpo-numerousness
-cpo-numerousness
-1 2
-0
-
 SLIDER
 1100
 65
@@ -1321,7 +1310,7 @@ cpo-%
 cpo-%
 0
 100
-50.0
+100.0
 1
 1
 NIL
