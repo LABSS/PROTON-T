@@ -72,6 +72,7 @@ topics-own  [
 ]
 
 breed [ police the-police ]
+police-own [ cpo? ]
 
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
 activity-links-own [ value ]                         ; value of activity for the citizen
@@ -189,14 +190,14 @@ end
 to setup-police
   create-police (4 * total-citizens / 1000) [
     set shape "person soldier"
-    let police-topic-link get-or-create-link-with topic-by-name "Institutional distrust"
-    set-extreme-opinions 1.5
+    set cpo? false
+    setxy random-xcor random-ycor
   ]
-  ask n-of round (count police * cpo-% / 100) police [ set-extreme-opinions -1.5 ]
+  ask n-of round (count police * cpo-% / 100) police [ set cpo? true ]
 end
 
 to move-police
-  ask police [
+  ask police with [not cpo?][
     ;; to have 23% of citizens meeting police in a year
     if random-float 1 < 0.00656 [
       let best-patches patches with [ count citizens-here >= 4 and area-id = [ area-id ] of [ patch-here ] of myself ]
@@ -207,8 +208,31 @@ to move-police
         ]
       ]
       move-to one-of best-patches
-      if any? citizens-here [
-        let dummy talk-to (turtle-set one-of citizens-here) topic-by-name "Institutional distrust"
+      police-action
+    ]
+  ]
+  ask police with [cpo?][
+    ;; to have 23% of citizens meeting police in a year
+    if random-float 1 < 0.00656 [
+      let best-patches patches with [ count citizens-here with [risk > radicalization-threshold] >= 1 and area-id = [ area-id ] of [ patch-here ] of myself]
+      if not any? best-patches [
+        set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+        if not any? best-patches [
+          set best-patches patch-here; if none, can as well stay there
+        ]
+      ]
+      move-to one-of best-patches
+      police-action
+    ]
+  ]
+end
+
+to police-action
+  let cpo cpo?
+  if any? citizens-here [
+    ask one-of citizens-here [
+      ask out-topic-link-to topic-by-name "Institutional distrust" [
+        set value ifelse-value cpo [max (list (value - 1) -2)][min (list (value + 1) 2)]
       ]
     ]
   ]
