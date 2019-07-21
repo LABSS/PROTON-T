@@ -25,6 +25,7 @@ to-report t3 [ operator the-area ]
     report runresult (word operator " [ risk ] of citizens with [ area = " the-area " ]")
   ]
 end
+
 to-report t3.bins
   report make-histo " risk " 10 -0.662 3.05
 end
