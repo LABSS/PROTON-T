@@ -140,15 +140,11 @@ to-report job-definition-list
   report (list
     ;     num-jobs start-time duration location-type task          criteria             priority 
     ;  inizialization
-    (list        1          8        12 "community center" [ -> preach ] [ -> age >= 18
-      ]                                   0
-    )     
-    (list        1         12        12 "propaganda place" [ -> preach ] [ -> age >= 18
-      ]                                   0
-    )     
-    (list       (population-employed-% * total-citizens / 100 / 20)
-                            8        8 "workplace"         [ -> work   ] [ -> age >= 18 ]             2
-    )
+    (list        number-workers-per-community-center
+                            8        12 "community center" [ -> preach ] [ -> age >= 18 ]   0)     
+    (list        1         12        12 "propaganda place" [ -> preach ] [ -> age >= 18 ]   0)     
+    (list       round (population-employed-% * total-citizens / 100 / 20)
+                            8        8 "workplace"         [ -> work   ] [ -> age >= 18 ]   2)
   )
 end
 

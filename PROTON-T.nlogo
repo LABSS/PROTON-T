@@ -1403,6 +1403,21 @@ population-employed-%
 NIL
 HORIZONTAL
 
+SLIDER
+20
+885
+327
+918
+number-workers-per-community-center
+number-workers-per-community-center
+1
+5
+5.0
+2
+1
+NIL
+HORIZONTAL
+
 @#$#@#$#@
 ## WHAT IS IT?
 
