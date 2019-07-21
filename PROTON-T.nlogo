@@ -53,7 +53,6 @@ activity-types-own [
   criteria
   task
   priority
-  make-special
 ]
 
 breed [ activities activity ]
@@ -105,12 +104,30 @@ to setup
   make-specials
   setup-police
   setup-free-time-activities
+  if high-risk-employed != "no intervention" [ high-risk-employment-intervene high-risk-employed ]
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
   ask activity-types [ set hidden? true ]
   update-plots
   display
   ; TODO: write some test code to make sure the schedule is consistent.
+end
+
+to high-risk-employment-intervene [ rate ]
+  let hr-unemployed citizens with [
+    not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] and risk > radicalization-threshold
+  ]
+  show count hr-unemployed / count citizens with [ risk > radicalization-threshold ]
+  ask n-of (count hr-unemployed * rate / 100) hr-unemployed [
+    set special-type "HR"
+    let lucky-one self
+    ask min-one-of locations with [ shape = "workplace" ] [ distance myself ] [
+      hatch-activities 1 [
+        set my-activity-type one-of activity-types with [ location-type = "workplace" and is-job? ]
+        create-activity-link-to lucky-one
+      ]
+    ]
+  ]
 end
 
 to calculate-topics-stats
@@ -136,7 +153,7 @@ to make-specials
 end
 
 to make-radical-public-speakers
-  ask locations with [ shape = "propaganda place" ] [ set color red ]
+  ;ask locations with [ shape = "propaganda place" ] [ set color red ]
   ask turtle-set [ activity-link-neighbors ] of activities with [
     [ is-job? and location-type = "propaganda place" ] of my-activity-type
   ] [
@@ -175,7 +192,7 @@ to make-recruiters
         age >= 21 and
         get "male?"
       ] [
-        ask activity-link-neighbors with [ [ is-job? ] of my-activity-type ] [ die ]
+        ask my-activity-links with [ [ [ is-job? ] of my-activity-type ] of other-end ] [ die ]
         create-activity-link-to myself
         set-extreme-opinions 1.5
         set printed lput self printed
@@ -413,6 +430,7 @@ end
 
 to setup-activity-types
   ; ok we keep the specials ALSO in here so we will have the activity in place at the location.
+  ; recruiter activities are created in
   foreach job-definition-list [ def ->
     create-activity-types 1 [
       set is-job?       true
@@ -1072,9 +1090,9 @@ PENS
 
 SLIDER
 15
-585
+590
 285
-618
+623
 work-socialization-probability
 work-socialization-probability
 0
@@ -1087,9 +1105,9 @@ HORIZONTAL
 
 SLIDER
 15
-625
+630
 285
-658
+663
 activity-value-update
 activity-value-update
 0
@@ -1265,9 +1283,9 @@ count links
 
 SLIDER
 15
-665
+670
 285
-698
+703
 links-cap-mean
 links-cap-mean
 5
@@ -1290,20 +1308,46 @@ count citizens with [ [ shape ] of locations-here = [ \"residence\" ] ]
 11
 
 CHOOSER
-1275
-265
-1413
-310
+1255
+260
+1393
+305
 male-ratio
 male-ratio
 "from scenario" 45 55
 0
 
+MONITOR
+310
+800
+427
+845
+unemployment %
+count citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] / count citizens * 100
+17
+1
+11
+
 SLIDER
 15
-705
+800
+217
+833
+population-employed-%
+population-employed-%
+0
+100
+15.0
+5
+1
+NIL
+HORIZONTAL
+
+SLIDER
+15
+710
 285
-738
+743
 cpo-%
 cpo-%
 0
@@ -1313,6 +1357,31 @@ cpo-%
 1
 NIL
 HORIZONTAL
+
+SLIDER
+15
+755
+322
+788
+number-workers-per-community-center
+number-workers-per-community-center
+1
+5
+1.0
+2
+1
+NIL
+HORIZONTAL
+
+CHOOSER
+15
+540
+162
+585
+high-risk-employed
+high-risk-employed
+"no intervention" 50 100
+2
 
 @#$#@#$#@
 ## WHAT IS IT?

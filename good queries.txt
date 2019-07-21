@@ -111,6 +111,8 @@ all? persons [ not any? school-attendance-link-neighbors or education-level = ([
 # are radical imams unwavering in their faith?
 ask citizens with [           [ is-job? and location-type = "radical mosque" ] of [ my-activity-type ] of current-activity         ] [ show [value] of link-with one-of topics with [ topic-name = "Institutional distrust" ]]
 
+ask citizens with [           [ is-job? and location-type = "propaganda place" ] of [ my-activity-type ] of current-activity       ] [ show [value] of link-with one-of topics with [ topic-name = "Institutional distrust" ]]
+
 
 ; the mosques
 all? activities with [ [ is-job? and location-type = "mosque" ]  of my-activity-type ] [ any? activity-link-neighbors ]
