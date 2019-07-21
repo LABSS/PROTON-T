@@ -104,12 +104,29 @@ to setup
   make-specials
   setup-police
   setup-free-time-activities
+  if high-risk-employed != "no intervention" [ high-risk-employment-intervene high-risk-employed ]
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
   ask activity-types [ set hidden? true ]
   update-plots
   display
   ; TODO: write some test code to make sure the schedule is consistent.
+end
+
+to high-risk-employment-intervene [ rate ]
+  let hr-unemployed citizens with [
+    not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] and risk > radicalization-threshold
+  ]
+  ask n-of (count hr-unemployed * rate / 100) hr-unemployed [
+    set special-type "HR"
+    let lucky-one self
+    ask min-one-of locations with [ shape = "workplace" ] [ distance myself ] [
+      hatch-activities 1 [
+        set my-activity-type one-of activity-types with [ location-type = "workplace" and is-job? ]
+        create-activity-link-from lucky-one
+      ]
+    ]
+  ]
 end
 
 to calculate-topics-stats
@@ -1072,9 +1089,9 @@ PENS
 
 SLIDER
 15
-585
+590
 285
-618
+623
 work-socialization-probability
 work-socialization-probability
 0
@@ -1087,9 +1104,9 @@ HORIZONTAL
 
 SLIDER
 15
-625
+630
 285
-658
+663
 activity-value-update
 activity-value-update
 0
@@ -1265,9 +1282,9 @@ count links
 
 SLIDER
 15
-665
+670
 285
-698
+703
 links-cap-mean
 links-cap-mean
 5
@@ -1319,7 +1336,7 @@ population-employed-%
 population-employed-%
 0
 100
-10.0
+20.0
 5
 1
 NIL
@@ -1327,9 +1344,9 @@ HORIZONTAL
 
 SLIDER
 15
-705
+710
 285
-738
+743
 cpo-%
 cpo-%
 0
@@ -1342,9 +1359,9 @@ HORIZONTAL
 
 SLIDER
 15
-750
+755
 322
-783
+788
 number-workers-per-community-center
 number-workers-per-community-center
 1
@@ -1354,6 +1371,16 @@ number-workers-per-community-center
 1
 NIL
 HORIZONTAL
+
+CHOOSER
+15
+540
+162
+585
+high-risk-employed
+high-risk-employed
+"no intervention" 50 100
+1
 
 @#$#@#$#@
 ## WHAT IS IT?

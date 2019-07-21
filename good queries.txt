@@ -9,6 +9,8 @@ show [ location-type ] of activity-types with [ is-job? ]
 sum [ count activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] of citizens
 ; people without a job
 citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ]
+ask citizens with [           [ is-job? and location-type = "propaganda place" ] of [ my-activity-type ] of current-activity       ] [ show [value] of link-with one-of topics with [ topic-name = "Institutional distrust" ]]
+
 
 
 ; recruiters
