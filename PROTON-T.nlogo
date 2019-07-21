@@ -1139,10 +1139,10 @@ weekday
 MONITOR
 1100
 15
-1205
+1257
 60
-mosque attendance
-count citizens with [ [ shape ] of locations-here = [ \"mosque\" ] ]
+propaganda attendance
+count citizens with [ [ shape ] of locations-here = [ \"propaganda place\" ] ]
 0
 1
 11
@@ -1245,9 +1245,9 @@ count citizens with [ risk > radicalization-threshold ]
 11
 
 MONITOR
-1210
+1260
 15
-1300
+1350
 60
 PS attendance
 count citizens with [ [ shape ] of locations-here = [ \"public space\" ] ]
@@ -1274,10 +1274,10 @@ activity-debug?
 -1000
 
 MONITOR
-1310
-60
-1440
-105
+1305
+65
+1435
+110
 socialization attempts
 soc-counter
 0
@@ -1354,9 +1354,9 @@ NIL
 HORIZONTAL
 
 MONITOR
-1310
+1385
 15
-1372
+1447
 60
 at home
 count citizens with [ [ shape ] of locations-here = [ \"residence\" ] ]

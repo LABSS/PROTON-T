@@ -115,7 +115,7 @@ to load-totals
 end 
 
 to-report location-names
-  report (list "radical mosque" "mosque" "community center" "workplace" "public space" "coffee") 
+  report (list "propaganda place" "community center" "public space" "workplace" "coffee") 
 end
 
 to-report location-definitions [ the-area ]
