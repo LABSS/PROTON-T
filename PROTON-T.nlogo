@@ -187,12 +187,12 @@ to make-recruiters
 end
 
 to setup-police
-  create-police 40 [
+  create-police (4 * total-citizens / 1000) [
     set shape "person soldier"
     let police-topic-link get-or-create-link-with topic-by-name "Institutional distrust"
     set-extreme-opinions 1.5
   ]
-  ask n-of round (40 * cpo-% / 100) police [ set-extreme-opinions -1.5 ]
+  ask n-of round (count police * cpo-% / 100) police [ set-extreme-opinions -1.5 ]
 end
 
 to move-police
@@ -1310,7 +1310,7 @@ cpo-%
 cpo-%
 0
 100
-100.0
+50.0
 1
 1
 NIL
