@@ -72,11 +72,7 @@ topics-own  [
 ]
 
 breed [ police the-police ]
-
-breed [ cpos cpo ]
-cpos-own [
-  number-of-interactions
-]
+police-own [ cpo? ]
 
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
 activity-links-own [ value ]                         ; value of activity for the citizen
@@ -97,7 +93,6 @@ to setup
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
   set-default-shape citizens "person"
-  setup-police
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
   load-opinions ; also sets fundamentalism, so that we can
@@ -108,6 +103,7 @@ to setup
   setup-jobs
   set radicalization-threshold calc-radicalization-threshold
   make-specials
+  setup-police
   setup-free-time-activities
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
@@ -190,37 +186,59 @@ to make-recruiters
 end
 
 to setup-police
-  create-police 1 [
-    let police-topic-link get-or-create-link-with topic-by-name "Institutional distrust"
-    ask police-topic-link [ set value police-distrust-effect ]
+  create-police (4 * total-citizens / 1000) [
+    set shape "person soldier"
+    set cpo? false
+    setxy random-xcor random-ycor
   ]
-  if any? cpos [
-    ask cpos [
-      let cpo-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
-      ask cpo-topic-link [ set value -2 ]
+  ask n-of round (count police * cpo-% / 100) police [ set cpo? true ]
+end
+
+to move-police
+  ask police with [ not cpo? ][
+    ;; to have 23% of citizens meeting police in a year
+    if random-float 1 < 0.00656 [
+      let best-patches patches with [ count citizens-here >= 4 and area-id = [ area-id ] of [ patch-here ] of myself ]
+      if not any? best-patches [
+        set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+        if not any? best-patches [
+          set best-patches patch-here; if none, can as well stay there
+        ]
+      ]
+      move-to one-of best-patches
+      police-action
+    ]
+  ]
+  ask police with [ cpo? ][
+    ;; to have 23% of citizens meeting police in a year
+    if random-float 1 < 0.00656 [
+      let best-patches patches with [ count citizens-here with [ risk > radicalization-threshold ] >= 1 and area-id = [ area-id ] of [ patch-here ] of myself]
+      if not any? best-patches [
+        set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+        if not any? best-patches [
+          set best-patches patch-here; if none, can as well stay there
+        ]
+      ]
+      move-to one-of best-patches
+      police-action
     ]
   ]
 end
 
-to move-cpos
-  ask cpos [
-    set number-of-interactions 0
-    let best-patches patches with [ count citizens-here >= 4 and area-id =
-      [ area-id ] of [ patch-here ] of myself ]
-    if not any? best-patches [
-      set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
-      if not any? best-patches [
-        set best-patches patch-here; if none, can as well stay there
+to police-action
+  let cpo cpo?
+  if any? citizens-here [
+    ask one-of citizens-here [
+      ask out-topic-link-to topic-by-name "Institutional distrust" [
+        set value ifelse-value cpo [max (list (value - 1) -2)][min (list (value + 1) 2)]
       ]
     ]
-    move-to one-of best-patches
   ]
 end
 
 to go
-  if any? cpos [ move-cpos ]
+  move-police
   ask citizens [
-    police-interact
     assert [ -> countdown >= 0 ]
     if countdown = 0 [ ; end of activity or activity without duration
       set current-task nobody
@@ -327,19 +345,7 @@ to setup-communities-citizens
       create-citizens table:get area-population the-area [
         setup-citizen residences the-area
       ]
-      if police-interaction = "cpo" [ setup-cpos community-patches ]
-    ]
-  ]
-end
-
-to setup-cpos [ the-patches ]
-  ask n-of cpo-numerousness the-patches [
-    sprout-cpos 1 [
-      set shape "flag"
-      set color red
-      create-topic-link-to topic-by-name "Institutional distrust" [
-        set value -1
-      ]
+      ;if police-interaction = "cpo" [ setup-cpos community-patches ]
     ]
   ]
 end
@@ -558,25 +564,6 @@ end
 
 to sleep
   ; do nothing
-end
-
-to police-interact ; citizen procedure
-  if police-interaction = "police" [
-    if police-density > (random-float 1) [
-      ask one-of police [
-        let result? talk-to (turtle-set myself) topic-by-name "Institutional distrust"
-      ]
-    ]
-  ]
-  ; this would be faster if initiated by the cpos. But let's leave it like this for now.
-  if police-interaction = "cpo" [
-    ask cpos-here with [ number-of-interactions <= 4 ][
-      if (random-float 1) < 0.9 [
-        let result? talk-to turtle-set myself topic-by-name "Institutional distrust"
-        set number-of-interactions number-of-interactions + 1
-      ]
-    ]
-  ]
 end
                                    ;agentset
 to-report select-opinion-and-talk [ receiver ]
@@ -862,7 +849,7 @@ total-citizens
 total-citizens
 100
 2000
-500.0
+1000.0
 50
 1
 citizens
@@ -1085,21 +1072,6 @@ PENS
 
 SLIDER
 15
-545
-285
-578
-website-access-probability
-website-access-probability
-0
-1
-0.05
-0.05
-1
-NIL
-HORIZONTAL
-
-SLIDER
-15
 585
 285
 618
@@ -1158,56 +1130,6 @@ CHOOSER
 scenario
 scenario
 "neukolln"
-0
-
-CHOOSER
-15
-705
-285
-750
-police-interaction
-police-interaction
-"police" "cpo" "no police"
-2
-
-SLIDER
-15
-750
-155
-783
-police-density
-police-density
-0
-1
-0.05
-0.05
-1
-NIL
-HORIZONTAL
-
-SLIDER
-15
-795
-285
-828
-police-distrust-effect
-police-distrust-effect
--1
-1
--0.25
-0.05
-1
-NIL
-HORIZONTAL
-
-CHOOSER
-155
-750
-285
-795
-cpo-numerousness
-cpo-numerousness
-1 2
 0
 
 SLIDER
@@ -1376,6 +1298,21 @@ male-ratio
 male-ratio
 "from scenario" 45 55
 0
+
+SLIDER
+15
+705
+285
+738
+cpo-%
+cpo-%
+0
+100
+0.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1710,6 +1647,26 @@ Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300
 Rectangle -7500403 true true 127 79 172 94
 Polygon -7500403 true true 195 90 240 150 225 180 165 105
 Polygon -7500403 true true 105 90 60 150 75 180 135 105
+
+person soldier
+false
+0
+Rectangle -7500403 true true 127 79 172 94
+Polygon -10899396 true false 105 90 60 195 90 210 135 105
+Polygon -10899396 true false 195 90 240 195 210 210 165 105
+Circle -7500403 true true 110 5 80
+Polygon -10899396 true false 105 90 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285 180 195 195 90
+Polygon -6459832 true false 120 90 105 90 180 195 180 165
+Line -6459832 false 109 105 139 105
+Line -6459832 false 122 125 151 117
+Line -6459832 false 137 143 159 134
+Line -6459832 false 158 179 181 158
+Line -6459832 false 146 160 169 146
+Rectangle -6459832 true false 120 193 180 201
+Polygon -6459832 true false 122 4 107 16 102 39 105 53 148 34 192 27 189 17 172 2 145 0
+Polygon -16777216 true false 183 90 240 15 247 22 193 90
+Rectangle -6459832 true false 114 187 128 208
+Rectangle -6459832 true false 177 187 191 208
 
 plant
 false
