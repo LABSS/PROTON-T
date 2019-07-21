@@ -10,6 +10,13 @@ class TRiskAndPropensityTests extends TModelSuite {
     ws.cmd("""
       set total-citizens 1000
       setup
+      ask one-of citizens with [ age < 25 and not employed? ] [
+        table:put attributes "male?" true 
+        table:put attributes "criminal-history?" true 
+        table:put attributes "immigrant?" true
+        table:put attributes "authoritarian?" true
+      ]
+      calculate-propensity      
     """)
   }
 
@@ -18,7 +25,7 @@ class TRiskAndPropensityTests extends TModelSuite {
     val citizenkane:String = ws.rpt("""
       [ who ] of one-of citizens with [
         get "male?" and 
-        employed? and  
+        not employed? and  
         get "criminal-history?" and 
         get "immigrant?" and
         get "authoritarian?" and

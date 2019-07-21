@@ -67,6 +67,8 @@ topics-own  [
   criteria  ; a boolean reporter taking a speaker and a listener
   risk-weight
   protective-weight ; weights that contribute or protect against risk
+  mean-value
+  sd-value ; used to calculate outliers like recruiters
 ]
 
 breed [ police the-police ]
@@ -99,6 +101,7 @@ to setup
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
   load-opinions ; also sets fundamentalism, so that we can
+  calculate-topics-stats
   calculate-propensity
   setup-activity-types
   setup-mandatory-activities
@@ -114,23 +117,36 @@ to setup
   ; TODO: write some test code to make sure the schedule is consistent.
 end
 
-; assumes citizens are at their residence after setup and assumes nobody has a job yet
+to calculate-topics-stats
+  ask topics [
+    set mean-value mean [ value ] of my-in-links
+    set sd-value standard-deviation [ value ] of my-in-links
+  ]
+end
+
+to set-extreme-opinions [ number-of-sd ] ; citizen procedure. -1.5
+  ask topics [
+    ask in-topic-link-from myself [
+      set value [ mean-value ] of myself + number-of-sd * [ sd-value ] of myself
+    ]
+  ]
+end
+
+; assumes citizens are at their residence after setup, jobs exist but are not assigned
 to make-specials
-  make-radical-imams
+  make-radical-public-speakers
   make-community-workers
   make-recruiters
 end
 
-to make-radical-imams
-  ask locations with [ shape = "radical mosque" ] [ set color red ]
+to make-radical-public-speakers
+  ask locations with [ shape = "propaganda place" ] [ set color red ]
   ask turtle-set [ activity-link-neighbors ] of activities with [
-    [ is-job? and location-type = "radical mosque" ] of my-activity-type
+    [ is-job? and location-type = "propaganda place" ] of my-activity-type
   ] [
-    ask out-topic-link-to topic-by-name "Institutional distrust" [
-      set value 2
-    ]
+    set-extreme-opinions 1.5
     set printed lput self printed
-    set special-type "RI"
+    set special-type "PS"
   ]
 end
 
@@ -138,9 +154,7 @@ to make-community-workers
   ask turtle-set [ activity-link-neighbors ] of activities with [
     [ is-job? and location-type = "community center" ] of my-activity-type
   ] [
-    ask out-topic-link-to topic-by-name "Institutional distrust" [
-      set value -2
-    ]
+    set-extreme-opinions -1.5
     set printed lput self printed
     set special-type "CW"
   ]
@@ -163,14 +177,11 @@ to make-recruiters
       set my-activity-type t
       ask one-of citizens in-radius activity-radius with [
         age >= 21 and
-        get "muslim?" and
         get "male?"
       ] [
         ask activity-link-neighbors with [ [ is-job? ] of my-activity-type ] [ die ]
         create-activity-link-to myself
-        ask my-topic-links [
-          set value 2
-        ]
+        set-extreme-opinions 1.5
         set printed lput self printed
         set special-type "R"
       ]
@@ -1010,10 +1021,10 @@ SLIDER
 258
 radicalization-percentage
 radicalization-percentage
-0
+0.05
 1
 0.1
-.1
+.05
 1
 NIL
 HORIZONTAL
@@ -1131,10 +1142,10 @@ weekday
 MONITOR
 1100
 15
-1205
+1257
 60
-mosque attendance
-count citizens with [ [ shape ] of locations-here = [ \"mosque\" ] ]
+propaganda attendance
+count citizens with [ [ shape ] of locations-here = [ \"propaganda place\" ] ]
 0
 1
 11
@@ -1237,9 +1248,9 @@ count citizens with [ risk > radicalization-threshold ]
 11
 
 MONITOR
-1210
+1260
 15
-1300
+1350
 60
 PS attendance
 count citizens with [ [ shape ] of locations-here = [ \"public space\" ] ]
@@ -1266,10 +1277,10 @@ activity-debug?
 -1000
 
 MONITOR
-1310
-60
-1440
-105
+1305
+65
+1435
+110
 socialization attempts
 soc-counter
 0
@@ -1346,9 +1357,9 @@ NIL
 HORIZONTAL
 
 MONITOR
-1310
+1385
 15
-1372
+1447
 60
 at home
 count citizens with [ [ shape ] of locations-here = [ \"residence\" ] ]
@@ -1644,27 +1655,6 @@ Line -7500403 true 225 195 225 240
 Line -16777216 false 270 180 270 255
 Line -16777216 false 0 180 300 180
 
-house two story
-false
-0
-Polygon -7500403 true true 2 180 227 180 152 150 32 150
-Rectangle -7500403 true true 270 75 285 255
-Rectangle -7500403 true true 75 135 270 255
-Rectangle -16777216 true false 124 195 187 256
-Rectangle -16777216 true false 210 195 255 240
-Rectangle -16777216 true false 90 150 135 180
-Rectangle -16777216 true false 210 150 255 180
-Line -16777216 false 270 135 270 255
-Rectangle -7500403 true true 15 180 75 255
-Polygon -7500403 true true 60 135 285 135 240 90 105 90
-Line -16777216 false 75 135 75 180
-Rectangle -16777216 true false 30 195 93 240
-Line -16777216 false 60 135 285 135
-Line -16777216 false 255 105 285 135
-Line -16777216 false 0 180 75 180
-Line -7500403 true 60 195 60 240
-Line -7500403 true 154 195 154 255
-
 leaf
 false
 0
@@ -1732,6 +1722,27 @@ Polygon -7500403 true true 165 180 165 210 225 180 255 120 210 135
 Polygon -7500403 true true 135 105 90 60 45 45 75 105 135 135
 Polygon -7500403 true true 165 105 165 135 225 105 255 45 210 60
 Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
+
+propaganda place
+false
+0
+Polygon -2674135 true false 298 180 73 180 148 150 268 150
+Rectangle -8630108 true false 15 75 30 255
+Rectangle -8630108 true false 30 135 225 255
+Rectangle -16777216 true false 113 195 176 256
+Rectangle -16777216 true false 45 195 90 240
+Rectangle -16777216 true false 165 150 210 180
+Rectangle -16777216 true false 45 150 90 180
+Line -16777216 false 30 135 30 255
+Rectangle -8630108 true false 225 180 285 255
+Polygon -2674135 true false 240 135 15 135 60 90 195 90
+Line -16777216 false 225 135 225 180
+Rectangle -16777216 true false 207 195 270 240
+Line -16777216 false 240 135 15 135
+Line -16777216 false 45 105 15 135
+Line -16777216 false 300 180 225 180
+Line -7500403 true 240 195 240 240
+Line -7500403 true 146 195 146 255
 
 public space
 false
