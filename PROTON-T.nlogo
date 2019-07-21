@@ -66,6 +66,8 @@ topics-own  [
   criteria  ; a boolean reporter taking a speaker and a listener
   risk-weight
   protective-weight ; weights that contribute or protect against risk
+  mean-value
+  sd-value ; used to calculate outliers like recruiters
 ]
 
 breed [ police the-police ]
@@ -98,6 +100,7 @@ to setup
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
   load-opinions ; also sets fundamentalism, so that we can
+  calculate-topics-stats
   calculate-propensity
   setup-activity-types
   setup-mandatory-activities
@@ -113,7 +116,22 @@ to setup
   ; TODO: write some test code to make sure the schedule is consistent.
 end
 
-; assumes citizens are at their residence after setup and assumes nobody has a job yet
+to calculate-topics-stats
+  ask topics [
+    set mean-value mean [ value ] of my-in-links
+    set sd-value standard-deviation [ value ] of my-in-links
+  ]
+end
+
+to set-extreme-opinions [ number-of-sd ] ; citizen procedure. -1.5
+  ask topics [
+    ask in-topic-link-from myself [
+      set value [ mean-value ] of myself + number-of-sd * [ sd-value ] of myself
+    ]
+  ]
+end
+
+; assumes citizens are at their residence after setup, jobs exist but are not assigned
 to make-specials
   make-radical-preachers
   make-community-workers
@@ -125,9 +143,7 @@ to make-radical-preachers
   ask turtle-set [ activity-link-neighbors ] of activities with [
     [ is-job? and location-type = "radical mosque" ] of my-activity-type
   ] [
-    ask out-topic-link-to topic-by-name "Institutional distrust" [
-      set value 2
-    ]
+    set-extreme-opinions 1.5
     set printed lput self printed
     set special-type "RI"
   ]
@@ -137,9 +153,7 @@ to make-community-workers
   ask turtle-set [ activity-link-neighbors ] of activities with [
     [ is-job? and location-type = "community center" ] of my-activity-type
   ] [
-    ask out-topic-link-to topic-by-name "Institutional distrust" [
-      set value -2
-    ]
+    set-extreme-opinions -1.5
     set printed lput self printed
     set special-type "CW"
   ]
@@ -162,14 +176,11 @@ to make-recruiters
       set my-activity-type t
       ask one-of citizens in-radius activity-radius with [
         age >= 21 and
-        get "muslim?" and
         get "male?"
       ] [
         ask activity-link-neighbors with [ [ is-job? ] of my-activity-type ] [ die ]
         create-activity-link-to myself
-        ask my-topic-links [
-          set value 2
-        ]
+        set-extreme-opinions 1.5
         set printed lput self printed
         set special-type "R"
       ]
@@ -1007,10 +1018,10 @@ SLIDER
 258
 radicalization-percentage
 radicalization-percentage
-0
+0.05
 1
 0.1
-.1
+.05
 1
 NIL
 HORIZONTAL

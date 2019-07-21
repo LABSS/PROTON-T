@@ -49,9 +49,7 @@ to-report age-class; citizen reporter. Classes from ZA4584_cdb.pdf page 1224
 end 
 
 to-report propensity-factors ; citizen reporter
-                             ; first item is weight (in R+), second item is value (in [-1, 1])
-                             ; todo: confirm weight for attribute factors
-                             ; todo: figure out the best way to convert odds ratio to weights
+                             ; a list of reporters on citizens scores)
   report (list
     [ -> ifelse-value (get "male?")             [ 0.113 ] [ 0     ] ]
     [ -> ifelse-value (employed?)               [ 0     ] [ 0.208 ] ]
