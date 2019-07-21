@@ -143,6 +143,9 @@ to-report job-definition-list
     (list        1          8        12 "community center" [ -> preach ] [ -> age >= 18
       ]                                   0
     )     
+    (list        1         12        12 "propaganda place" [ -> preach ] [ -> age >= 18
+      ]                                   0
+    )     
     (list       99999          8        8 "workplace"         [ -> work   ] [ -> age >= 18 ]             2
     )
   )
