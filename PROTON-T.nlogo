@@ -212,7 +212,8 @@ to move-police
 end
 
 to go
-  move-police
+  ;; to have 23% of citizens meeting police in a year
+  if random-float 0.15 < 1 [ move-police ]
   ask citizens [
     assert [ -> countdown >= 0 ]
     if countdown = 0 [ ; end of activity or activity without duration
@@ -836,7 +837,7 @@ total-citizens
 total-citizens
 100
 2000
-500.0
+1000.0
 50
 1
 citizens
@@ -1310,7 +1311,7 @@ cpo-%
 cpo-%
 0
 100
-50.0
+0.0
 1
 1
 NIL
