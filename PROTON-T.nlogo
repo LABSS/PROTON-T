@@ -197,23 +197,25 @@ end
 
 to move-police
   ask police [
-    let best-patches patches with [ count citizens-here >= 4 and area-id = [ area-id ] of [ patch-here ] of myself ]
-    if not any? best-patches [
-      set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+    ;; to have 23% of citizens meeting police in a year
+    if random-float 1 < 0.00656 [
+      let best-patches patches with [ count citizens-here >= 4 and area-id = [ area-id ] of [ patch-here ] of myself ]
       if not any? best-patches [
-        set best-patches patch-here; if none, can as well stay there
+        set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+        if not any? best-patches [
+          set best-patches patch-here; if none, can as well stay there
+        ]
       ]
-    ]
-    move-to one-of best-patches
-    if any? citizens-here [
-      let dummy talk-to (turtle-set one-of citizens-here) topic-by-name "Institutional distrust"
+      move-to one-of best-patches
+      if any? citizens-here [
+        let dummy talk-to (turtle-set one-of citizens-here) topic-by-name "Institutional distrust"
+      ]
     ]
   ]
 end
 
 to go
-  ;; to have 23% of citizens meeting police in a year
-  if random-float 0.15 < 1 [ move-police ]
+  move-police
   ask citizens [
     assert [ -> countdown >= 0 ]
     if countdown = 0 [ ; end of activity or activity without duration
