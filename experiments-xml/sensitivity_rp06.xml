@@ -1,5 +1,5 @@
 <experiments>
-   <!--                               ?? runs -->
+   <!--                               1296 runs -->
   <experiment name="sensitivity_rp06" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
