@@ -38,6 +38,7 @@ citizens-own [
   hours-to-recruit
   special-type
   recruit-target
+  my-links-cap
   fundamentalism-score ; this exists only to calculate the value of authoritarian?
 ]
 
@@ -385,6 +386,7 @@ to setup-citizen [ residences the-area ]
   set recruited?       false
   set hours-to-recruit random (2 * recruit-hours-threshold)
   set recruit-target   nobody
+  set my-links-cap     5 + random (2 * links-cap-mean - 5)
   move-to residence
 end
 
@@ -486,7 +488,7 @@ to setup-free-time-activities
     let reachable-activities my-nearby-activities with [
       [ not is-mandatory? and not is-job? ] of my-activity-type and [ can-do? myself ] of the-citizen
     ]
-    create-activity-links-to n-of min list links-cap count reachable-activities reachable-activities [
+    create-activity-links-to n-of min list my-links-cap count reachable-activities reachable-activities [
       set value -2 + random-float 4 ; TODO: how should this be initialized?
     ]
   ]
@@ -665,11 +667,12 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
   if the-link = nobody [
     if is-activity? the-object [
       create-activity-link-to the-object [ set the-link self ]
-      if count my-activity-links > links-cap [
-        ask min-one-of my-activity-links with [
-          [ [ not is-mandatory? and not is-job? ] of my-activity-type
-          ] of other-end and not member? other-end [ turtles-here ] of myself and not (the-link = self)
-        ] [ value ] [ die ]
+      if any? my-activity-links [
+        if count my-activity-links > my-links-cap [
+          ask min-one-of my-activity-links with [
+            [ [ not is-mandatory? and not is-job? ] of my-activity-type ] of other-end and not member? other-end [ turtles-here ] of myself and not (the-link = self)
+          ] [ value ] [ die ]
+        ]
       ]
     ]
     if is-topic?    the-object [ create-topic-link-to    the-object [ set the-link self ] ]
@@ -678,7 +681,7 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
       set value 0
     ]
   ]
-  report the-link
+report the-link
 end
 
 to check-recruitment ; citizen procedure
@@ -1332,11 +1335,11 @@ SLIDER
 665
 285
 698
-links-cap
-links-cap
+links-cap-mean
+links-cap-mean
 5
 100
-20.0
+10.0
 1
 1
 NIL
