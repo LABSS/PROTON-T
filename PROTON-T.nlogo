@@ -133,19 +133,19 @@ end
 
 ; assumes citizens are at their residence after setup, jobs exist but are not assigned
 to make-specials
-  make-radical-preachers
+  make-radical-public-speakers
   make-community-workers
   make-recruiters
 end
 
-to make-radical-preachers
-  ask locations with [ shape = "radical mosque" ] [ set color red ]
+to make-radical-public-speakers
+  ask locations with [ shape = "propaganda place" ] [ set color red ]
   ask turtle-set [ activity-link-neighbors ] of activities with [
-    [ is-job? and location-type = "radical mosque" ] of my-activity-type
+    [ is-job? and location-type = "propaganda place" ] of my-activity-type
   ] [
     set-extreme-opinions 1.5
     set printed lput self printed
-    set special-type "RI"
+    set special-type "PS"
   ]
 end
 
@@ -1652,27 +1652,6 @@ Line -7500403 true 225 195 225 240
 Line -16777216 false 270 180 270 255
 Line -16777216 false 0 180 300 180
 
-house two story
-false
-0
-Polygon -7500403 true true 2 180 227 180 152 150 32 150
-Rectangle -7500403 true true 270 75 285 255
-Rectangle -7500403 true true 75 135 270 255
-Rectangle -16777216 true false 124 195 187 256
-Rectangle -16777216 true false 210 195 255 240
-Rectangle -16777216 true false 90 150 135 180
-Rectangle -16777216 true false 210 150 255 180
-Line -16777216 false 270 135 270 255
-Rectangle -7500403 true true 15 180 75 255
-Polygon -7500403 true true 60 135 285 135 240 90 105 90
-Line -16777216 false 75 135 75 180
-Rectangle -16777216 true false 30 195 93 240
-Line -16777216 false 60 135 285 135
-Line -16777216 false 255 105 285 135
-Line -16777216 false 0 180 75 180
-Line -7500403 true 60 195 60 240
-Line -7500403 true 154 195 154 255
-
 leaf
 false
 0
@@ -1740,6 +1719,27 @@ Polygon -7500403 true true 165 180 165 210 225 180 255 120 210 135
 Polygon -7500403 true true 135 105 90 60 45 45 75 105 135 135
 Polygon -7500403 true true 165 105 165 135 225 105 255 45 210 60
 Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
+
+propaganda place
+false
+0
+Polygon -2674135 true false 298 180 73 180 148 150 268 150
+Rectangle -8630108 true false 15 75 30 255
+Rectangle -8630108 true false 30 135 225 255
+Rectangle -16777216 true false 113 195 176 256
+Rectangle -16777216 true false 45 195 90 240
+Rectangle -16777216 true false 165 150 210 180
+Rectangle -16777216 true false 45 150 90 180
+Line -16777216 false 30 135 30 255
+Rectangle -8630108 true false 225 180 285 255
+Polygon -2674135 true false 240 135 15 135 60 90 195 90
+Line -16777216 false 225 135 225 180
+Rectangle -16777216 true false 207 195 270 240
+Line -16777216 false 240 135 15 135
+Line -16777216 false 45 105 15 135
+Line -16777216 false 300 180 225 180
+Line -7500403 true 240 195 240 240
+Line -7500403 true 146 195 146 255
 
 public space
 false

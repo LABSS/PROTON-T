@@ -121,7 +121,7 @@ end
 to-report location-definitions [ the-area ]
     report (list
     ;                        number                                  name/shape size
-    (list local-table-by "num of mosques"           the-area "propaganda-place"    3)
+    (list local-table-by "num of mosques"           the-area "propaganda place"    3)
     (list local-table-by "num of community centers" the-area "community center"    3)      
     (list local-table-by "num of parks"             the-area     "public space"    3)  
     (list  5                                                        "workplace"    3)
@@ -140,16 +140,10 @@ to-report job-definition-list
   report (list
     ;     num-jobs start-time duration location-type task          criteria             priority 
     ;  inizialization
-    (list        1          8       12 "mosque"      [ -> preach ] [ -> age >= 21 and
-      get "muslim?" and get "male?" ]                                                                1
-    )
-    (list        1          8       12 "radical mosque"      [ -> preach ] [ -> age >= 21 and
-      get "muslim?" and get "male?" ] 0
-    )    
     (list        1          8        12 "community center" [ -> preach ] [ -> age >= 18
       ]                                   0
     )     
-    (list       50          8        8 "workplace"        [ -> work   ] [ -> age >= 18 ]             2
+    (list       50          8        8 "workplace"         [ -> work   ] [ -> age >= 18 ]             2
     )
   )
 end
@@ -161,7 +155,7 @@ to-report free-time-activity-definition-list
     (list "residence"        [ -> socialize-online ] [ -> true ])
     (list "coffee"           [ -> socialize ]        [ -> true ])
     (list "public space"     [ -> socialize ]        [ -> true ])
-    (list "mosque"           [ -> socialize ]        [ -> get "muslim?" ])
+    (list "propaganda place" [ -> socialize ]        [ -> true ])
     (list "community center" [ -> socialize ]        [ -> true ])
   )
 end
@@ -182,7 +176,7 @@ to-report topic-definitions
     ;      type                             criteria    risk-weight protective-weight
     (list "Non integration"                 [ -> true ]    0.188     0.178)
     (list "Institutional distrust"          [ -> true ]    0.277     0.153)
-    (list "Collective relative deprivation" [ -> [ get "muslim?" ] of myself and get "muslim?" ]  0.116     0    )
+    (list "Collective relative deprivation" [ -> true ]    0.116     0    )
   )
 end
 
