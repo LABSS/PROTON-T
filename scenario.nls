@@ -1,3 +1,48 @@
+to load-opinions
+  let opinions read-csv "combination_data"  
+  let table table:group-items opinions [ line -> sublist line 0 4 ]; group the rows by lists with initial 4 items
+  ask  citizens [
+    let my-key (list
+      ifelse-value get "immigrant?" [ 1 ] [ 0 ]
+      ifelse-value get "male?"      [ 1 ] [ 0 ]
+      ifelse-value get "muslim?"    [ 1 ] [ 0 ]
+                   age-class)
+    let l item 0 table:get table my-key
+    ; l looks like this: [0 0 1 5 "[-0.06, ..]" "[0.89,..]" "[0.70,..]" "[0.91,..]"]
+    ; netlogo does not understand commas, but once removed them, 
+    ; the runresult of the string is the list we need. 
+    let f-list runresult remove "," item 7 l 
+    ; j is the individual chosen at random
+    let j random length f-list
+    set fundamentalism-score item j f-list
+    ; then we set the three opinions to the same individual j, inverting when needed    
+    set-opinion-value "Non integration" -1 * item j runresult remove "," item 4 l
+    set-opinion-value "Institutional distrust" -1 * item j runresult remove "," item 5 l    
+    set-opinion-value "Collective relative deprivation" item j runresult remove "," item 6 l
+  ]
+end
+
+to export-opinions [ id ]
+  csv:to-file (word "opinions-at-" ticks "-" id ".csv") [ 
+    (list
+      get "immigrant?" 
+      get "male?"     
+      get "muslim?"   
+      age-class
+      opinion-on-topic "Non integration"         
+      opinion-on-topic "Institutional distrust"    
+      opinion-on-topic "Collective relative deprivation"
+      fundamentalism-score) 
+  ] of citizens
+end
+
+to-report age-class; citizen reporter. Classes from ZA4584_cdb.pdf page 1224
+  let thresholds [ 29 44 59 74 89 999 ]
+  let i 0
+  while [ age > item i thresholds ] [ set i i + 1 ]
+  report i + 1
+end 
+
 to-report propensity-factors ; citizen reporter
                              ; first item is weight (in R+), second item is value (in [-1, 1])
                              ; todo: confirm weight for attribute factors
@@ -11,11 +56,6 @@ to-report propensity-factors ; citizen reporter
     [ -> ifelse-value (age <= 25)               [ 0.1   ] [ 0     ] ]
   )
 end
-
-to-report normalized-opinion-on-topic [ the-topic ]
-  report [ (value + 1) / 2 ] of opinion-on-topic the-topic
-end
-
 
 to-report make-attributes-set [ the-area ] ; citizen procedure. Warning: sets age as a side effect.
   let my-group rnd:weighted-one-of-list table:get population-details the-area [ i -> last i ]
@@ -63,13 +103,6 @@ to-report location-definitions [ the-area ]
   )
 end
 
-to-report website-definitions
-  report (list
-    (list "Non integration" -1)
-    (list "Non integration"  1) 
-  )
-end
-
 to-report mandatory-activity-definition-list
   report (list
     ;     start-time duration location-type task         criteria
@@ -97,12 +130,13 @@ end
 
 to-report free-time-activity-definition-list
   report (list
-    ;     location-type task             criteria
-    (list "residence"        [ -> socialize ] [ -> true ])
-    (list "coffee"           [ -> socialize ] [ -> true ])
-    (list "public space"     [ -> socialize ] [ -> true ])
-    (list "mosque"           [ -> socialize ] [ -> get "muslim?" ])
-    (list "community center" [ -> socialize ] [ -> true ])
+    ;     location-type      task             criteria
+    (list "residence"        [ -> socialize ]        [ -> true ])
+    (list "residence"        [ -> socialize-online ] [ -> true ])
+    (list "coffee"           [ -> socialize ]        [ -> true ])
+    (list "public space"     [ -> socialize ]        [ -> true ])
+    (list "mosque"           [ -> socialize ]        [ -> get "muslim?" ])
+    (list "community center" [ -> socialize ]        [ -> true ])
   )
 end
 
@@ -115,15 +149,14 @@ to preach
 end
 
 to-report topic-definitions
-  let uniform [ -> -1 + random-float 2 ]
   ; Criteria are reporters with one speaker (myself) and one listener (self). 
   ; This makes the criteria compatible with the ones in activities.
   ; the risk and protection are used in risk calculation.
   report (list
-    ;      type                             value     criteria    risk-weight protective-weight
-    (list "Non integration"                 uniform   [ -> true ]    0.188     0.178)
-    (list "Institutional distrust"          uniform   [ -> true ]    0.277     0.153)
-    (list "Collective relative deprivation" uniform   [ -> [ get "muslim?" ] of myself and get "muslim?" ]  0.116     0    )
+    ;      type                             criteria    risk-weight protective-weight
+    (list "Non integration"                 [ -> true ]    0.188     0.178)
+    (list "Institutional distrust"          [ -> true ]    0.277     0.153)
+    (list "Collective relative deprivation" [ -> [ get "muslim?" ] of myself and get "muslim?" ]  0.116     0    )
   )
 end
 
@@ -132,16 +165,8 @@ to-report topics-list report map [ l -> first l ] topic-definitions end
 to post-opinions-setup [ the-places the-topic-name the-value the-criteria ]
   let n count the-places
   let the-topic topic-by-name the-topic-name
-  ; initialize opinions about extremist websites
-  let the-websites websites with [
-    out-topic-link-to the-topic != nobody and
-    [ value ] of out-topic-link-to the-topic = the-value
-  ]
   ask n-of n citizens with [ runresult the-criteria ] [
     ask out-topic-link-to the-topic [
-      set value the-value
-    ]
-    create-website-links-to the-websites [
       set value the-value
     ]
   ]
@@ -151,6 +176,14 @@ to-report calc-radicalization-threshold
   let big-list sort-on [ -1 * risk ] citizens
   report [ risk ] of item (radicalization-percentage * count citizens) big-list
 end
+
+; citizen procedure
+to set-opinion-value [ the-topic the-value ]
+  assert [ -> is-number? the-value ]
+  create-topic-link-to topic-by-name the-topic [
+    set value the-value
+  ]
+end  
 
 to-report workday-nonmuslim? report member? week-num (range 1 6)                                                             end ; citizen reporter
 to-report weekday            report item week-num [ "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" ] end ; citizen reporter
