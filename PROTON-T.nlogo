@@ -122,10 +122,8 @@ end
 
 to set-extreme-opinions [ number-of-sd ] ; citizen procedure. -1.5
   ask topics [
-    if in-topic-link-from myself != nobody [
-      ask in-topic-link-from myself [
-        set value [ mean-value ] of myself + number-of-sd * [ sd-value ] of myself
-      ]
+    ask in-topic-link-from myself [
+      set value [ mean-value ] of myself + number-of-sd * [ sd-value ] of myself
     ]
   ]
 end
@@ -197,7 +195,7 @@ to setup-police
 end
 
 to move-police
-  ask police with [not cpo?][
+  ask police with [ not cpo? ][
     ;; to have 23% of citizens meeting police in a year
     if random-float 1 < 0.00656 [
       let best-patches patches with [ count citizens-here >= 4 and area-id = [ area-id ] of [ patch-here ] of myself ]
@@ -211,10 +209,10 @@ to move-police
       police-action
     ]
   ]
-  ask police with [cpo?][
+  ask police with [ cpo? ][
     ;; to have 23% of citizens meeting police in a year
     if random-float 1 < 0.00656 [
-      let best-patches patches with [ count citizens-here with [risk > radicalization-threshold] >= 1 and area-id = [ area-id ] of [ patch-here ] of myself]
+      let best-patches patches with [ count citizens-here with [ risk > radicalization-threshold ] >= 1 and area-id = [ area-id ] of [ patch-here ] of myself]
       if not any? best-patches [
         set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
         if not any? best-patches [
@@ -351,18 +349,6 @@ to setup-communities-citizens
     ]
   ]
 end
-
-;to setup-cpos [ the-patches ]
-;  ask n-of cpo-numerousness the-patches [
-;    sprout-cpos 1 [
-;      set shape "flag"
-;      set color red
-;      create-topic-link-to topic-by-name "Institutional distrust" [
-;        set value -1
-;      ]
-;    ]
-;  ]
-;end
 
 to setup-locations [ target-patches the-area ]
   set target-patches target-patches with [ count neighbors = 8 ]
@@ -1083,21 +1069,6 @@ true
 true
 "let n count topics\n(foreach sort topics range n [ [t i] ->\n  ask t [ create-temporary-plot-pen topic-name ]\n  set-plot-pen-color hsb (i * 360 / n) 50 50\n])" "if ticks > 0 [\n  ask topics [\n    set-current-plot-pen topic-name\n    plotxy ticks mean [value] of my-in-topic-links\n  ]\n]"
 PENS
-
-SLIDER
-15
-545
-285
-578
-website-access-probability
-website-access-probability
-0
-1
-0.05
-0.05
-1
-NIL
-HORIZONTAL
 
 SLIDER
 15
