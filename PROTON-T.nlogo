@@ -868,7 +868,7 @@ total-citizens
 total-citizens
 100
 2000
-750.0
+500.0
 10
 1
 citizens
@@ -1174,7 +1174,7 @@ CHOOSER
 police-interaction
 police-interaction
 "police" "cpo" "no police"
-0
+2
 
 SLIDER
 15
@@ -1200,7 +1200,7 @@ police-distrust-effect
 police-distrust-effect
 -1
 1
--0.15
+-0.25
 0.05
 1
 NIL
