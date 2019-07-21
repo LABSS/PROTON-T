@@ -73,11 +73,6 @@ topics-own  [
 
 breed [ police the-police ]
 
-breed [ cpos cpo ]
-cpos-own [
-  number-of-interactions
-]
-
 directed-link-breed [ activity-links activity-link ] ; links from citizens to activities
 activity-links-own [ value ]                         ; value of activity for the citizen
 
@@ -126,8 +121,10 @@ end
 
 to set-extreme-opinions [ number-of-sd ] ; citizen procedure. -1.5
   ask topics [
-    ask in-topic-link-from myself [
-      set value [ mean-value ] of myself + number-of-sd * [ sd-value ] of myself
+    if in-topic-link-from myself != nobody [
+      ask in-topic-link-from myself [
+        set value [ mean-value ] of myself + number-of-sd * [ sd-value ] of myself
+      ]
     ]
   ]
 end
@@ -190,21 +187,16 @@ to make-recruiters
 end
 
 to setup-police
-  create-police 1 [
+  create-police 40 [
+    set shape "person soldier"
     let police-topic-link get-or-create-link-with topic-by-name "Institutional distrust"
-    ask police-topic-link [ set value police-distrust-effect ]
+    set-extreme-opinions 1.5
   ]
-  if any? cpos [
-    ask cpos [
-      let cpo-topic-link get-or-create-link-with (one-of topics with [topic-name = "Institutional distrust"])
-      ask cpo-topic-link [ set value -2 ]
-    ]
-  ]
+  ask n-of round (40 * cpo-% / 100) police [ set-extreme-opinions -1.5 ]
 end
 
-to move-cpos
-  ask cpos [
-    set number-of-interactions 0
+to move-police
+  ask police [
     let best-patches patches with [ count citizens-here >= 4 and area-id =
       [ area-id ] of [ patch-here ] of myself ]
     if not any? best-patches [
@@ -214,13 +206,15 @@ to move-cpos
       ]
     ]
     move-to one-of best-patches
+    if any? citizens-here [
+      let dummy talk-to (turtle-set one-of citizens-here) topic-by-name "Institutional distrust"
+    ]
   ]
 end
 
 to go
-  if any? cpos [ move-cpos ]
+  move-police
   ask citizens [
-    police-interact
     assert [ -> countdown >= 0 ]
     if countdown = 0 [ ; end of activity or activity without duration
       set current-task nobody
@@ -327,22 +321,22 @@ to setup-communities-citizens
       create-citizens table:get area-population the-area [
         setup-citizen residences the-area
       ]
-      if police-interaction = "cpo" [ setup-cpos community-patches ]
+      ;if police-interaction = "cpo" [ setup-cpos community-patches ]
     ]
   ]
 end
 
-to setup-cpos [ the-patches ]
-  ask n-of cpo-numerousness the-patches [
-    sprout-cpos 1 [
-      set shape "flag"
-      set color red
-      create-topic-link-to topic-by-name "Institutional distrust" [
-        set value -1
-      ]
-    ]
-  ]
-end
+;to setup-cpos [ the-patches ]
+;  ask n-of cpo-numerousness the-patches [
+;    sprout-cpos 1 [
+;      set shape "flag"
+;      set color red
+;      create-topic-link-to topic-by-name "Institutional distrust" [
+;        set value -1
+;      ]
+;    ]
+;  ]
+;end
 
 to setup-locations [ target-patches the-area ]
   set target-patches target-patches with [ count neighbors = 8 ]
@@ -558,25 +552,6 @@ end
 
 to sleep
   ; do nothing
-end
-
-to police-interact ; citizen procedure
-  if police-interaction = "police" [
-    if police-density > (random-float 1) [
-      ask one-of police [
-        let result? talk-to (turtle-set myself) topic-by-name "Institutional distrust"
-      ]
-    ]
-  ]
-  ; this would be faster if initiated by the cpos. But let's leave it like this for now.
-  if police-interaction = "cpo" [
-    ask cpos-here with [ number-of-interactions <= 4 ][
-      if (random-float 1) < 0.9 [
-        let result? talk-to turtle-set myself topic-by-name "Institutional distrust"
-        set number-of-interactions number-of-interactions + 1
-      ]
-    ]
-  ]
 end
                                    ;agentset
 to-report select-opinion-and-talk [ receiver ]
@@ -1162,49 +1137,9 @@ scenario
 
 CHOOSER
 15
-705
-285
-750
-police-interaction
-police-interaction
-"police" "cpo" "no police"
-2
-
-SLIDER
-15
-750
-155
-783
-police-density
-police-density
-0
-1
-0.05
-0.05
-1
-NIL
-HORIZONTAL
-
-SLIDER
-15
-795
-285
-828
-police-distrust-effect
-police-distrust-effect
--1
-1
--0.25
-0.05
-1
-NIL
-HORIZONTAL
-
-CHOOSER
-155
-750
-285
-795
+760
+145
+805
 cpo-numerousness
 cpo-numerousness
 1 2
@@ -1376,6 +1311,21 @@ male-ratio
 male-ratio
 "from scenario" 45 55
 0
+
+SLIDER
+15
+705
+285
+738
+cpo-%
+cpo-%
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1710,6 +1660,26 @@ Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300
 Rectangle -7500403 true true 127 79 172 94
 Polygon -7500403 true true 195 90 240 150 225 180 165 105
 Polygon -7500403 true true 105 90 60 150 75 180 135 105
+
+person soldier
+false
+0
+Rectangle -7500403 true true 127 79 172 94
+Polygon -10899396 true false 105 90 60 195 90 210 135 105
+Polygon -10899396 true false 195 90 240 195 210 210 165 105
+Circle -7500403 true true 110 5 80
+Polygon -10899396 true false 105 90 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285 180 195 195 90
+Polygon -6459832 true false 120 90 105 90 180 195 180 165
+Line -6459832 false 109 105 139 105
+Line -6459832 false 122 125 151 117
+Line -6459832 false 137 143 159 134
+Line -6459832 false 158 179 181 158
+Line -6459832 false 146 160 169 146
+Rectangle -6459832 true false 120 193 180 201
+Polygon -6459832 true false 122 4 107 16 102 39 105 53 148 34 192 27 189 17 172 2 145 0
+Polygon -16777216 true false 183 90 240 15 247 22 193 90
+Rectangle -6459832 true false 114 187 128 208
+Rectangle -6459832 true false 177 187 191 208
 
 plant
 false
