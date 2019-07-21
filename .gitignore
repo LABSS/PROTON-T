@@ -10,3 +10,6 @@
 *.world
 *.out
 *.swp
+*.ipynb_checkpoints*
+*__pycache__*
+inputs/neukolln/.ipynb_checkpoints/opinion_analysis_T-checkpoint.ipynb

@@ -33,17 +33,17 @@ class TRiskAndPropensityTests extends TModelSuite {
       let ck citizen """ + citizenkane + """
       ask ck [ ask one-of my-out-topic-links with [
         [topic-name] of other-end = "Non integration" ] [
-        set value 0.23
+        set value 0.23 * 2
         ] 
       ]
       ask ck [ ask one-of my-out-topic-links with [
         [topic-name] of other-end = "Institutional distrust" ] [
-        set value -0.87
+        set value -0.87 * 2
         ]
       ]
       ask ck [ ask one-of my-out-topic-links with [
         [topic-name] of other-end = "Collective relative deprivation" ] [
-        set value 0.99
+        set value 0.99 * 2
         ]
       ] 
     """)

@@ -28,8 +28,8 @@ class TJobsTests extends TModelSuite {
     setup(ws)
     ws.cmd("""
       set alpha 0.1
-      repeat 24 * 3 + 18 [ go ]
-      ask n-of 
+      repeat 24 * 2 + 8 [ go ]
+      ask n-of count citizens / 5 * 
         count locations with [ shape = "community center" ] 
         citizens with [
           [ shape ] of locations-here != [ "community center" ] 
@@ -57,11 +57,15 @@ class TJobsTests extends TModelSuite {
   }
 
   test("Radical imams preach to an effect") { ws =>
-    setup(ws)
+    setup(ws) 
+    for (fid <- 1 to 24 * 3 + 18) {
+      ws.cmd(" go ")
+      println(fid)
+    }
     ws.cmd("""
       set alpha 0.1
-      repeat 24 * 3 + 18 [ go ] 
-      ask n-of (10 * 
+      repeat 24 * 2 + 18 [ go ] 
+      ask n-of (count citizens / 5 * 
         count locations with [ shape = "radical mosque" ])
         citizens with [
           [ shape ] of locations-here != [ "radical mosque" ] 
@@ -90,7 +94,7 @@ class TJobsTests extends TModelSuite {
 
   test("citizens in workplace are working") { ws =>
     setup(ws)
-    1 to 500 foreach { _ => 
+    for (fid <- 1 to 400) {
       ws.cmd("go")
       ws.rpt("""
         count citizens with [ any? out-activity-link-neighbors with [ 
@@ -105,7 +109,8 @@ class TJobsTests extends TModelSuite {
         """) shouldBe true  
       ws.rpt("""
         max [length [ shape ] of locations-here  ] of activities = 1
-        """) shouldBe true        
+        """) shouldBe true    
+      if (fid % 10 == 0) println(fid)    
     }
   }
 

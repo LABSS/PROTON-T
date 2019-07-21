@@ -1,9 +1,16 @@
+# this works only with readxl < readxl_1.1.0. Newer won't work as they substitute column name with ...x (now X__x)
+
 library(tidyverse)
 library(readxl)
+
+
+gender_mod <- 1.0     # multiplier - 2 means twice the women
+migrant_mod <- 1.0 # 2 means twice the immigrants
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 maxcol<-217
+
 
 df <-
   file.path("raw", "Neukolln population statistics (citizenship - migrant background, gender, age, religion).xlsx") %>%
@@ -83,8 +90,24 @@ df3 <-   df1 %>%
     age = age %>%
       str_extract_all("\\d+") %>%
       map(as.numeric) %>%
-      map((lift(seq)))  
+      map((lift(seq))
   )
+  ) %>%
+  mutate (      
+    value = as.numeric(
+      case_when(
+        `male?` == "false" ~ gender_mod * value,
+        TRUE  ~  value
+      ))
+  ) %>%
+  mutate (      
+    value = as.numeric(
+      case_when(
+        `migrant?` == "true" ~ migrant_mod * value,
+        TRUE  ~  value
+      ))
+  )   
+
 
 df4 <- df3 %>%
   ungroup() %>%
