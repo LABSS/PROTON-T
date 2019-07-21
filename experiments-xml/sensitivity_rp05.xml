@@ -119,12 +119,17 @@
    <metric>soc-counter</metric>
    <metric>soc-online-counter</metric>
    <metric>rec-counter</metric>
-   <metric>min [hours-to-recruit] of citizens</metric>
-   <metric>mean [hours-to-recruit] of citizens</metric>
+   <metric>min [ hours-to-recruit ] of citizens</metric>
+   <metric>mean [ hours-to-recruit ] of citizens</metric>
    <metric>count links</metric>   
     <!--                                variable parameters (and population) -->
     <enumeratedValueSet variable="total-citizens">
       <value value="5000"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="male-ratio">
+        <value value="from scenario"/>
+        <value value="45"/>
+        <value value="55"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="police-density">
       <value value="0.05"/>
@@ -171,8 +176,6 @@
     </enumeratedValueSet>
     <enumeratedValueSet variable="scenario">
       <value value="&quot;neukolln&quot;"/>
-      <value value="&quot;neukolln_females_x_2&quot;"/>
-      <value value="&quot;neukolln_migrants_x_2&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="website-access-probability">
       <value value="0.01"/>

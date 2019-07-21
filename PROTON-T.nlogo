@@ -8,7 +8,6 @@ globals [
   areas
   area-names
   area-population
-  population
   population-details
   migrant-muslims-ratio
   soc-counter
@@ -88,6 +87,9 @@ to setup
   set initial-random-seed random 4294967295 - 2147483648
   random-seed initial-random-seed
   load-totals
+  if male-ratio != "from scenario" [
+    change-global-gender-ratio male-ratio / 100
+  ]
   setup-world  ; warning: this kills all turtles and links in case of resize
   setup-topics ; topic names are needed for plots
   reset-ticks  ; we need the tick counter started for `age` to work
@@ -95,7 +97,8 @@ to setup
   setup-police
   setup-communities-citizens ; citizens are created and moved to their home
   set printed (list one-of citizens)
-  load-opinions ; also sets fundamentalism
+  load-opinions ; also sets fundamentalism, so that we can
+  calculate-propensity
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
@@ -379,11 +382,14 @@ to setup-citizen [ residences the-area ]
   set current-activity nobody
   set countdown        0
   set residence        one-of residences
-  set propensity       sum-factors propensity-factors
   set recruited?       false
   set hours-to-recruit random (2 * recruit-hours-threshold)
-  set recruit-target    nobody
+  set recruit-target   nobody
   move-to residence
+end
+
+to calculate-propensity
+  ask citizens [ set propensity sum-factors propensity-factors ]
 end
 
 to setup-activity-types
@@ -843,7 +849,7 @@ total-citizens
 100
 2000
 500.0
-10
+50
 1
 citizens
 HORIZONTAL
@@ -1137,7 +1143,7 @@ CHOOSER
 60
 scenario
 scenario
-"neukolln" "neukolln_females_x_2" "neukolln_migrants_x_2"
+"neukolln"
 0
 
 CHOOSER
@@ -1346,6 +1352,16 @@ count citizens with [ [ shape ] of locations-here = [ \"residence\" ] ]
 0
 1
 11
+
+CHOOSER
+1275
+265
+1413
+310
+male-ratio
+male-ratio
+"from scenario" 45 55
+0
 
 @#$#@#$#@
 ## WHAT IS IT?

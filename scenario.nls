@@ -20,6 +20,11 @@ to load-opinions
     set-opinion-value "Institutional distrust" -1 * item j runresult remove "," item 5 l    
     set-opinion-value "Collective relative deprivation" item j runresult remove "," item 6 l
   ]
+  let auth-threshold mean [ fundamentalism-score ] of citizens + 
+    standard-deviation [ fundamentalism-score ] of citizens
+  ask citizens [ 
+    table:put attributes "authoritarian?" fundamentalism-score >= auth-threshold
+  ]
 end
 
 to export-opinions [ id ]
@@ -57,14 +62,36 @@ to-report propensity-factors ; citizen reporter
   )
 end
 
+;                                >0 , <1
+to change-global-gender-ratio [ target-ratio ]
+  let ratio-m []
+  foreach areas [ a -> 
+    let males-pop sum map [ i -> last i ] filter [ i -> item 1 i ] table:get population-details a 
+    let females-pop sum map [ i -> last i ] filter [ i -> not item 1 i ] table:get population-details a 
+    set ratio-m lput (males-pop / (males-pop + females-pop)) ratio-m 
+  ]
+  let l []
+  foreach areas [ a ->
+    foreach table:get population-details a [ i ->
+      ; i here is [ immigrant? male? muslim?  age weight ]
+      ; we update the weight by dividing for the old mean and multiplying for the new
+      set l lput fput a replace-item 4 i (item 4 i * ifelse-value (item 1 i) [ ; male
+        target-ratio / item (a - 1) ratio-m
+      ] [ ; female
+        (1 - target-ratio) / (1 - item (a - 1) ratio-m)
+      ] ) l
+    ]
+  ]
+  set population-details group-by-first-item  l
+end
+
 to-report make-attributes-set [ the-area ] ; citizen procedure. Warning: sets age as a side effect.
   let my-group rnd:weighted-one-of-list table:get population-details the-area [ i -> last i ]
   set birth-year -1 * item 3 my-group
   report table:from-list (list
-    (list "male?"      item 1 my-group)
-    (list "muslim?"    item 2 my-group)
     (list "immigrant?" item 0 my-group)
-    (list "authoritarian?" one-of [true false])
+    (list "male?"      item 1 my-group)
+    (list "muslim?"    item 2 my-group)    
     (list "criminal-history?" one-of [true false])
   )
 end
@@ -76,13 +103,16 @@ end
 ; this runs before resize, so it should not operate on turtles or links.
 to load-totals
   set local group-by-first-item read-csv "neighborhoods"
-  set population group-by-first-item read-csv "neukolln-totals"
+  let population group-by-first-item read-csv "neukolln-totals"
   set areas table:keys population
   assert [ -> sqrt length  areas = round sqrt length areas ]
   set area-names map [ i -> first first (table:get population i) ] areas
   set area-population map [ i -> last first table:get population i ] areas
+  ; area-population gives the right number of citizens per neighborhood
   set area-population table:from-list map [ i -> list i round
     (item (i - 1) area-population / sum area-population * total-citizens) ] areas
+  ; population-details has, by area and cell, the cell population to use as a weight when drawing attributes.
+  ; example: [[ 1 [[.. ]..[false false false 119 29.675] [false false true 16 79] ..] [2.. ]]
   set population-details group-by-first-item read-csv "neukolln-by-citizenship-migrantbackground-gender-religion-age"   
 end 
 
@@ -174,7 +204,7 @@ end
 
 to-report calc-radicalization-threshold
   let big-list sort-on [ -1 * risk ] citizens
-  report [ risk ] of item (radicalization-percentage * count citizens) big-list
+  report [ risk ] of item (radicalization-percentage * count citizens - 1) big-list
 end
 
 ; citizen procedure
