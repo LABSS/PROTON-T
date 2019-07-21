@@ -683,14 +683,11 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
   if the-link = nobody [
     if is-activity? the-object [
       create-activity-link-to the-object [ set the-link self ]
-      if count my-activity-links > my-links-cap [
-        carefully [
+      if any? my-activity-links [
+        if count my-activity-links > my-links-cap [
           ask min-one-of my-activity-links with [
-            [ [ not is-mandatory? and not is-job? ] of my-activity-type
-            ] of other-end and not member? other-end [ turtles-here ] of myself and not (the-link = self)
+            [ [ not is-mandatory? and not is-job? ] of my-activity-type ] of other-end and not member? other-end [ turtles-here ] of myself and not (the-link = self)
           ] [ value ] [ die ]
-        ][
-          ; TODO: better handling here
         ]
       ]
     ]
@@ -701,7 +698,7 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
       set value 0
     ]
   ]
-  report the-link
+report the-link
 end
 
 to check-recruitment ; citizen procedure
@@ -1017,7 +1014,7 @@ alpha
 alpha
 0
 1
-0.2
+1.0
 0.1
 1
 NIL
@@ -1177,7 +1174,7 @@ CHOOSER
 police-interaction
 police-interaction
 "police" "cpo" "no police"
-2
+0
 
 SLIDER
 15
@@ -1203,7 +1200,7 @@ police-distrust-effect
 police-distrust-effect
 -1
 1
--0.25
+-0.15
 0.05
 1
 NIL
