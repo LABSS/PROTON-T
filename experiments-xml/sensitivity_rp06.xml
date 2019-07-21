@@ -129,7 +129,7 @@
         <value value="100"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="total-citizens">
-      <value value="1000"/>
+      <value value="5000"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
       <value value="0.0"/>
@@ -181,7 +181,7 @@
       <value value="&quot;neukolln&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="community-side-length">
-      <value value="35"/>
+      <value value="45"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="radicalization-percentage">
       <value value="0.1"/>
