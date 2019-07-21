@@ -53,7 +53,6 @@ activity-types-own [
   criteria
   task
   priority
-  make-special
 ]
 
 breed [ activities activity ]
@@ -140,7 +139,7 @@ to make-specials
 end
 
 to make-radical-public-speakers
-  ask locations with [ shape = "propaganda place" ] [ set color red ]
+  ;ask locations with [ shape = "propaganda place" ] [ set color red ]
   ask turtle-set [ activity-link-neighbors ] of activities with [
     [ is-job? and location-type = "propaganda place" ] of my-activity-type
   ] [
@@ -407,6 +406,7 @@ end
 
 to setup-activity-types
   ; ok we keep the specials ALSO in here so we will have the activity in place at the location.
+  ; recruiter activities are created in
   foreach job-definition-list [ def ->
     create-activity-types 1 [
       set is-job?       true
@@ -1368,14 +1368,25 @@ count citizens with [ [ shape ] of locations-here = [ \"residence\" ] ]
 11
 
 CHOOSER
-1275
-265
-1413
-310
+1255
+260
+1393
+305
 male-ratio
 male-ratio
 "from scenario" 45 55
 0
+
+MONITOR
+310
+800
+417
+845
+unemployment 
+count citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] / count citizens * 100
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
