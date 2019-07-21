@@ -178,7 +178,7 @@ to make-recruiters
         age >= 21 and
         get "male?"
       ] [
-        ask activity-link-neighbors with [ [ is-job? ] of my-activity-type ] [ die ]
+        ask my-activity-links with [ [ [ is-job? ] of my-activity-type ] of other-end ] [ die ]
         create-activity-link-to myself
         set-extreme-opinions 1.5
         set printed lput self printed
@@ -862,7 +862,7 @@ total-citizens
 total-citizens
 100
 2000
-500.0
+1000.0
 50
 1
 citizens
@@ -1380,13 +1380,28 @@ male-ratio
 MONITOR
 310
 800
-417
+427
 845
-unemployment 
+unemployment %
 count citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] / count citizens * 100
 17
 1
 11
+
+SLIDER
+20
+845
+222
+878
+population-employed-%
+population-employed-%
+0
+100
+15.0
+5
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
