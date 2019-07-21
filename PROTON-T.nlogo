@@ -1306,7 +1306,7 @@ MONITOR
 845
 unemployment %
 count citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] / count citizens * 100
-17
+0
 1
 11
 
@@ -1319,7 +1319,7 @@ population-employed-%
 population-employed-%
 0
 100
-15.0
+10.0
 5
 1
 NIL
