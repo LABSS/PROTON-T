@@ -259,30 +259,33 @@ to go
     if countdown = 0 [ ; end of activity or activity without duration
       set current-task nobody
       set current-activity nobody
-      ; first: try job or compulsory
-      let new-job-or-mand one-of activity-link-neighbors with [
+      ; first: try mandatory, then jobs..
+      let new-activity one-of activity-link-neighbors with [
         [ start-time = current-time and is-mandatory? ] of my-activity-type
       ]
-      if new-job-or-mand = nobody [
-        set new-job-or-mand one-of activity-link-neighbors with [
+      if new-activity = nobody [
+        set new-activity one-of activity-link-neighbors with [
           [ workday? ] of myself and [ start-time = current-time and is-job? ] of my-activity-type
         ]
-      ]
-      ifelse new-job-or-mand != nobody [
-        start-activity new-job-or-mand
-      ] [  ; otherwise find something to do. Worse thing you'll go back home to socialize.
-        let candidate-activities activity-link-neighbors with [
-          [ not is-mandatory? and not is-job? ] of my-activity-type and not is-full?
+        ; ...then try leisure activities, including socializing at home
+        if new-activity = nobody [
+          let candidate-activities activity-link-neighbors with [
+            [ not is-mandatory? and not is-job? ] of my-activity-type and not is-full?
+          ]
+          set new-activity rnd:weighted-one-of candidate-activities [
+            (([ value ] of link-with myself + 2) / 4) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
+          ]
+          ; everything hopeless. In this case, it would sleep, if at least that link still exists.
+          if new-activity = nobody [
+            set fail-activity-counter fail-activity-counter + 1
+            ; at least the sleep activity will always be there. We're also protecting the home activities now.
+            set new-activity one-of activity-link-neighbors with [ [ location-type ] of my-activity-type = "residence" ]
+          ]
         ]
-        start-activity rnd:weighted-one-of candidate-activities [
-          (([ value ] of link-with myself + 2) / 4) + (1 / (1 + distance myself)) ; this weights value the same as inverse distance.
-        ]
       ]
-      ;assert [ -> current-task != nobody and current-activity != nobody ]
-      ; here the citizen is on free time so he has a probability to browse the web.
+      start-activity new-activity
     ]
     if current-task != nobody [
-      set fail-activity-counter fail-activity-counter + 1
       run current-task
       set countdown countdown - 1
     ]
@@ -682,21 +685,23 @@ to-report get-or-create-link-with [ the-object ] ; citizen reporter
   if the-link = nobody [
     if is-activity? the-object [
       create-activity-link-to the-object [ set the-link self ]
-      if any? my-activity-links [
-        if count my-activity-links > my-links-cap [
-          ask min-one-of my-activity-links with [
-            [ [ not is-mandatory? and not is-job? ] of my-activity-type ] of other-end and not member? other-end [ turtles-here ] of myself and not (the-link = self)
-          ] [ value ] [ die ]
+      if count my-activity-links > my-links-cap [
+        let removable my-activity-links with [
+          [ [ not is-mandatory? and not is-job? and not (location-type = "residence") ]
+            of my-activity-type ] of other-end and                                ; no mandatory, job or home activites
+          not member? other-end [ turtles-here ] of myself and                    ; not the one that took me here
+          not (the-link = self)                                                   ; not the one just added
         ]
+        if any? removable [ ask min-one-of removable [ value ] [ die ] ]
       ]
     ]
-    if is-topic?    the-object [ create-topic-link-to    the-object [ set the-link self ] ]
+    if is-topic? the-object [ create-topic-link-to the-object [ set the-link self ] ]
     ask the-link [
       hide-link
       set value 0
     ]
   ]
-report the-link
+  report the-link
 end
 
 to check-recruitment ; citizen procedure
@@ -841,9 +846,9 @@ ticks
 30.0
 
 BUTTON
-25
+5
 335
-98
+78
 368
 NIL
 setup
@@ -910,9 +915,9 @@ count citizens / count patches
 11
 
 BUTTON
-140
+165
 335
-203
+225
 368
 NIL
 go
@@ -927,9 +932,9 @@ NIL
 1
 
 BUTTON
-210
+230
 335
-273
+290
 368
 NIL
 go
@@ -1328,15 +1333,15 @@ count citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-
 11
 
 SLIDER
-20
-845
-222
-878
+15
+800
+217
+833
 population-employed-%
 population-employed-%
 0
 100
-20.0
+100.0
 5
 1
 NIL
@@ -1351,8 +1356,8 @@ cpo-%
 cpo-%
 0
 100
-0.0
-1
+25.0
+5
 1
 NIL
 HORIZONTAL
@@ -1380,6 +1385,23 @@ CHOOSER
 high-risk-employed
 high-risk-employed
 "no intervention" 50 100
+0
+
+BUTTON
+80
+335
+162
+368
+set 'n go
+setup repeat 500 [go]
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
 1
 
 @#$#@#$#@
