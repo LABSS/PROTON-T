@@ -35,6 +35,9 @@ show remove-duplicates [ current-task ] of citizens
 any? citizens with [ not member? "residence" [ [ location-type ] of my-activity-type ] of activity-link-neighbors ]
 ; activities starting at midnight
 citizens with [ [ [ start-time ] of my-activity-type = 0 ] of activity-link-neighbors ]
+show any? citizens with [ not member? "residence" [ [ location-type ] of my-activity-type ] of activity-link-neighbors with [ [  not is-job? and not is-mandatory? ] of my-activity-type ] ]
+; citizens who go at home just to sleep
+[who ] of  citizens with [ not member? "residence" [ [ location-type ] of my-activity-type ] of activity-link-neighbors with [ [ not is-mandatory? ] of my-activity-type ] ]
 
 
 
