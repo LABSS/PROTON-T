@@ -1,6 +1,6 @@
 <experiments>
-   <!--                               1296 runs -->
-  <experiment name="sensitivity_rp06" repetitions="1" runMetricsEveryStep="true">
+   <!--                               10 runs -->
+  <experiment name="base_rp06" repetitions="10" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <final>show (word "Time elapsed:" timer)
@@ -121,25 +121,26 @@
    <metric>rec-counter</metric>
    <metric>min [ hours-to-recruit ] of citizens</metric>
    <metric>mean [ hours-to-recruit ] of citizens</metric>
-   <metric>count links</metric>   
+   <metric>count links</metric> 
+   <metric>fail-activity-counter</metric>
+    <metric>soc-counter</metric> 
+    <metric>soc-online-counter</metric> 
+    <metric>rec-counter</metric> 
+
     <!--                                variable parameters (and population) -->
     <enumeratedValueSet variable="high-risk-employed">
         <value value="&quot;no intervention&quot;"/>
-        <value value="50"/>
-        <value value="100"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="total-citizens">
       <value value="5000"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
-      <value value="0.0"/>
       <value value="1.0"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="population-employed-%">
-      <value value="20"/>
+      <value value="10"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-radius">
-      <value value="5"/>
       <value value="10"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-debug?">
@@ -147,31 +148,23 @@
     </enumeratedValueSet>
     <enumeratedValueSet variable="work-socialization-probability">
       <value value="0.1"/>
-      <value value="0.3"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="number-workers-per-community-center">
         <value value="1"/>
-        <value value="3"/>
-        <value value="5"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="links-cap-mean">
       <value value="10"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="male-ratio">
       <value value="&quot;from scenario&quot;"/>
-      <value value="45"/>
-      <value value="55"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="test-location-type">
       <value value="&quot;coffee&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="cpo-%">
       <value value="0"/>
-      <value value="25"/>
-      <value value="50"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="recruit-hours-threshold">
-      <value value="50"/>
       <value value="200"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-value-update">
