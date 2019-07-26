@@ -27,7 +27,7 @@ class TOpinionDynamicsTest extends TModelSuite {
     ws.cmd("ask citizen " + talker + " [ show talk-to turtle-set citizen " + listener + """ topic-by-name "Institutional distrust" ] """)  
     (ws.rpt("""
       [ opinion-on-topic "Institutional distrust" ] of citizen """ + listener ).toString.toDouble == 
-    (if (Math.abs(diff) < 1 - alpha * Math.abs(v2)) v2 + (1 - alpha * Math.abs(v2)) * diff / 2 else  v2 )) shouldBe true
+    (if (Math.abs(diff) < 2 - alpha * Math.abs(v2)) v2 + (2 - alpha * Math.abs(v2)) * diff / 2 else  v2 )) shouldBe true
   }
 }
 
