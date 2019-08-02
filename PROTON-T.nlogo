@@ -344,8 +344,8 @@ to socialize-online ; citizen context
   let the-topic one-of topics
   let my-opinion [ value ] of out-topic-link-to the-topic
   let the-contact rnd:weighted-one-of potential-contacts [ abs ([ value ] of out-topic-link-to the-topic - my-opinion) ]
-  let _unused talk-to-tuned turtle-set the-contact the-topic 0.5
-  ask the-contact [ set _unused talk-to-tuned turtle-set self the-topic 0.5 ]
+  let _unused talk-to-tuned turtle-set the-contact the-topic (0.5 * talk-effect-size)
+  ask the-contact [ set _unused talk-to-tuned turtle-set self the-topic (0.5 * talk-effect-size) ]
   set soc-online-counter soc-online-counter + 1
 end
 
@@ -629,11 +629,13 @@ to-report select-opinion-and-talk [ receiver ]
 end
 
 to socialize; citizen procedure
-  let receiver turtle-set one-of other citizens-here
-  if any? receiver [
-    let _unused select-opinion-and-talk receiver
+  if random-float 1 < socialize-probability [
+    let receiver turtle-set one-of other citizens-here
+    if any? receiver [
+      let _unused select-opinion-and-talk receiver
+    ]
+    set soc-counter soc-counter + 1
   ]
-  set soc-counter soc-counter + 1
 end
 
 to socialize-and-recruit; citizen procedure
@@ -649,7 +651,7 @@ end
 
 to update-activity-value [ success? ] ; link procedure
   ;if [ special-type ] of myself = 0 [
-    set value value + activity-value-update * (ifelse-value success? [ 2 ][ -2 ] - value)
+  set value value + activity-value-update * (ifelse-value success? [ 2 ][ -2 ] - value)
 end
 
 to-report find-criteria-by-breed ; link reporter
@@ -683,7 +685,7 @@ end
 
 ; https://arxiv.org/ftp/arxiv/papers/0803/0803.3879.pdf
 to-report talk-to [ recipients the-object ] ; citizen procedure
-  report talk-to-tuned recipients the-object 1
+  report talk-to-tuned recipients the-object talk-effect-size
 end
 
 ; introduced to allow interaction at a reduced rate of persuasion). In most cases, effect-size should be 1.
@@ -697,6 +699,7 @@ to-report talk-to-tuned [ recipients the-object effect-size ] ; citizen procedur
       let v2 [ value ] of l2
       let t 2 - alpha * abs v2
       if abs (v1 - v2) < t [
+      ;if false [
         ask l2 [ set value v2 + t * (v1 - v2) / 2 * effect-size ]
         set success? true
       ]
@@ -978,8 +981,8 @@ BUTTON
 375
 145
 408
-profile 20
-setup                  ;; set up the model\nprofiler:start         ;; start profiling\nrepeat 20 [ go ]       ;; run something you want to measure\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
+NIL
+profile-go
 NIL
 1
 T
@@ -1010,8 +1013,8 @@ BUTTON
 375
 272
 408
-profile setup
-profiler:start         ;; start profiling\nsetup                  ;; set up the model\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
+NIL
+profile-setup
 NIL
 1
 T
@@ -1042,7 +1045,7 @@ alpha
 alpha
 0
 1
-1.0
+0.1
 0.1
 1
 NIL
@@ -1359,9 +1362,9 @@ count citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-
 
 SLIDER
 15
-800
-217
-833
+780
+285
+813
 population-employed-%
 population-employed-%
 0
@@ -1389,9 +1392,9 @@ HORIZONTAL
 
 SLIDER
 15
-755
-322
-788
+745
+285
+778
 number-workers-per-community-center
 number-workers-per-community-center
 1
@@ -1428,6 +1431,36 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+15
+815
+285
+848
+talk-effect-size
+talk-effect-size
+0
+0.1
+0.04
+0.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+15
+855
+192
+888
+socialize-probability
+socialize-probability
+0
+1
+0.1
+0.05
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

@@ -182,16 +182,6 @@ end
 
 to-report topics-list report map [ l -> first l ] topic-definitions end
 
-to post-opinions-setup [ the-places the-topic-name the-value the-criteria ]
-  let n count the-places
-  let the-topic topic-by-name the-topic-name
-  ask n-of n citizens with [ runresult the-criteria ] [
-    ask out-topic-link-to the-topic [
-      set value the-value
-    ]
-  ]
-end
-
 to-report calc-radicalization-threshold
   let big-list sort-on [ -1 * risk ] citizens
   report [ risk ] of item (radicalization-percentage * count citizens - 1) big-list
