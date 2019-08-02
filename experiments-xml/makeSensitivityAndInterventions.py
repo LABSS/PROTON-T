@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 
-version="rp0.7"
+version="rp0.8"
 
 #pretty print method
 def indent(elem, level=0):
@@ -23,34 +23,6 @@ def indent(elem, level=0):
 tree = ET.parse('base_' + version + '.xml')
 root = tree.getroot()
 
-# first, sentitivity analysis.
-
-al = tree.find('.//enumeratedValueSet[@variable="activity-radius"]')
-al.insert(1, ET.Element("value", value="5"))
-
-al = tree.find('.//enumeratedValueSet[@variable="alpha"]')
-al.insert(1, ET.Element("value", value="0.0"))
-
-al = tree.find('.//enumeratedValueSet[@variable="recruit-hours-threshold"]')
-al.insert(1, ET.Element("value", value="50"))
-
-al = tree.find('.//enumeratedValueSet[@variable="population-employed-%"]')
-al.insert(1, ET.Element("value", value="5"))
-al.insert(1, ET.Element("value", value="20"))
-al.insert(1, ET.Element("value", value="40"))
-
-al = tree.find('.//enumeratedValueSet[@variable="work-socialization-probability"]')
-al.insert(1, ET.Element("value", value="0.3"))
-
-al = tree.find('.//enumeratedValueSet[@variable="male-ratio"]')
-al.insert(1, ET.Element("value", value="45"))
-al.insert(1, ET.Element("value", value="55"))
-
-
-#write to file
-tree = ET.ElementTree(indent(root))
-tree.write('sensitivity_' + version + '.xml', encoding='utf-8')
-
 # then we restart and prepare the high risk
 
 tree = ET.parse('base_' + version + '.xml')
@@ -59,17 +31,7 @@ root = tree.getroot()
 al = tree.find('.//enumeratedValueSet[@variable="high-risk-employed"]')
 for x in al.getchildren():
   al.remove(x)
-al.insert(1, ET.Element("value", value="50"))
-al.insert(1, ET.Element("value", value="100"))
-
-al = tree.find('.//enumeratedValueSet[@variable="population-employed-%"]')
-al.insert(1, ET.Element("value", value="5"))
-al.insert(1, ET.Element("value", value="20"))
-al.insert(1, ET.Element("value", value="40"))
-
-al = tree.find('.//enumeratedValueSet[@variable="male-ratio"]')
-al.insert(1, ET.Element("value", value="45"))
-al.insert(1, ET.Element("value", value="55"))
+al.insert(1, ET.Element("value", value="75"))
 
 #write to file
 tree = ET.ElementTree(indent(root))
@@ -83,18 +45,7 @@ root = tree.getroot()
 al = tree.find('.//enumeratedValueSet[@variable="cpo-%"]')
 for x in al.getchildren():
   al.remove(x)
-al.insert(1, ET.Element("value", value="25"))
 al.insert(1, ET.Element("value", value="50"))
-
-al = tree.find('.//enumeratedValueSet[@variable="population-employed-%"]')
-al.insert(1, ET.Element("value", value="5"))
-al.insert(1, ET.Element("value", value="20"))
-al.insert(1, ET.Element("value", value="40"))
-
-al = tree.find('.//enumeratedValueSet[@variable="male-ratio"]')
-al.insert(1, ET.Element("value", value="45"))
-al.insert(1, ET.Element("value", value="55"))
-
 
 #write to file
 tree = ET.ElementTree(indent(root))
@@ -108,17 +59,7 @@ root = tree.getroot()
 al = tree.find('.//enumeratedValueSet[@variable="number-workers-per-community-center"]')
 for x in al.getchildren():
   al.remove(x)
-al.insert(1, ET.Element("value", value="3"))
 al.insert(1, ET.Element("value", value="5"))
-
-al = tree.find('.//enumeratedValueSet[@variable="population-employed-%"]')
-al.insert(1, ET.Element("value", value="5"))
-al.insert(1, ET.Element("value", value="20"))
-al.insert(1, ET.Element("value", value="40"))
-
-al = tree.find('.//enumeratedValueSet[@variable="male-ratio"]')
-al.insert(1, ET.Element("value", value="45"))
-al.insert(1, ET.Element("value", value="55"))
 
 #write to file
 tree = ET.ElementTree(indent(root))

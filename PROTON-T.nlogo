@@ -1412,7 +1412,7 @@ CHOOSER
 585
 high-risk-employed
 high-risk-employed
-"no intervention" 50 100
+"no intervention" 50 75 100
 0
 
 BUTTON
