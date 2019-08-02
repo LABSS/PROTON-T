@@ -297,6 +297,31 @@ to go
   ]
 end
 
+to profile-go
+  set total-citizens 10000
+  profiler:reset         ; clear the data
+  profiler:start         ; start profiling
+  random-seed 12
+  setup                  ; set up the model
+  repeat 40 [ go show ticks]
+  profiler:stop          ; stop profiling
+  print profiler:report  ; view the results
+  profiler:reset         ; clear the data
+  show timer
+end
+
+to profile-setup
+  set total-citizens 10000
+  profiler:reset         ; clear the data
+  profiler:start         ; start profiling
+  random-seed 12
+  repeat 10 [ setup show ticks]
+  profiler:stop          ; stop profiling
+  print profiler:report  ; view the results
+  profiler:reset         ; clear the data
+  show timer
+end
+
 ; activity reporter
 to-report is-full?
   report ifelse-value ([location-type] of my-activity-type = "coffee") [
