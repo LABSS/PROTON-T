@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+version="rp0.7"
+
 #pretty print method
 def indent(elem, level=0):
     i = "\n" + level*"  "
@@ -18,7 +20,7 @@ def indent(elem, level=0):
             elem.tail = j
     return elem
 	
-tree = ET.parse('base_rp0.6.xml')
+tree = ET.parse('base_' + version + '.xml')
 root = tree.getroot()
 
 # first, sentitivity analysis.
@@ -44,13 +46,14 @@ al = tree.find('.//enumeratedValueSet[@variable="male-ratio"]')
 al.insert(1, ET.Element("value", value="45"))
 al.insert(1, ET.Element("value", value="55"))
 
+
 #write to file
 tree = ET.ElementTree(indent(root))
-tree.write('sensitivity_rp0.6.xml', encoding='utf-8')
+tree.write('sensitivity_' + version + '.xml', encoding='utf-8')
 
 # then we restart and prepare the high risk
 
-tree = ET.parse('base_rp0.6.xml')
+tree = ET.parse('base_' + version + '.xml')
 root = tree.getroot()
 
 al = tree.find('.//enumeratedValueSet[@variable="high-risk-employed"]')
@@ -70,11 +73,11 @@ al.insert(1, ET.Element("value", value="55"))
 
 #write to file
 tree = ET.ElementTree(indent(root))
-tree.write('high-risk_rp0.6.xml',  encoding='utf-8')
+tree.write('high-risk_' + version + '.xml',  encoding='utf-8')
 
 # then we restart and prepare the CPOS
 
-tree = ET.parse('base_rp0.6.xml')
+tree = ET.parse('base_' + version + '.xml')
 root = tree.getroot()
 
 al = tree.find('.//enumeratedValueSet[@variable="cpo-%"]')
@@ -92,13 +95,14 @@ al = tree.find('.//enumeratedValueSet[@variable="male-ratio"]')
 al.insert(1, ET.Element("value", value="45"))
 al.insert(1, ET.Element("value", value="55"))
 
+
 #write to file
 tree = ET.ElementTree(indent(root))
-tree.write('cpos_rp0.6.xml', encoding='utf-8')
+tree.write('cpos_' + version + '.xml', encoding='utf-8')
 
 # finally, the community workers 
 
-tree = ET.parse('base_rp0.6.xml')
+tree = ET.parse('base_' + version + '.xml')
 root = tree.getroot()
 
 al = tree.find('.//enumeratedValueSet[@variable="number-workers-per-community-center"]')
@@ -118,5 +122,5 @@ al.insert(1, ET.Element("value", value="55"))
 
 #write to file
 tree = ET.ElementTree(indent(root))
-tree.write('communityworkers_rp0.6.xml', encoding='utf-8')
+tree.write('communityworkers_' + version + '.xml', encoding='utf-8')
 

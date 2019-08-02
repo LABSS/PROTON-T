@@ -1,5 +1,5 @@
 <experiments>
-  <experiment name="base_rp06" repetitions="10" runMetricsEveryStep="true">
+  <experiment name="base_rp07" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
   <go>go</go>
   <final>show (word "Time elapsed:" timer)
@@ -119,8 +119,7 @@
   <metric>soc-online-counter</metric>
   <metric>rec-counter</metric>
   <enumeratedValueSet variable="high-risk-employed">
-      <value value="50" />
-    <value value="100" />
+      <value value="&quot;no intervention&quot;" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="total-citizens">
       <value value="5000" />
@@ -144,7 +143,8 @@
       <value value="0.1" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="number-workers-per-community-center">
-      <value value="1" />
+      <value value="3" />
+    <value value="5" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="links-cap-mean">
       <value value="10" />
