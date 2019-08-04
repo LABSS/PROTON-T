@@ -132,7 +132,7 @@ end
 to-report mandatory-activity-definition-list
   report (list
     ;     start-time duration location-type task         
-    (list          0        8 "residence"   [ -> sleep ] )
+    (list          7        1 "residence"   [ -> sleep ] )
   )
 end
 
