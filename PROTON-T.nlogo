@@ -576,10 +576,10 @@ to-report intervals [ n the-range ]
   report n-values n [ i -> i * (the-range / n) ]
 end
 
-to-report ticks-per-day  report 24                             end
+to-report ticks-per-day  report 17                             end
 to-report ticks-per-year report ticks-per-day * 365            end
 to-report current-year   report floor (ticks / ticks-per-year) end
-to-report current-time   report ticks mod ticks-per-day        end
+to-report current-time   report ticks mod ticks-per-day + 7    end
 to-report age            report current-year - birth-year      end
 ; days are already there in the rest of the division by seven. I'd keep them that way. It won't be done too often; if it does, it should be cached;
 ; a routine could set all the reporters at the beginning of the step, making them into globals. To do in the optimization phase.
@@ -1016,7 +1016,7 @@ MONITOR
 250
 310
 time
-(word (ticks mod 24) \":00\")
+(word (current-time) \":00\")
 17
 1
 11
@@ -1229,7 +1229,7 @@ SWITCH
 153
 activity-debug?
 activity-debug?
-1
+0
 1
 -1000
 
