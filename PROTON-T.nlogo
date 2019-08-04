@@ -50,7 +50,6 @@ activity-types-own [
   max-agents
   start-time
   duration
-  criteria
   task
   priority
 ]
@@ -63,7 +62,6 @@ activities-own [
 breed [ topics topic ]
 topics-own  [
   topic-name
-  criteria  ; a boolean reporter taking a speaker and a listener
   risk-weight
   protective-weight ; weights that contribute or protect against risk
   mean-value
@@ -182,7 +180,6 @@ to make-recruiters
     set duration      16
     set location-type test-location-type
     set task          [ -> socialize-and-recruit ]
-    set criteria      [ -> false ]
     set t self
   ]
   ask n-of 5 locations with [ shape = [ location-type ] of t ] [
@@ -354,9 +351,8 @@ to setup-topics
   foreach topic-definitions [ def ->
     create-topics 1 [
       set topic-name        item 0 def
-      set criteria          item 1 def
-      set risk-weight       item 2 def
-      set protective-weight item 3 def
+      set risk-weight       item 1 def
+      set protective-weight item 2 def
       set hidden? true
     ]
   ]
@@ -468,8 +464,7 @@ to setup-activity-types
       set duration      item 2 def
       set location-type item 3 def
       set task          item 4 def
-      set criteria      item 5 def
-      set priority      item 6 def
+      set priority      item 5 def
     ]
   ]
   foreach mandatory-activity-definition-list [ def ->
@@ -481,7 +476,6 @@ to setup-activity-types
       set duration      item 1 def
       set location-type item 2 def
       set task          item 3 def
-      set criteria      item 4 def
     ]
   ]
   foreach free-time-activity-definition-list [ def ->
@@ -493,7 +487,6 @@ to setup-activity-types
       set duration      1
       set location-type item 0 def
       set task          item 1 def
-      set criteria      item 2 def
     ]
   ]
   ask locations [
@@ -509,7 +502,7 @@ end
 to setup-jobs
   foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type ->
     ask activities with [ my-activity-type = the-type ] [
-      let candidates citizens with [ runresult [ criteria ] of the-type and schedule-free [ start-time ] of the-type [ duration ] of the-type ]
+      let candidates citizens with [ schedule-free [ start-time ] of the-type [ duration ] of the-type ]
       let n min (list (count candidates) ([ max-agents ] of the-type))
       ; this approach allows citizens to work in areas that are not their residence if they are on a border
       ask rnd:weighted-n-of n candidates [ distance myself ^ 2 ] [
@@ -538,7 +531,7 @@ to setup-mandatory-activities ; citizen procedure
       let possible-activities activities with [ my-activity-type = the-type ]
       set get-activity [ -> min-one-of possible-activities [ distance myself ] ]
     ]
-    ask citizens with [ runresult [ criteria ] of myself ] [
+    ask citizens [
       create-activity-link-to runresult get-activity
     ]
   ]
@@ -549,7 +542,7 @@ to setup-free-time-activities
     ; look for possible free-time activities around current activities
     let the-citizen self
     let reachable-activities my-nearby-activities with [
-      [ not is-mandatory? and not is-job? ] of my-activity-type and [ can-do? myself ] of the-citizen
+      [ not is-mandatory? and not is-job? ] of my-activity-type and not [ at-strangers-home? myself ] of the-citizen
     ]
     create-activity-links-to n-of min list my-links-cap count reachable-activities reachable-activities [
       set value -2 + random-float 4 ; TODO: how should this be initialized?
@@ -566,13 +559,12 @@ to-report my-nearby-activities ; citizen reporter
   report reachable-activities
 end
 
-to-report can-do? [ the-activity ] ; citizen reporter
+to-report at-strangers-home? [ the-activity ] ; citizen reporter
   let the-location-type [ location-type ] of [ my-activity-type ] of the-activity
   if the-location-type = "residence" and not is-at-my-residence? the-activity [
-    report false
+    report true
   ]
-  let the-criteria [ criteria ] of [ my-activity-type ] of the-activity
-  report runresult the-criteria
+  report false
 end
 
 to-report is-at-my-residence? [ the-turtle ] ; citizen reporter
@@ -584,10 +576,10 @@ to-report intervals [ n the-range ]
   report n-values n [ i -> i * (the-range / n) ]
 end
 
-to-report ticks-per-day  report 24                             end
+to-report ticks-per-day  report 17                             end
 to-report ticks-per-year report ticks-per-day * 365            end
 to-report current-year   report floor (ticks / ticks-per-year) end
-to-report current-time   report ticks mod ticks-per-day        end
+to-report current-time   report ticks mod ticks-per-day + 7    end
 to-report age            report current-year - birth-year      end
 ; days are already there in the rest of the division by seven. I'd keep them that way. It won't be done too often; if it does, it should be cached;
 ; a routine could set all the reporters at the beginning of the step, making them into globals. To do in the optimization phase.
@@ -614,7 +606,7 @@ end
                                    ;agentset
 to-report select-opinion-and-talk [ receiver ]
   let speaker self
-  let candidate-opinions my-opinions with [ meets-criteria? speaker receiver ]
+  let candidate-opinions my-opinions
   let the-object [ other-end ] of rnd:weighted-one-of candidate-opinions [ abs value ]
   let success? talk-to receiver the-object
   ask link-with current-activity [ update-activity-value success? ]
@@ -653,26 +645,6 @@ end
 to update-activity-value [ success? ] ; link procedure
   ;if [ special-type ] of myself = 0 [
   set value value + activity-value-update * (ifelse-value success? [ 2 ][ -2 ] - value)
-end
-
-to-report find-criteria-by-breed ; link reporter
-  if breed = activity-links [
-    report [ criteria ] of [ my-activity-type ] of other-end
-  ]
-  if breed = topic-links [
-    report [ criteria ] of other-end
-  ]
-end
-
-to-report meets-criteria? [ speaker receiver ]; link reporter
-  let the-criteria find-criteria-by-breed
-  let result [ [ runresult the-criteria ] of receiver ]  of speaker
-  ifelse is-list? result [
-   report reduce and result
-  ] [
-   report result
-  ]
-  ; report item 0 [ [ runresult the-criteria ] of receiver ] of speaker
 end
 
 to-report my-opinions ; citizen reporter
@@ -841,6 +813,18 @@ to update-output
         current-task ", " ifelse-value (recruit-target = nobody) [ "" ][ [ who ] of recruit-target ])
       ]
     ]
+end
+
+; citizen procedure
+to show-act
+  let acts sort-by [ [ i j ] -> item 0 i < item 0 j ]
+  [
+    (list [ value ] of in-activity-link-from myself
+      [ location-type ] of my-activity-type
+      [ task ] of my-activity-type
+      [ is-at-my-residence? myself ] of myself
+  ) ] of activity-link-neighbors
+  foreach acts print
 end
 
 to assert [ f ]
@@ -1032,7 +1016,7 @@ MONITOR
 250
 310
 time
-(word (ticks mod 24) \":00\")
+(word (current-time) \":00\")
 17
 1
 11
@@ -1370,7 +1354,7 @@ population-employed-%
 population-employed-%
 0
 100
-100.0
+50.0
 5
 1
 NIL
