@@ -5,8 +5,8 @@
     <go>go</go>
     <final>show (word "Time elapsed:" timer)
     </final>   
-    <!--                                assuming 1 year = 8640 steps, three = 25920  -->
-    <timeLimit steps="8640"/>
+    <!--                                assuming 1 year = 6205 steps with 17-hours days  -->
+    <timeLimit steps="6205"/>
     <!--                               Metrics for the wizard   -->
     <!-- t1 recruited citizens -->
     <metric>t1</metric>
