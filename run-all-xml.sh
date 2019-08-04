@@ -4,9 +4,5 @@ version="rp0.8"
 netlogo="/Applications/NetLogo\ 6.0.4/netlogo-headless.sh"
 
 for arg in `ls experiments-xml/*rp0.8.xml`; do
-	echo "hey"
-	echo $netlogo
-	echo $arg
-	 echo "$netlogo --model PROTON-T.nlogo --setup-file $arg --table $arg.csv"
-   eval "$netlogo --model PROTON-T.nlogo --setup-file $arg --table $arg.csv > $arg.out 2>&1 &"
+   eval "$netlogo --model PROTON-T.nlogo --setup-file $arg --table $arg.csv > $arg.out 2>&1 &"	
 done

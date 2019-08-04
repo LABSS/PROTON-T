@@ -110,6 +110,7 @@ to setup
   ask activity-types [ set hidden? true ]
   update-plots
   display
+  show word "Setup complete in " timer
   ; TODO: write some test code to make sure the schedule is consistent.
 end
 
