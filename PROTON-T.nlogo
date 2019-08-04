@@ -1229,7 +1229,7 @@ SWITCH
 153
 activity-debug?
 activity-debug?
-0
+1
 1
 -1000
 
