@@ -9,7 +9,7 @@ class TPreachingTests extends TModelSuite {
  def setup(ws: HeadlessWorkspace): Unit = {
     ws.cmd("""
       set total-citizens 1000
-      set alpha 0.1
+      set alpha 1
       setup
     """)
   }
@@ -27,7 +27,7 @@ class TPreachingTests extends TModelSuite {
 
   test("Community workers preach to an effect") { ws =>
     setup(ws)
-    for (fid <- 1 to 24 * 3 + 18) {
+    for (fid <- 1 to 17 * 3 + 10) {
       ws.cmd(" go ")
       if (fid % 10 == 0) println(fid)    
     }
@@ -61,7 +61,7 @@ class TPreachingTests extends TModelSuite {
 
   test("Radicalizers preach to an effect") { ws =>
     setup(ws) 
-    for (fid <- 1 to 24 * 3 + 18) {
+    for (fid <- 1 to 17 * 3 + 10) {
       ws.cmd(" go ")
       if (fid % 10 == 0) println(fid)    
     }

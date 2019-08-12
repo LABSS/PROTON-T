@@ -131,32 +131,32 @@ end
 
 to-report mandatory-activity-definition-list
   report (list
-    ;     start-time duration location-type task         criteria
-    (list          0        8 "residence"   [ -> sleep ] [ -> true ] )
+    ;     start-time duration location-type task         
+    (list          7        1 "residence"   [ -> sleep ] )
   )
 end
 
 to-report job-definition-list
   report (list
-    ;     num-jobs start-time duration location-type task          criteria             priority 
+    ;     num-jobs start-time duration location-type task                       priority 
     ;  inizialization
     (list       number-workers-per-community-center
-                            8        12 "community center" [ -> preach ] [ -> age >= 18 ]   0)     
-    (list        1         12        12 "propaganda place" [ -> preach ] [ -> age >= 18 ]   0)     
+                            8        12 "community center" [ -> preach ]    0)     
+    (list        1         12        12 "propaganda place" [ -> preach ]    0)     
     (list       round (population-employed-% * total-citizens / 100 / 20)
-                            8        8 "workplace"         [ -> work   ] [ -> age >= 18 ]   2)
+                            8        8 "workplace"         [ -> work   ]    2)
   )
 end
 
 to-report free-time-activity-definition-list
   report (list
-    ;     location-type      task             criteria
-    (list "residence"        [ -> socialize ]        [ -> true ])
-    (list "residence"        [ -> socialize-online ] [ -> true ])
-    (list "coffee"           [ -> socialize ]        [ -> true ])
-    (list "public space"     [ -> socialize ]        [ -> true ])
-    (list "propaganda place" [ -> socialize ]        [ -> true ])
-    (list "community center" [ -> socialize ]        [ -> true ])
+    ;     location-type      task             
+    (list "residence"        [ -> socialize ]        )
+    (list "residence"        [ -> socialize-online ] )
+    (list "coffee"           [ -> socialize ]        )
+    (list "public space"     [ -> socialize ]        )
+    (list "propaganda place" [ -> socialize ]        )
+    (list "community center" [ -> socialize ]        )
   )
 end
 
@@ -173,24 +173,14 @@ to-report topic-definitions
   ; This makes the criteria compatible with the ones in activities.
   ; the risk and protection are used in risk calculation.
   report (list
-    ;      type                             criteria    risk-weight protective-weight
-    (list "Non integration"                 [ -> true ]    0.188     0.178)
-    (list "Institutional distrust"          [ -> true ]    0.277     0.153)
-    (list "Collective relative deprivation" [ -> true ]    0.116     0    )
+    ;      type                                 risk-weight protective-weight
+    (list "Non integration"                     0.188     0.178)
+    (list "Institutional distrust"              0.277     0.153)
+    (list "Collective relative deprivation"     0.116     0    )
   )
 end
 
 to-report topics-list report map [ l -> first l ] topic-definitions end
-
-to post-opinions-setup [ the-places the-topic-name the-value the-criteria ]
-  let n count the-places
-  let the-topic topic-by-name the-topic-name
-  ask n-of n citizens with [ runresult the-criteria ] [
-    ask out-topic-link-to the-topic [
-      set value the-value
-    ]
-  ]
-end
 
 to-report calc-radicalization-threshold
   let big-list sort-on [ -1 * risk ] citizens

@@ -1,12 +1,12 @@
 <experiments>
-   <!--                               48 runs -->
-  <experiment name="sensitivity_rp04" repetitions="1" runMetricsEveryStep="true">
+   <!--                              * 5 runs -->
+  <experiment name="base_rp08" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <final>show (word "Time elapsed:" timer)
     </final>   
-    <!--                                assuming 1 year = 8640 steps, three = 25920  -->
-    <timeLimit steps="200"/>
+    <!--                                assuming 1 year = 6205 steps with 17-hours days  -->
+    <timeLimit steps="6205"/>
     <!--                               Metrics for the wizard   -->
     <!-- t1 recruited citizens -->
     <metric>t1</metric>
@@ -104,11 +104,11 @@
     <metric>t6  "public space" 2</metric>  
     <metric>t6  "public space" 3</metric>
     <metric>t6  "public space" 4</metric>
-    <metric>t6  "mosque" 0</metric>
-    <metric>t6  "mosque" 1</metric>
-    <metric>t6  "mosque" 2</metric>  
-    <metric>t6  "mosque" 3</metric>
-    <metric>t6  "mosque" 4</metric> 
+    <metric>t6  "propaganda place" 0</metric>
+    <metric>t6  "propaganda place" 1</metric>
+    <metric>t6  "propaganda place" 2</metric>  
+    <metric>t6  "propaganda place" 3</metric>
+    <metric>t6  "propaganda place" 4</metric> 
     <metric>t6  "community center" 0</metric>
     <metric>t6  "community center" 1</metric>
     <metric>t6  "community center" 2</metric>  
@@ -121,64 +121,69 @@
    <metric>rec-counter</metric>
    <metric>min [ hours-to-recruit ] of citizens</metric>
    <metric>mean [ hours-to-recruit ] of citizens</metric>
-   <metric>count links</metric>   
+   <metric>count links</metric> 
+   <metric>fail-activity-counter</metric>
+    <metric>soc-counter</metric> 
+    <metric>soc-online-counter</metric> 
+    <metric>rec-counter</metric> 
+
     <!--                                variable parameters (and population) -->
+    <enumeratedValueSet variable="high-risk-employed">
+        <value value="&quot;no intervention&quot;"/>
+    </enumeratedValueSet>
     <enumeratedValueSet variable="total-citizens">
-      <value value="5000"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="male-ratio">
-        <value value="from scenario"/>
-        <value value="45"/>
-        <value value="55"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="police-density">
-      <value value="0.05"/>
+      <value value="40000"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
-      <value value="0.0"/>
-      <value value="1.0"/>
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="population-employed-%">
+      <value value="10"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-radius">
       <value value="5"/>
-      <value value="10"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community-side-length">
-      <value value="45"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="recruit-hours-threshold">
-      <value value="50"/>
-      <value value="200"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-debug?">
       <value value="false"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="work-socialization-probability">
       <value value="0.1"/>
-      <value value="0.3"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="police-interaction">
-      <value value="&quot;no police&quot;"/>
+    <enumeratedValueSet variable="number-workers-per-community-center">
+        <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="links-cap-mean">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="male-ratio">
+      <value value="&quot;from scenario&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="test-location-type">
       <value value="&quot;coffee&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="cpo-numerousness">
-      <value value="1"/>
+    <enumeratedValueSet variable="cpo-%">
+      <value value="0"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="radicalization-threshold">
-      <value value="0.7"/>
+    <enumeratedValueSet variable="recruit-hours-threshold">
+      <value value="250"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-value-update">
       <value value="0.5"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="police-distrust-effect">
-      <value value="-0.25"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="scenario">
       <value value="&quot;neukolln&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="website-access-probability">
-      <value value="0.01"/>
+    <enumeratedValueSet variable="community-side-length">
+      <value value="45"/>
     </enumeratedValueSet>
-  </experiment>
+    <enumeratedValueSet variable="radicalization-percentage">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="talk-effect-size">
+      <value value="0.04"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="socialize-probability">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+</experiment>
 </experiments>

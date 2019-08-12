@@ -50,7 +50,6 @@ activity-types-own [
   max-agents
   start-time
   duration
-  criteria
   task
   priority
 ]
@@ -63,7 +62,6 @@ activities-own [
 breed [ topics topic ]
 topics-own  [
   topic-name
-  criteria  ; a boolean reporter taking a speaker and a listener
   risk-weight
   protective-weight ; weights that contribute or protect against risk
   mean-value
@@ -110,6 +108,7 @@ to setup
   ask activity-types [ set hidden? true ]
   update-plots
   display
+  show word "Setup complete in " timer
   ; TODO: write some test code to make sure the schedule is consistent.
 end
 
@@ -181,7 +180,6 @@ to make-recruiters
     set duration      16
     set location-type test-location-type
     set task          [ -> socialize-and-recruit ]
-    set criteria      [ -> false ]
     set t self
   ]
   ask n-of 5 locations with [ shape = [ location-type ] of t ] [
@@ -297,6 +295,31 @@ to go
   ]
 end
 
+to profile-go
+  set total-citizens 10000
+  profiler:reset         ; clear the data
+  profiler:start         ; start profiling
+  random-seed 12
+  setup                  ; set up the model
+  repeat 40 [ go show ticks]
+  profiler:stop          ; stop profiling
+  print profiler:report  ; view the results
+  profiler:reset         ; clear the data
+  show timer
+end
+
+to profile-setup
+  set total-citizens 10000
+  profiler:reset         ; clear the data
+  profiler:start         ; start profiling
+  random-seed 12
+  repeat 10 [ setup show ticks]
+  profiler:stop          ; stop profiling
+  print profiler:report  ; view the results
+  profiler:reset         ; clear the data
+  show timer
+end
+
 ; activity reporter
 to-report is-full?
   report ifelse-value ([location-type] of my-activity-type = "coffee") [
@@ -319,8 +342,8 @@ to socialize-online ; citizen context
   let the-topic one-of topics
   let my-opinion [ value ] of out-topic-link-to the-topic
   let the-contact rnd:weighted-one-of potential-contacts [ abs ([ value ] of out-topic-link-to the-topic - my-opinion) ]
-  let _unused talk-to-tuned turtle-set the-contact the-topic 0.5
-  ask the-contact [ set _unused talk-to-tuned turtle-set self the-topic 0.5 ]
+  let _unused talk-to-tuned turtle-set the-contact the-topic (0.5 * talk-effect-size)
+  ask the-contact [ set _unused talk-to-tuned turtle-set self the-topic (0.5 * talk-effect-size) ]
   set soc-online-counter soc-online-counter + 1
 end
 
@@ -328,9 +351,8 @@ to setup-topics
   foreach topic-definitions [ def ->
     create-topics 1 [
       set topic-name        item 0 def
-      set criteria          item 1 def
-      set risk-weight       item 2 def
-      set protective-weight item 3 def
+      set risk-weight       item 1 def
+      set protective-weight item 2 def
       set hidden? true
     ]
   ]
@@ -442,8 +464,7 @@ to setup-activity-types
       set duration      item 2 def
       set location-type item 3 def
       set task          item 4 def
-      set criteria      item 5 def
-      set priority      item 6 def
+      set priority      item 5 def
     ]
   ]
   foreach mandatory-activity-definition-list [ def ->
@@ -455,7 +476,6 @@ to setup-activity-types
       set duration      item 1 def
       set location-type item 2 def
       set task          item 3 def
-      set criteria      item 4 def
     ]
   ]
   foreach free-time-activity-definition-list [ def ->
@@ -467,7 +487,6 @@ to setup-activity-types
       set duration      1
       set location-type item 0 def
       set task          item 1 def
-      set criteria      item 2 def
     ]
   ]
   ask locations [
@@ -483,7 +502,7 @@ end
 to setup-jobs
   foreach sort-on [ priority ] activity-types with [ is-job? ] [ the-type ->
     ask activities with [ my-activity-type = the-type ] [
-      let candidates citizens with [ runresult [ criteria ] of the-type and schedule-free [ start-time ] of the-type [ duration ] of the-type ]
+      let candidates citizens with [ schedule-free [ start-time ] of the-type [ duration ] of the-type ]
       let n min (list (count candidates) ([ max-agents ] of the-type))
       ; this approach allows citizens to work in areas that are not their residence if they are on a border
       ask rnd:weighted-n-of n candidates [ distance myself ^ 2 ] [
@@ -512,7 +531,7 @@ to setup-mandatory-activities ; citizen procedure
       let possible-activities activities with [ my-activity-type = the-type ]
       set get-activity [ -> min-one-of possible-activities [ distance myself ] ]
     ]
-    ask citizens with [ runresult [ criteria ] of myself ] [
+    ask citizens [
       create-activity-link-to runresult get-activity
     ]
   ]
@@ -523,7 +542,7 @@ to setup-free-time-activities
     ; look for possible free-time activities around current activities
     let the-citizen self
     let reachable-activities my-nearby-activities with [
-      [ not is-mandatory? and not is-job? ] of my-activity-type and [ can-do? myself ] of the-citizen
+      [ not is-mandatory? and not is-job? ] of my-activity-type and not [ at-strangers-home? myself ] of the-citizen
     ]
     create-activity-links-to n-of min list my-links-cap count reachable-activities reachable-activities [
       set value -2 + random-float 4 ; TODO: how should this be initialized?
@@ -540,13 +559,12 @@ to-report my-nearby-activities ; citizen reporter
   report reachable-activities
 end
 
-to-report can-do? [ the-activity ] ; citizen reporter
+to-report at-strangers-home? [ the-activity ] ; citizen reporter
   let the-location-type [ location-type ] of [ my-activity-type ] of the-activity
   if the-location-type = "residence" and not is-at-my-residence? the-activity [
-    report false
+    report true
   ]
-  let the-criteria [ criteria ] of [ my-activity-type ] of the-activity
-  report runresult the-criteria
+  report false
 end
 
 to-report is-at-my-residence? [ the-turtle ] ; citizen reporter
@@ -558,10 +576,10 @@ to-report intervals [ n the-range ]
   report n-values n [ i -> i * (the-range / n) ]
 end
 
-to-report ticks-per-day  report 24                             end
+to-report ticks-per-day  report 17                             end
 to-report ticks-per-year report ticks-per-day * 365            end
 to-report current-year   report floor (ticks / ticks-per-year) end
-to-report current-time   report ticks mod ticks-per-day        end
+to-report current-time   report ticks mod ticks-per-day + 7    end
 to-report age            report current-year - birth-year      end
 ; days are already there in the rest of the division by seven. I'd keep them that way. It won't be done too often; if it does, it should be cached;
 ; a routine could set all the reporters at the beginning of the step, making them into globals. To do in the optimization phase.
@@ -588,7 +606,7 @@ end
                                    ;agentset
 to-report select-opinion-and-talk [ receiver ]
   let speaker self
-  let candidate-opinions my-opinions with [ meets-criteria? speaker receiver ]
+  let candidate-opinions my-opinions
   let the-object [ other-end ] of rnd:weighted-one-of candidate-opinions [ abs value ]
   let success? talk-to receiver the-object
   ask link-with current-activity [ update-activity-value success? ]
@@ -604,11 +622,13 @@ to-report select-opinion-and-talk [ receiver ]
 end
 
 to socialize; citizen procedure
-  let receiver turtle-set one-of other citizens-here
-  if any? receiver [
-    let _unused select-opinion-and-talk receiver
+  if random-float 1 < socialize-probability [
+    let receiver turtle-set one-of other citizens-here
+    if any? receiver [
+      let _unused select-opinion-and-talk receiver
+    ]
+    set soc-counter soc-counter + 1
   ]
-  set soc-counter soc-counter + 1
 end
 
 to socialize-and-recruit; citizen procedure
@@ -624,27 +644,7 @@ end
 
 to update-activity-value [ success? ] ; link procedure
   ;if [ special-type ] of myself = 0 [
-    set value value + activity-value-update * (ifelse-value success? [ 2 ][ -2 ] - value)
-end
-
-to-report find-criteria-by-breed ; link reporter
-  if breed = activity-links [
-    report [ criteria ] of [ my-activity-type ] of other-end
-  ]
-  if breed = topic-links [
-    report [ criteria ] of other-end
-  ]
-end
-
-to-report meets-criteria? [ speaker receiver ]; link reporter
-  let the-criteria find-criteria-by-breed
-  let result [ [ runresult the-criteria ] of receiver ]  of speaker
-  ifelse is-list? result [
-   report reduce and result
-  ] [
-   report result
-  ]
-  ; report item 0 [ [ runresult the-criteria ] of receiver ] of speaker
+  set value value + activity-value-update * (ifelse-value success? [ 2 ][ -2 ] - value)
 end
 
 to-report my-opinions ; citizen reporter
@@ -658,7 +658,7 @@ end
 
 ; https://arxiv.org/ftp/arxiv/papers/0803/0803.3879.pdf
 to-report talk-to [ recipients the-object ] ; citizen procedure
-  report talk-to-tuned recipients the-object 1
+  report talk-to-tuned recipients the-object talk-effect-size
 end
 
 ; introduced to allow interaction at a reduced rate of persuasion). In most cases, effect-size should be 1.
@@ -672,6 +672,7 @@ to-report talk-to-tuned [ recipients the-object effect-size ] ; citizen procedur
       let v2 [ value ] of l2
       let t 2 - alpha * abs v2
       if abs (v1 - v2) < t [
+      ;if false [
         ask l2 [ set value v2 + t * (v1 - v2) / 2 * effect-size ]
         set success? true
       ]
@@ -814,6 +815,18 @@ to update-output
     ]
 end
 
+; citizen procedure
+to show-act
+  let acts sort-by [ [ i j ] -> item 0 i < item 0 j ]
+  [
+    (list [ value ] of in-activity-link-from myself
+      [ location-type ] of my-activity-type
+      [ task ] of my-activity-type
+      [ is-at-my-residence? myself ] of myself
+  ) ] of activity-link-neighbors
+  foreach acts print
+end
+
 to assert [ f ]
   if not runresult f [ error (word "Assertion failed: " f) ]
 end
@@ -953,8 +966,8 @@ BUTTON
 375
 145
 408
-profile 20
-setup                  ;; set up the model\nprofiler:start         ;; start profiling\nrepeat 20 [ go ]       ;; run something you want to measure\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
+NIL
+profile-go
 NIL
 1
 T
@@ -985,8 +998,8 @@ BUTTON
 375
 272
 408
-profile setup
-profiler:start         ;; start profiling\nsetup                  ;; set up the model\nprofiler:stop          ;; stop profiling\nprint profiler:report  ;; view the results\nprofiler:reset         ;; clear the data
+NIL
+profile-setup
 NIL
 1
 T
@@ -1003,7 +1016,7 @@ MONITOR
 250
 310
 time
-(word (ticks mod 24) \":00\")
+(word (current-time) \":00\")
 17
 1
 11
@@ -1017,7 +1030,7 @@ alpha
 alpha
 0
 1
-1.0
+0.1
 0.1
 1
 NIL
@@ -1334,14 +1347,14 @@ count citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-
 
 SLIDER
 15
-800
-217
-833
+780
+285
+813
 population-employed-%
 population-employed-%
 0
 100
-100.0
+50.0
 5
 1
 NIL
@@ -1364,9 +1377,9 @@ HORIZONTAL
 
 SLIDER
 15
-755
-322
-788
+745
+285
+778
 number-workers-per-community-center
 number-workers-per-community-center
 1
@@ -1384,7 +1397,7 @@ CHOOSER
 585
 high-risk-employed
 high-risk-employed
-"no intervention" 50 100
+"no intervention" 50 75 100
 0
 
 BUTTON
@@ -1403,6 +1416,36 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+15
+815
+285
+848
+talk-effect-size
+talk-effect-size
+0
+0.1
+0.04
+0.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+15
+855
+192
+888
+socialize-probability
+socialize-probability
+0
+1
+0.1
+0.05
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
