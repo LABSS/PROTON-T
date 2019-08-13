@@ -6,7 +6,7 @@
     <final>show (word "Time elapsed:" timer)
     </final>   
     <!--                                assuming 1 year = 6205 steps with 17-hours days  -->
-    <timeLimit steps="6205"/>
+    <timeLimit steps="800"/>
     <!--                               Metrics for the wizard   -->
     <!-- t1 recruited citizens -->
     <metric>t1</metric>
@@ -165,7 +165,7 @@
       <value value="0"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="recruit-hours-threshold">
-      <value value="250"/>
+      <value value="500"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-value-update">
       <value value="0.5"/>
@@ -177,7 +177,7 @@
       <value value="45"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="radicalization-percentage">
-      <value value="0.1"/>
+      <value value="0.56"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="talk-effect-size">
       <value value="0.04"/>
@@ -185,5 +185,8 @@
     <enumeratedValueSet variable="socialize-probability">
       <value value="0.1"/>
     </enumeratedValueSet>
+    <enumeratedValueSet variable="criminal-history-percent">
+      <value value="20"/>
+    </enumeratedValueSet>    
 </experiment>
 </experiments>
