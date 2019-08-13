@@ -176,8 +176,8 @@ to make-recruiters
   create-activity-types 1 [
     set is-job?       true
     set is-mandatory? false
-    set start-time    8
-    set duration      16
+    set start-time    8 + random 8
+    set duration      8
     set location-type test-location-type
     set task          [ -> socialize-and-recruit ]
     set t self
