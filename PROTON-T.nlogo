@@ -769,7 +769,7 @@ end
 ; citizen reporter
 to-report recruit-allure
   report (sum map opinion-on-topic topics-list + 6) / 12 +
-  (2 * recruit-hours-threshold - hours-to-recruit) / recruit-hours-threshold +
+   (2 * max list 0 (recruit-hours-threshold - hours-to-recruit)) / recruit-hours-threshold +
   ifelse-value (self = [ recruit-target ] of myself) [ 1000 ] [ 0 ]
 end
 
@@ -1443,6 +1443,21 @@ socialize-probability
 1
 0.1
 0.05
+1
+NIL
+HORIZONTAL
+
+SLIDER
+225
+860
+432
+893
+criminal-history-percent
+criminal-history-percent
+0
+100
+20.0
+5
 1
 NIL
 HORIZONTAL
