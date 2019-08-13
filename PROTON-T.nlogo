@@ -16,6 +16,8 @@ globals [
   printed
   fail-activity-counter
   radicalization-threshold
+  police-actions-counter
+  police-action-probability
 ]
 
 patches-own [
@@ -205,42 +207,47 @@ to setup-police
     set cpo? false
     setxy random-xcor random-ycor
   ]
+  set police-action-probability 0.23 * 1000 / 4 / 365 / (ticks-per-day - 1)
+  ;                             23% of num-citizens / num-policemen / 365 / (hours - 1)
   ask n-of round (count police * cpo-% / 100) police [ set cpo? true ]
 end
 
 to move-police
-  ask police with [ not cpo? ][
-    ;; to have 23% of citizens meeting police in a year
-    if random-float 1 < 0.00656 [
-      let best-patches patches with [ count citizens-here >= 4 and area-id = [ area-id ] of [ patch-here ] of myself ]
-      if not any? best-patches [
-        set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+  if current-time != 7 [ ; no night raids
+    ask police with [ not cpo? ][
+      ;; to have 23% of citizens meeting police in a year
+      if random-float 1 < police-action-probability [
+        let best-patches patches with [ count citizens-here >= 4 and area-id = [ area-id ] of [ patch-here ] of myself ]
         if not any? best-patches [
-          set best-patches patch-here; if none, can as well stay there
+          set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+          if not any? best-patches [
+            set best-patches patch-here; if none, can as well stay there
+          ]
         ]
+        move-to one-of best-patches
+        police-action
       ]
-      move-to one-of best-patches
-      police-action
     ]
-  ]
-  ask police with [ cpo? ][
-    ;; to have 23% of citizens meeting police in a year
-    if random-float 1 < 0.00656 [
-      let best-patches patches with [ count citizens-here with [ risk > radicalization-threshold ] >= 1 and area-id = [ area-id ] of [ patch-here ] of myself]
-      if not any? best-patches [
-        set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+    ask police with [ cpo? ][
+      ;; to have 23% of citizens meeting police in a year
+      if random-float 1 < police-action-probability [
+        let best-patches patches with [ count citizens-here with [ risk > radicalization-threshold ] >= 1 and area-id = [ area-id ] of [ patch-here ] of myself]
         if not any? best-patches [
-          set best-patches patch-here; if none, can as well stay there
+          set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+          if not any? best-patches [
+            set best-patches patch-here; if none, can as well stay there
+          ]
         ]
+        move-to one-of best-patches
+        police-action
       ]
-      move-to one-of best-patches
-      police-action
     ]
   ]
 end
 
 to police-action
-  let cpo cpo?
+  let cpo cpo? ; needed deep down there
+  set police-actions-counter police-actions-counter + 1
   if any? citizens-here [
     ask one-of citizens-here [
       ask out-topic-link-to topic-by-name "Institutional distrust" [
@@ -251,7 +258,6 @@ to police-action
 end
 
 to go
-  move-police
   ask citizens [
     assert [ -> countdown >= 0 ]
     if countdown = 0 [ ; end of activity or activity without duration
@@ -288,11 +294,12 @@ to go
       set countdown countdown - 1
     ]
   ]
+  move-police
   if activity-debug? [ update-output ]
-  tick
   if behaviorspace-experiment-name != "" [
     show (word behaviorspace-run-number "." ticks " t:" timer )
   ]
+  tick
 end
 
 to profile-go
