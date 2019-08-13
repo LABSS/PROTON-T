@@ -884,7 +884,7 @@ total-citizens
 total-citizens
 100
 2000
-1000.0
+1500.0
 50
 1
 citizens
@@ -987,7 +987,7 @@ activity-radius
 activity-radius
 1
 100
-11.0
+5.0
 1
 1
 patches
