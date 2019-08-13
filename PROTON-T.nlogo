@@ -291,7 +291,7 @@ to go
   if activity-debug? [ update-output ]
   tick
   if behaviorspace-experiment-name != "" [
-    show (word behaviorspace-run-number "." ticks)
+    show (word behaviorspace-run-number "." ticks " t:" timer )
   ]
 end
 
