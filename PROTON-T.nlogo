@@ -247,8 +247,8 @@ end
 
 to police-action
   let cpo cpo? ; needed deep down there
-  set police-actions-counter police-actions-counter + 1
   if any? citizens-here [
+    set police-actions-counter police-actions-counter + 1
     ask one-of citizens-here [
       ask out-topic-link-to topic-by-name "Institutional distrust" [
         set value ifelse-value cpo [max (list (value - 1) -2)][min (list (value + 1) 2)]
@@ -776,7 +776,7 @@ end
 ; citizen reporter
 to-report recruit-allure
   report (sum map opinion-on-topic topics-list + 6) / 12 +
-   (2 * max list 0 (recruit-hours-threshold - hours-to-recruit)) / recruit-hours-threshold +
+  (2 * max list 0 (recruit-hours-threshold - hours-to-recruit)) / recruit-hours-threshold +
   ifelse-value (self = [ recruit-target ] of myself) [ 1000 ] [ 0 ]
 end
 
