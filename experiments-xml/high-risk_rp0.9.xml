@@ -4,7 +4,7 @@
   <go>go</go>
   <final>show (word "Time elapsed:" timer)
     </final>
-  <timeLimit steps="3060" />
+  <timeLimit steps="800" />
   <metric>t1</metric>
   <metric>t2</metric>
   <metric>t3 "mean" 0</metric>
@@ -162,7 +162,7 @@
       <value value="0" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="recruit-hours-threshold">
-      <value value="500" />
+      <value value="800" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="activity-value-update">
       <value value="0.5" />
