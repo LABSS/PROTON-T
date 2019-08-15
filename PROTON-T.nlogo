@@ -1338,7 +1338,7 @@ CHOOSER
 305
 male-ratio
 male-ratio
-"from scenario" 45 55
+"from scenario" 45 50 55
 0
 
 MONITOR
