@@ -174,19 +174,16 @@ to make-community-workers
 end
 
 to make-recruiters
-  let t nobody
-  create-activity-types 1 [
+  create-activity-types num-recruiters [
     set is-job?       true
     set is-mandatory? false
-    set start-time    8 + random 8
-    set duration      8
+    set start-time    8 + random 10
+    set duration      [ -> random 5 + 1 ]
     set location-type test-location-type
     set task          [ -> socialize-and-recruit ]
-    set t self
-  ]
-  ask n-of 5 locations with [ shape = [ location-type ] of t ] [
     hatch-activities 1 [
-      set my-activity-type t
+      set my-activity-type myself
+      move-to one-of locations with [ shape = test-location-type ]
       ask one-of citizens in-radius activity-radius with [
         age >= 21 and
         get "male?"
@@ -338,7 +335,8 @@ end
 
 to start-activity [ new-activity ] ; citizen procedure
   move-to new-activity
-  set countdown [ duration ] of [ my-activity-type ] of new-activity
+  let d  [ duration ] of [ my-activity-type ] of new-activity
+  set countdown ifelse-value (is-number? d) [ d ] [ runresult d ]
   set current-activity new-activity
   set current-task [ task ] of [ my-activity-type ] of new-activity
 end
@@ -639,7 +637,9 @@ to socialize; citizen procedure
 end
 
 to socialize-and-recruit; citizen procedure
-  let receiver rnd:weighted-one-of other citizens-here with [ special-type = 0 and not recruited? and risk > radicalization-threshold ] [ recruit-allure ]
+  let receiver rnd:weighted-one-of other citizens-here with [ special-type = 0 and not recruited? and risk > radicalization-threshold ] [
+    recruit-allure
+  ]
   if receiver != nobody [
     if select-opinion-and-talk turtle-set receiver [
       if recruit-target = nobody [ set recruit-target receiver ]
@@ -1052,7 +1052,7 @@ radicalization-percentage
 radicalization-percentage
 5
 50
-10.0
+5.0
 5
 1
 NIL
@@ -1465,6 +1465,21 @@ criminal-history-percent
 100
 20.0
 5
+1
+NIL
+HORIZONTAL
+
+SLIDER
+445
+810
+617
+843
+num-recruiters
+num-recruiters
+0
+20
+5.0
+1
 1
 NIL
 HORIZONTAL
