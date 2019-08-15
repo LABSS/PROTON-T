@@ -8,7 +8,7 @@ class TJobsTest extends TModelSuite {
 
  def setup(ws: HeadlessWorkspace): Unit = {
     ws.cmd("""
-      set total-citizens 2000
+      set total-citizens 3000
       set alpha 0.1
       setup
     """)

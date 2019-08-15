@@ -16,6 +16,8 @@ globals [
   printed
   fail-activity-counter
   radicalization-threshold
+  police-actions-counter
+  police-action-probability
 ]
 
 patches-own [
@@ -176,8 +178,8 @@ to make-recruiters
   create-activity-types 1 [
     set is-job?       true
     set is-mandatory? false
-    set start-time    8
-    set duration      16
+    set start-time    8 + random 8
+    set duration      8
     set location-type test-location-type
     set task          [ -> socialize-and-recruit ]
     set t self
@@ -205,43 +207,48 @@ to setup-police
     set cpo? false
     setxy random-xcor random-ycor
   ]
+  set police-action-probability 0.23 * 1000 / 4 / 365 / (ticks-per-day - 1)
+  ;                             23% of num-citizens / num-policemen / 365 / (hours - 1)
   ask n-of round (count police * cpo-% / 100) police [ set cpo? true ]
 end
 
 to move-police
-  ask police with [ not cpo? ][
-    ;; to have 23% of citizens meeting police in a year
-    if random-float 1 < 0.00656 [
-      let best-patches patches with [ count citizens-here >= 4 and area-id = [ area-id ] of [ patch-here ] of myself ]
-      if not any? best-patches [
-        set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+  if current-time != 7 [ ; no night raids
+    ask police with [ not cpo? ][
+      ;; to have 23% of citizens meeting police in a year
+      if random-float 1 < police-action-probability [
+        let best-patches patches with [ count citizens-here >= 4 and area-id = [ area-id ] of [ patch-here ] of myself ]
         if not any? best-patches [
-          set best-patches patch-here; if none, can as well stay there
+          set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+          if not any? best-patches [
+            set best-patches patch-here; if none, can as well stay there
+          ]
         ]
+        move-to one-of best-patches
+        police-action
       ]
-      move-to one-of best-patches
-      police-action
     ]
-  ]
-  ask police with [ cpo? ][
-    ;; to have 23% of citizens meeting police in a year
-    if random-float 1 < 0.00656 [
-      let best-patches patches with [ count citizens-here with [ risk > radicalization-threshold ] >= 1 and area-id = [ area-id ] of [ patch-here ] of myself]
-      if not any? best-patches [
-        set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+    ask police with [ cpo? ][
+      ;; to have 23% of citizens meeting police in a year
+      if random-float 1 < police-action-probability [
+        let best-patches patches with [ count citizens-here with [ risk > radicalization-threshold ] >= 1 and area-id = [ area-id ] of [ patch-here ] of myself]
         if not any? best-patches [
-          set best-patches patch-here; if none, can as well stay there
+          set best-patches patches with [ any? citizens-here and area-id = [ area-id ] of [ patch-here ] of myself ]
+          if not any? best-patches [
+            set best-patches patch-here; if none, can as well stay there
+          ]
         ]
+        move-to one-of best-patches
+        police-action
       ]
-      move-to one-of best-patches
-      police-action
     ]
   ]
 end
 
 to police-action
-  let cpo cpo?
+  let cpo cpo? ; needed deep down there
   if any? citizens-here [
+    set police-actions-counter police-actions-counter + 1
     ask one-of citizens-here [
       ask out-topic-link-to topic-by-name "Institutional distrust" [
         set value ifelse-value cpo [max (list (value - 1) -2)][min (list (value + 1) 2)]
@@ -251,7 +258,6 @@ to police-action
 end
 
 to go
-  move-police
   ask citizens [
     assert [ -> countdown >= 0 ]
     if countdown = 0 [ ; end of activity or activity without duration
@@ -288,11 +294,12 @@ to go
       set countdown countdown - 1
     ]
   ]
+  move-police
   if activity-debug? [ update-output ]
-  tick
   if behaviorspace-experiment-name != "" [
-    show (word behaviorspace-run-number "." ticks)
+    show (word behaviorspace-run-number "." ticks " t:" timer )
   ]
+  tick
 end
 
 to profile-go
@@ -338,7 +345,7 @@ end
 
 ; finds at random simlilar people and talk with them. The interaction has only 50% of the effect it would have when face to face.
 to socialize-online ; citizen context
-  let potential-contacts n-of 50 other citizens  ; limit contacts to avoid sorting long lists of citizens
+  let potential-contacts n-of 10 other citizens  ; limit contacts to avoid sorting long lists of citizens
   let the-topic one-of topics
   let my-opinion [ value ] of out-topic-link-to the-topic
   let the-contact rnd:weighted-one-of potential-contacts [ abs ([ value ] of out-topic-link-to the-topic - my-opinion) ]
@@ -769,7 +776,7 @@ end
 ; citizen reporter
 to-report recruit-allure
   report (sum map opinion-on-topic topics-list + 6) / 12 +
-  (2 * recruit-hours-threshold - hours-to-recruit) / recruit-hours-threshold +
+  (2 * max list 0 (recruit-hours-threshold - hours-to-recruit)) / recruit-hours-threshold +
   ifelse-value (self = [ recruit-target ] of myself) [ 1000 ] [ 0 ]
 end
 
@@ -884,7 +891,7 @@ total-citizens
 total-citizens
 100
 2000
-1000.0
+1500.0
 50
 1
 citizens
@@ -987,7 +994,7 @@ activity-radius
 activity-radius
 1
 100
-11.0
+5.0
 1
 1
 patches
@@ -1043,10 +1050,10 @@ SLIDER
 258
 radicalization-percentage
 radicalization-percentage
-0.05
-1
-0.1
-.05
+5
+50
+10.0
+5
 1
 NIL
 HORIZONTAL
@@ -1443,6 +1450,21 @@ socialize-probability
 1
 0.1
 0.05
+1
+NIL
+HORIZONTAL
+
+SLIDER
+225
+860
+432
+893
+criminal-history-percent
+criminal-history-percent
+0
+100
+20.0
+5
 1
 NIL
 HORIZONTAL

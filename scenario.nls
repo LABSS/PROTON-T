@@ -90,7 +90,7 @@ to-report make-attributes-set [ the-area ] ; citizen procedure. Warning: sets ag
     (list "immigrant?" item 0 my-group)
     (list "male?"      item 1 my-group)
     (list "muslim?"    item 2 my-group)    
-    (list "criminal-history?" one-of [true false])
+    (list "criminal-history?" ifelse-value (random 100 < criminal-history-percent) [ true ][ false ])
   )
 end
 
@@ -184,7 +184,7 @@ to-report topics-list report map [ l -> first l ] topic-definitions end
 
 to-report calc-radicalization-threshold
   let big-list sort-on [ -1 * risk ] citizens
-  report [ risk ] of item (radicalization-percentage * count citizens - 1) big-list
+  report [ risk ] of item ((radicalization-percentage / 100 * count citizens) - 1) big-list
 end
 
 ; citizen procedure

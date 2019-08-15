@@ -8,7 +8,7 @@ class TRiskAndPropensityTests extends TModelSuite {
 
  def setup4x300(ws: HeadlessWorkspace): Unit = {
     ws.cmd("""
-      set total-citizens 1000
+      set total-citizens 3000
       setup
       ask one-of citizens with [ age < 25 and not employed? ] [
         table:put attributes "male?" true 

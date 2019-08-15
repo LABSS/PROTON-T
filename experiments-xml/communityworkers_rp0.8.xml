@@ -4,7 +4,7 @@
   <go>go</go>
   <final>show (word "Time elapsed:" timer)
     </final>
-  <timeLimit steps="6205" />
+  <timeLimit steps="800" />
   <metric>t1</metric>
   <metric>t2</metric>
   <metric>t3 "mean" 0</metric>
@@ -155,7 +155,7 @@
       <value value="0" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="recruit-hours-threshold">
-      <value value="250" />
+      <value value="500" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="activity-value-update">
       <value value="0.5" />
@@ -167,13 +167,16 @@
       <value value="45" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="radicalization-percentage">
-      <value value="0.1" />
+      <value value="5.6" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="talk-effect-size">
       <value value="0.04" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="socialize-probability">
       <value value="0.1" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="criminal-history-percent">
+      <value value="20" />
     </enumeratedValueSet>
   </experiment>
 </experiments>

@@ -8,7 +8,7 @@ class TPreachingTests extends TModelSuite {
 
  def setup(ws: HeadlessWorkspace): Unit = {
     ws.cmd("""
-      set total-citizens 1000
+      set total-citizens 3000
       set alpha 1
       setup
     """)
