@@ -176,7 +176,7 @@ end
 to make-recruiters
   create-activity-types num-recruiters [
     set is-job?       true
-    set is-mandatory? false
+    set is-mandatory? true
     set start-time    8 + random 10
     set duration      [ -> random 5 + 1 ]
     set location-type test-location-type
