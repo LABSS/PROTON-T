@@ -177,9 +177,7 @@ to make-recruiters
   create-activity-types num-recruiters [
     set is-job?       true
     set is-mandatory? true
-    set duration      random (2 * mean-hours-worked-recruiter + 1) ; must be even
-    set start-time    8 + random (17 - duration)
-    assert [ -> duration + start-time <= 23 ]
+    randomize-recruit-times
     set location-type test-location-type
     set task          [ -> socialize-and-recruit ]
     hatch-activities 1 [
@@ -294,9 +292,7 @@ to go
   ]
   if ticks mod ticks-per-day = 0 [
     ask activity-types with [ location-type = test-location-type and is-mandatory? and is-job? ] [
-      set duration      random (2 * mean-hours-worked-recruiter + 1) ; must be even
-      set start-time    8 + random (17 - duration)
-      assert [ -> duration + start-time <= 23 ]
+      randomize-recruit-times
     ]
   ]
   move-police
@@ -305,6 +301,12 @@ to go
     show (word behaviorspace-run-number "." ticks " t:" timer )
   ]
   tick
+end
+
+to randomize-recruit-times ; activity-type procedure
+  set duration      random (2 * (mean-hours-worked-recruiter - 1) + 1) + 1 ; must be even. Result must be > 1.   ex 5 -> random 9 (0..8) + 1 = (1..9)
+  set start-time    8 + random (15 - duration)
+  assert [ -> duration + start-time <= 23 ]
 end
 
 to profile-go
@@ -1486,7 +1488,7 @@ num-recruiters
 num-recruiters
 0
 20
-3.0
+5.0
 1
 1
 NIL
