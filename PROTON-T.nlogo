@@ -1486,7 +1486,7 @@ num-recruiters
 num-recruiters
 0
 20
-5.0
+3.0
 1
 1
 NIL
@@ -1501,7 +1501,7 @@ mean-hours-worked-recruiter
 mean-hours-worked-recruiter
 1
 15
-7.0
+3.0
 2
 1
 NIL
