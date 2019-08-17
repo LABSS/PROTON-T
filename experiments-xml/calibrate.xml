@@ -191,6 +191,12 @@
     </enumeratedValueSet>
     <enumeratedValueSet variable="criminal-history-percent">
       <value value="20"/>
-    </enumeratedValueSet>    
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-recruiters">
+      <value value="5"/>
+    </enumeratedValueSet>      
+    <enumeratedValueSet variable="mean-hours-worked-recruiter">
+      <value value="3"/>
+    </enumeratedValueSet>     
 </experiment>
 </experiments>

@@ -177,8 +177,9 @@ to make-recruiters
   create-activity-types num-recruiters [
     set is-job?       true
     set is-mandatory? true
-    set start-time    8 + random 10
-    set duration      [ -> random 5 + 1 ]
+    set duration      random (2 * mean-hours-worked-recruiter + 1) ; must be even
+    set start-time    8 + random (17 - duration)
+    assert [ -> duration + start-time <= 23 ]
     set location-type test-location-type
     set task          [ -> socialize-and-recruit ]
     hatch-activities 1 [
@@ -289,6 +290,13 @@ to go
     if current-task != nobody [
       run current-task
       set countdown countdown - 1
+    ]
+  ]
+  if ticks mod ticks-per-day = 0 [
+    ask activity-types with [ location-type = test-location-type and is-mandatory? and is-job? ] [
+      set duration      random (2 * mean-hours-worked-recruiter + 1) ; must be even
+      set start-time    8 + random (17 - duration)
+      assert [ -> duration + start-time <= 23 ]
     ]
   ]
   move-police
@@ -1480,6 +1488,21 @@ num-recruiters
 20
 5.0
 1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+455
+860
+697
+893
+mean-hours-worked-recruiter
+mean-hours-worked-recruiter
+1
+15
+7.0
+2
 1
 NIL
 HORIZONTAL
