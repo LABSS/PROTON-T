@@ -123,9 +123,6 @@
    <metric>mean [ hours-to-recruit ] of citizens</metric>
    <metric>count links</metric> 
    <metric>fail-activity-counter</metric>
-    <metric>soc-counter</metric> 
-    <metric>soc-online-counter</metric> 
-    <metric>rec-counter</metric> 
 
     <!--                                variable parameters (and population) -->
     <enumeratedValueSet variable="high-risk-employed">
