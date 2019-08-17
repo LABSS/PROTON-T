@@ -304,7 +304,7 @@ to go
 end
 
 to randomize-recruit-times ; activity-type procedure
-  set duration      (random 5) - 2  + mean-hours-worked-recruiter ; range of 2 around the mean
+  set duration      (random 5) - 2  + mean-hours-worked-recruiter ; range of 2 around the mean. Can not be > 14
   set start-time    8 + random (15 - duration)
   assert [ -> duration + start-time <= 23 ]
 end
