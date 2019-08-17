@@ -304,7 +304,7 @@ to go
 end
 
 to randomize-recruit-times ; activity-type procedure
-  set duration      random (2 * (mean-hours-worked-recruiter - 1) + 1) + 1 ; must be even. Result must be > 1.   ex 5 -> random 9 (0..8) + 1 = (1..9)
+  set duration      (random 5) - 2  + mean-hours-worked-recruiter ; range of 2 around the mean
   set start-time    8 + random (15 - duration)
   assert [ -> duration + start-time <= 23 ]
 end
@@ -1502,9 +1502,9 @@ SLIDER
 mean-hours-worked-recruiter
 mean-hours-worked-recruiter
 1
-15
+14
 3.0
-2
+1
 1
 NIL
 HORIZONTAL
