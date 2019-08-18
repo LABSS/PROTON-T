@@ -159,7 +159,7 @@
       <value value="0" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="recruit-hours-threshold">
-      <value value="800" />
+      <value value="200" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="activity-value-update">
       <value value="0.5" />

@@ -6,7 +6,7 @@
     <final>show (word "Time elapsed:" timer)
     </final>   
     <!-- assuming 6 months = 3060 steps with 17-hours days.  -->
-    <timeLimit steps="800"/>
+    <timeLimit steps="3060"/>
     <!--                               Metrics for the wizard   -->
     <!-- t1 recruited citizens -->
     <metric>t1</metric>
