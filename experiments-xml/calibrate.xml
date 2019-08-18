@@ -1,5 +1,4 @@
 <experiments>
-   <!--                              * 4 runs -->
   <experiment name="calibration" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
