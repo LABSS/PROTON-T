@@ -4,7 +4,7 @@
   <go>go</go>
   <final>show (word "Time elapsed:" timer)
     </final>
-  <timeLimit steps="800" />
+  <timeLimit steps="3060" />
   <metric>t1</metric>
   <metric>t2</metric>
   <metric>t3 "mean" 0</metric>
@@ -186,10 +186,10 @@
     <value value="2" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="num-recruiters">
-      <value value="5" />
+      <value value="60" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="mean-hours-worked-recruiter">
-      <value value="3" />
+      <value value="6" />
     </enumeratedValueSet>
   </experiment>
 </experiments>

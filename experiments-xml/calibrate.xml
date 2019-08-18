@@ -1,11 +1,11 @@
 <experiments>
    <!--                              * 4 runs -->
-  <experiment name="calibration" repetitions="4" runMetricsEveryStep="true">
+  <experiment name="calibration" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <final>show (word "Time elapsed:" timer)
     </final>   
-    <!-- assuming 6 months = 3102 steps with 17-hours days.  -->
+    <!-- assuming 6 months = 3060 steps with 17-hours days.  -->
     <timeLimit steps="800"/>
     <!--                               Metrics for the wizard   -->
     <!-- t1 recruited citizens -->
