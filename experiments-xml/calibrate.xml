@@ -1,11 +1,11 @@
 <experiments>
-   <!--                              * 5 runs -->
-  <experiment name="calibration" repetitions="5" runMetricsEveryStep="true">
+   <!--                              * 4 runs -->
+  <experiment name="calibration" repetitions="4" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <final>show (word "Time elapsed:" timer)
     </final>   
-    <!--                                assuming 1 year = 6205 steps with 17-hours days  -->
+    <!-- assuming 6 months = 3102 steps with 17-hours days.  -->
     <timeLimit steps="800"/>
     <!--                               Metrics for the wizard   -->
     <!-- t1 recruited citizens -->
@@ -163,10 +163,6 @@
     </enumeratedValueSet>
     <enumeratedValueSet variable="recruit-hours-threshold">
       <value value="200"/>
-      <value value="250"/>
-      <value value="300"/>
-      <value value="500"/>
-      <value value="800"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-value-update">
       <value value="0.5"/>
@@ -179,6 +175,7 @@
     </enumeratedValueSet>
     <enumeratedValueSet variable="radicalization-percentage">
       <value value="5.6"/>
+      <value value="10"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="talk-effect-size">
       <value value="0.04"/>
@@ -190,10 +187,12 @@
       <value value="20"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="num-recruiters">
-      <value value="5"/>
+      <value value="50"/>
+      <value value="60"/>
     </enumeratedValueSet>      
     <enumeratedValueSet variable="mean-hours-worked-recruiter">
-      <value value="3"/>
+      <value value="8"/>
+      <value value="10"/>
     </enumeratedValueSet>     
 </experiment>
 </experiments>
