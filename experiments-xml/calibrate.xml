@@ -175,7 +175,6 @@
     </enumeratedValueSet>
     <enumeratedValueSet variable="radicalization-percentage">
       <value value="5.6"/>
-      <value value="10"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="talk-effect-size">
       <value value="0.04"/>
@@ -187,12 +186,10 @@
       <value value="20"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="num-recruiters">
-      <value value="50"/>
       <value value="60"/>
     </enumeratedValueSet>      
     <enumeratedValueSet variable="mean-hours-worked-recruiter">
-      <value value="8"/>
-      <value value="10"/>
+      <value value="6"/>
     </enumeratedValueSet>     
 </experiment>
 </experiments>
