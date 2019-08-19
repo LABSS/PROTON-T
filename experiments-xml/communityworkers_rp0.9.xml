@@ -1,10 +1,10 @@
 <experiments>
-  <experiment name="base_rp08" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="base_rp09" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
   <go>go</go>
   <final>show (word "Time elapsed:" timer)
     </final>
-  <timeLimit steps="800" />
+  <timeLimit steps="3060" />
   <metric>t1</metric>
   <metric>t2</metric>
   <metric>t3 "mean" 0</metric>
@@ -115,9 +115,6 @@
   <metric>mean [ hours-to-recruit ] of citizens</metric>
   <metric>count links</metric>
   <metric>fail-activity-counter</metric>
-  <metric>soc-counter</metric>
-  <metric>soc-online-counter</metric>
-  <metric>rec-counter</metric>
   <enumeratedValueSet variable="high-risk-employed">
       <value value="&quot;no intervention&quot;" />
     </enumeratedValueSet>
@@ -129,6 +126,10 @@
     </enumeratedValueSet>
   <enumeratedValueSet variable="population-employed-%">
       <value value="10" />
+    <value value="50" />
+    <value value="40" />
+    <value value="30" />
+    <value value="20" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="activity-radius">
       <value value="5" />
@@ -140,22 +141,25 @@
       <value value="0.1" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="number-workers-per-community-center">
-      <value value="1" />
+      <value value="3" />
+    <value value="5" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="links-cap-mean">
       <value value="10" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="male-ratio">
-      <value value="&quot;from scenario&quot;" />
+      <value value="50" />
+    <value value="55" />
+    <value value="45" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="test-location-type">
       <value value="&quot;coffee&quot;" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="cpo-%">
-      <value value="50" />
+      <value value="0" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="recruit-hours-threshold">
-      <value value="500" />
+      <value value="200" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="activity-value-update">
       <value value="0.5" />
@@ -177,6 +181,15 @@
     </enumeratedValueSet>
   <enumeratedValueSet variable="criminal-history-percent">
       <value value="20" />
+    <value value="10" />
+    <value value="5" />
+    <value value="2" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="num-recruiters">
+      <value value="60" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="mean-hours-worked-recruiter">
+      <value value="6" />
     </enumeratedValueSet>
   </experiment>
 </experiments>

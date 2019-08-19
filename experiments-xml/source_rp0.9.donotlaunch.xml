@@ -1,12 +1,12 @@
 <experiments>
    <!--                              * 5 runs -->
-  <experiment name="base_rp08" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="base_rp09" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <final>show (word "Time elapsed:" timer)
     </final>   
-    <!--                                assuming 1 year = 6205 steps with 17-hours days  -->
-    <timeLimit steps="800"/>
+    <!--                                assuming 6 months = 3060 steps with 17-hours days  -->
+    <timeLimit steps="3060"/>
     <!--                               Metrics for the wizard   -->
     <!-- t1 recruited citizens -->
     <metric>t1</metric>
@@ -123,9 +123,6 @@
    <metric>mean [ hours-to-recruit ] of citizens</metric>
    <metric>count links</metric> 
    <metric>fail-activity-counter</metric>
-    <metric>soc-counter</metric> 
-    <metric>soc-online-counter</metric> 
-    <metric>rec-counter</metric> 
 
     <!--                                variable parameters (and population) -->
     <enumeratedValueSet variable="high-risk-employed">
@@ -156,7 +153,7 @@
       <value value="10"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="male-ratio">
-      <value value="&quot;from scenario&quot;"/>
+      <value value="50"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="test-location-type">
       <value value="&quot;coffee&quot;"/>
@@ -165,7 +162,7 @@
       <value value="0"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="recruit-hours-threshold">
-      <value value="500"/>
+      <value value="200"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="activity-value-update">
       <value value="0.5"/>
@@ -187,6 +184,12 @@
     </enumeratedValueSet>
     <enumeratedValueSet variable="criminal-history-percent">
       <value value="20"/>
-    </enumeratedValueSet>    
+    </enumeratedValueSet> 
+    <enumeratedValueSet variable="num-recruiters">
+      <value value="60"/>
+    </enumeratedValueSet>      
+    <enumeratedValueSet variable="mean-hours-worked-recruiter">
+      <value value="6"/>
+    </enumeratedValueSet> 
 </experiment>
 </experiments>
