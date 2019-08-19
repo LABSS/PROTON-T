@@ -1,5 +1,5 @@
 <experiments>
-  <experiment name="base_rp09" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="base_rp09" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
   <go>go</go>
   <final>show (word "Time elapsed:" timer)
@@ -130,6 +130,10 @@
     <value value="40" />
     <value value="30" />
     <value value="20" />
+    <value value="50" />
+    <value value="40" />
+    <value value="30" />
+    <value value="20" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="activity-radius">
       <value value="5" />
@@ -148,6 +152,8 @@
     </enumeratedValueSet>
   <enumeratedValueSet variable="male-ratio">
       <value value="50" />
+    <value value="55" />
+    <value value="45" />
     <value value="55" />
     <value value="45" />
     </enumeratedValueSet>
@@ -179,10 +185,8 @@
       <value value="0.1" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="criminal-history-percent">
-      <value value="20" />
-    <value value="10" />
-    <value value="5" />
-    <value value="2" />
+      <value value="10" />
+    <value value="20" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="num-recruiters">
       <value value="60" />

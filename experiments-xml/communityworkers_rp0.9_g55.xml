@@ -1,5 +1,5 @@
 <experiments>
-  <experiment name="base_rp09" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="base_rp09" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
   <go>go</go>
   <final>show (word "Time elapsed:" timer)
@@ -148,9 +148,7 @@
       <value value="10" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="male-ratio">
-      <value value="50" />
-    <value value="55" />
-    <value value="45" />
+      <value value="55" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="test-location-type">
       <value value="&quot;coffee&quot;" />

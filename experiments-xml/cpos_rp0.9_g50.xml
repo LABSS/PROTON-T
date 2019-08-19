@@ -1,5 +1,5 @@
 <experiments>
-  <experiment name="base_rp09" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="base_rp09" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
   <go>go</go>
   <final>show (word "Time elapsed:" timer)
@@ -116,8 +116,7 @@
   <metric>count links</metric>
   <metric>fail-activity-counter</metric>
   <enumeratedValueSet variable="high-risk-employed">
-      <value value="75" />
-    <value value="50" />
+      <value value="&quot;no intervention&quot;" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="total-citizens">
       <value value="40000" />
@@ -149,14 +148,13 @@
     </enumeratedValueSet>
   <enumeratedValueSet variable="male-ratio">
       <value value="50" />
-    <value value="55" />
-    <value value="45" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="test-location-type">
       <value value="&quot;coffee&quot;" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="cpo-%">
-      <value value="0" />
+      <value value="50" />
+    <value value="25" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="recruit-hours-threshold">
       <value value="200" />

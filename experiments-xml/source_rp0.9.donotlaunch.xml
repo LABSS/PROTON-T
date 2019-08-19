@@ -1,6 +1,5 @@
 <experiments>
-   <!--                              * 5 runs -->
-  <experiment name="base_rp09" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="base_rp09" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <final>show (word "Time elapsed:" timer)
