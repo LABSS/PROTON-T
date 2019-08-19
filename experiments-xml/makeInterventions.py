@@ -56,3 +56,7 @@ al = tree.find('.//enumeratedValueSet[@variable="number-workers-per-community-ce
 for x in al.getchildren():
   al.remove(x)
 al.insert(1, ET.Element("value", value="5"))
+
+#write to file
+tree = ET.ElementTree(indent(root))
+tree.write('communityworkers_' + version + '.xml', encoding='utf-8')
