@@ -122,6 +122,7 @@
    <metric>mean [ hours-to-recruit ] of citizens</metric>
    <metric>count links</metric> 
    <metric>fail-activity-counter</metric>
+   <metric>police-actions-counter</metric>
 
     <!--                                variable parameters (and population) -->
     <enumeratedValueSet variable="high-risk-employed">
