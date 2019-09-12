@@ -139,7 +139,7 @@
         <value value="&quot;no intervention&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="total-citizens">
-      <value value="40000"/>
+      <value value="8000"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
       <value value="0.1"/>
@@ -204,8 +204,8 @@
     <enumeratedValueSet variable="running-plan">
       <value value="rp1.1"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="opinion-dumps.every">
-      <value value="9999"/>
+    <enumeratedValueSet variable="opinion-dumps-every">
+      <value value="99999"/>
     </enumeratedValueSet> 
 </experiment>
 </experiments>

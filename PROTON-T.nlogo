@@ -295,7 +295,7 @@ to go
       randomize-recruit-times
     ]
   ]
-  if opinion-dumps.every < 99999 and ticks mod opinion-dumps.every = 0 [
+  if opinion-dumps-every < 99999 and ticks mod opinion-dumps-every = 0 [
     export-risk
     export-opinions
   ]
@@ -1529,7 +1529,7 @@ INPUTBOX
 840
 1017
 900
-opinion-dumps.every
+opinion-dumps-every
 99999.0
 1
 0
