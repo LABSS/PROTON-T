@@ -12,7 +12,7 @@
         show (word "Time elapsed:" timer)
     </final>   
     <!--                                assuming 6 months = 3060 steps with 17-hours days  -->
-    <timeLimit steps="50"/>
+    <timeLimit steps="3060"/>
     <!--                               Metrics for the wizard   -->
     <!-- t1 recruited citizens -->
     <metric>t1</metric>
@@ -139,7 +139,7 @@
         <value value="&quot;no intervention&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="total-citizens">
-      <value value="8000"/>
+      <value value="10000"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="alpha">
       <value value="0.1"/>
@@ -202,10 +202,10 @@
       <value value="6"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="running-plan">
-      <value value="rp1.1"/>
+      <value value="&quot;rp1.1-10K-56&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="opinion-dumps-every">
-      <value value="99999"/>
+      <value value="1000"/>
     </enumeratedValueSet> 
 </experiment>
 </experiments>
