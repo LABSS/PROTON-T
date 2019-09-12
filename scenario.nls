@@ -28,7 +28,7 @@ to load-opinions
 end
 
 to export-opinions [ id ]
-  csv:to-file (word "opinions-at-" ticks "-" id ".csv") [ 
+  csv:to-file (word "opinions-" initial-random-seed "-at-" ticks "-" id ".csv") [ 
     (list
       get "immigrant?" 
       get "male?"     
@@ -39,6 +39,19 @@ to export-opinions [ id ]
       opinion-on-topic "Collective relative deprivation"
       fundamentalism-score) 
   ] of citizens
+end
+
+to export-risk 
+  let file-name (word "risk-factors-" initial-random-seed ".csv")
+  let first-time? not file-exists? file-name 
+  file-open file-name
+  if first-time? [
+    file-print csv:to-row (list "who" "step" "risk" "propensity" "Non integration" "Institutional distrust"   "Collective relative deprivation" )
+  ] 
+  ask citizens [
+    file-print csv:to-row (list who ticks risk propensity opinion-on-topic "Non integration" opinion-on-topic "Institutional distrust"  opinion-on-topic "Collective relative deprivation")
+  ]
+  file-close
 end
 
 to-report age-class; citizen reporter. Classes from ZA4584_cdb.pdf page 1224

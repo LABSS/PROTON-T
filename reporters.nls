@@ -27,7 +27,7 @@ to-report t3 [ operator the-area ]
 end
 
 to-report t3.bins
-  report make-histo " risk " 10 -0.662 3.05
+  report make-histo " risk of citizens " 10 -0.662 3.05
 end
 
 ;t4.mean, t4.median, t4.sd mean, median and standard deviation of propensity of citizens (constants)
@@ -56,11 +56,19 @@ to-report t6 [ building the-area ]
   ]
 end
   
+;t5.bins "Collective relative deprivation" 
+; t5, opinion bins
+to-report t5.bins [ opinion ]
+  let query (word " [ value ] of [ my-in-topic-links] of topic-by-name \"" opinion "\"")
+  show query
+  report make-histo query 50 -2 2
+end
+
 ; this procedure creates a list of values counting the number of citizens in the bins as created. For example,
 ; [[-0.662 3] [-0.2 34] [0.07 80]] means that in the second bin, the one from -0.2 to 0.07, there are 34 cases.
 ; objects falling outside of bins are not counte
-to-report make-histo [ citizen-reporter bins min-v max-v ]
-  let values filter [ i -> i >= min-v and i  < max-v ] [ runresult citizen-reporter ] of citizens
+to-report make-histo [ reporter bins min-v max-v ]
+  let values filter [ i -> i >= min-v and i  < max-v ] runresult reporter
   let counts n-values bins [ 0 ]
   let thresholds (sentence (range min-v max-v ((max-v - min-v) / bins)) max-v)
   let i 0 
