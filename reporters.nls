@@ -27,7 +27,7 @@ to-report t3 [ operator the-area ]
 end
 
 to-report t3.bins
-  report make-histo " risk of citizens " 10 -0.662 3.05
+  report make-histo " [ risk ] of citizens " 10 -0.662 3.05
 end
 
 ;t4.mean, t4.median, t4.sd mean, median and standard deviation of propensity of citizens (constants)
