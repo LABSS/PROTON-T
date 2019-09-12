@@ -61,7 +61,7 @@ end
 to-report t5.bins [ opinion ]
   let query (word " [ value ] of [ my-in-topic-links] of topic-by-name \"" opinion "\"")
   show query
-  report make-histo query 50 -2 2
+  report make-histo query 20 -2 2
 end
 
 ; this procedure creates a list of values counting the number of citizens in the bins as created. For example,
