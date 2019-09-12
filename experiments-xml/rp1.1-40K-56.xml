@@ -193,7 +193,7 @@
       <value value="6" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="running-plan">
-      <value value="&amp;quot;rp1.1-40K-56&amp;quot;" />
+      <value value="&quot;rp1.1-40K-56&quot;" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="opinion-dumps-every">
       <value value="1000" />

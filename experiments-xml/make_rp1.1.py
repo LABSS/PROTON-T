@@ -39,7 +39,7 @@ for x in al.getchildren(): al.remove(x)
 al.insert(1, ET.Element("value", value="10000"))
 al = tree.find('.//enumeratedValueSet[@variable="running-plan"]')
 for x in al.getchildren(): al.remove(x)
-al.insert(1, ET.Element("value", value=value='"' + version + '"'))
+al.insert(1, ET.Element("value", value='"' + version + '"'))
 tree = ET.ElementTree(pretty_print.indent(root))
 tree.write(version + '.xml',  encoding='utf-8')
 
