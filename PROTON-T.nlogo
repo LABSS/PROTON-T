@@ -295,6 +295,10 @@ to go
       randomize-recruit-times
     ]
   ]
+  if opinion-dumps.every < 99999 and ticks mod opinion-dumps.every = 0 [
+    export-risk
+    export-opinions
+  ]
   move-police
   if activity-debug? [ update-output ]
   if behaviorspace-experiment-name != "" [
@@ -1508,6 +1512,28 @@ mean-hours-worked-recruiter
 1
 NIL
 HORIZONTAL
+
+INPUTBOX
+1130
+835
+1372
+895
+running-plan
+rp1.1
+1
+0
+String
+
+INPUTBOX
+860
+840
+1017
+900
+opinion-dumps.every
+99999.0
+1
+0
+Number
 
 @#$#@#$#@
 ## WHAT IS IT?
