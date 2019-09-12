@@ -60,7 +60,6 @@ end
 ; t5, opinion bins
 to-report t5.bins [ opinion ]
   let query (word " [ value ] of [ my-in-topic-links] of topic-by-name \"" opinion "\"")
-  show query
   report make-histo query 20 -2 2
 end
 
