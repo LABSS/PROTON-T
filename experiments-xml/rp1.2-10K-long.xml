@@ -1,5 +1,5 @@
 <experiments>
-  <experiment name="rp1.1-10K-56" repetitions="16" runMetricsEveryStep="true">
+  <experiment name="rp1.2" repetitions="16" runMetricsEveryStep="true">
     <setup>
         setup
         export-risk
@@ -156,9 +156,6 @@
     </enumeratedValueSet>
   <enumeratedValueSet variable="male-ratio">
       <value value="50" />
-    </enumeratedValueSet>
-  <enumeratedValueSet variable="test-location-type">
-      <value value="&quot;coffee&quot;" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="cpo-%">
       <value value="0" />
