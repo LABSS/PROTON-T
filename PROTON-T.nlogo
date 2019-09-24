@@ -693,8 +693,14 @@ to-report talk-to-tuned [ recipients the-object effect-size ] ; citizen procedur
       let v2 [ value ] of l2
       let t 2 - alpha * abs v2
       if abs (v1 - v2) < t [
-      ;if false [
-        ask l2 [ set value v2 + t * (v1 - v2) / 2 * effect-size ]
+        ask l2 [
+          set value v2 + t * (v1 - v2) / 2 * effect-size
+          ifelse value < -2 [
+            set value -2
+          ] [
+            if value > 2 [ set value 2 ]
+          ]
+        ]
         set success? true
       ]
     ]
