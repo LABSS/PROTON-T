@@ -612,7 +612,7 @@ end
 
 to-report topic-risk-contribution ; opinion-on-topic reporter.
   ; The link must have been called from a citizen in order to make use of other-end.
-  report value * ifelse-value (value > 0) [ [ risk-weight ] of other-end ] [ [ protective-weight ] of other-end ]
+  report value * ifelse-value (value > 0) [ [ risk-weight ] of other-end ] [ [ -1 * protective-weight ] of other-end ]
 end
 
 to-report risk ; citizen reporter
