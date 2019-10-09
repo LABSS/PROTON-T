@@ -27,9 +27,19 @@ to load-opinions
   ]
 end
 
+; warning - will add to file if same running-plan and experiiment name.
 to export-opinions
-  csv:to-file (word running-plan "-opinions-" abs initial-random-seed ".csv") [ 
-    (list
+  let file-name (word running-plan "-" behaviorspace-experiment-name "-opinions.csv")
+  let first-time? not file-exists? file-name 
+  file-open file-name
+  if first-time? [
+    file-print csv:to-row (list "run-number" "initial-random-seed" "who" "step" "tick" "immigrant?" "male" "muslim" "age-class" "Non integration" "Institutional distrust" "Collective relative deprivation" "fundamentalism")
+  ]   
+  ask citizens [
+    file-print csv:to-row     (list
+      behaviorspace-run-number
+      initial-random-seed
+      who
       ticks
       get "immigrant?" 
       get "male?"     
@@ -38,19 +48,21 @@ to export-opinions
       opinion-on-topic "Non integration"         
       opinion-on-topic "Institutional distrust"    
       opinion-on-topic "Collective relative deprivation"
-      fundamentalism-score) 
-  ] of citizens
+      fundamentalism-score)    
+  ]
+  file-close
 end
 
+; warning - will add to file if same running-plan and experiiment name.
 to export-risk 
   let file-name (word running-plan "-risk_factors-" initial-random-seed ".csv")
   let first-time? not file-exists? file-name 
   file-open file-name
   if first-time? [
-    file-print csv:to-row (list "who" "step" "risk" "propensity" "Non integration" "Institutional distrust" "Collective relative deprivation" )
+    file-print csv:to-row (list "run-number" "initial-random-seed" "who" "step" "risk" "propensity" "Non integration" "Institutional distrust" "Collective relative deprivation" )
   ] 
   ask citizens [
-    file-print csv:to-row (list who ticks risk propensity opinion-on-topic "Non integration" opinion-on-topic "Institutional distrust"  opinion-on-topic "Collective relative deprivation")
+    file-print csv:to-row (list behaviorspace-run-number initial-random-seed who ticks risk propensity opinion-on-topic "Non integration" opinion-on-topic "Institutional distrust"  opinion-on-topic "Collective relative deprivation")
   ]
   file-close
 end
