@@ -27,7 +27,7 @@ to load-opinions
   ]
 end
 
-; warning - will add to file if same running-plan and experiiment name.
+; warning - will add to file if same running-plan and experiment name.
 to export-opinions
   let file-name (word running-plan "-" behaviorspace-experiment-name "-opinions.csv")
   let first-time? not file-exists? file-name 
@@ -53,9 +53,9 @@ to export-opinions
   file-close
 end
 
-; warning - will add to file if same running-plan and experiiment name.
+; warning - will add to file if same running-plan and experiment name.
 to export-risk 
-  let file-name (word running-plan "-risk_factors-" initial-random-seed ".csv")
+  let file-name (word running-plan "-" behaviorspace-experiment-name "-opinions.csv")
   let first-time? not file-exists? file-name 
   file-open file-name
   if first-time? [

@@ -1,0 +1,201 @@
+<experiments>
+  <experiment name="rpT13" repetitions="10" runMetricsEveryStep="true">
+    <setup>
+        setup
+        export-risk
+        export-opinions        
+    </setup>
+  <go>go</go>
+  <final>
+        export-risk
+        show (word "Time elapsed:" timer)
+    </final>
+  <timeLimit steps="10000" />
+  <metric>t1</metric>
+  <metric>t2</metric>
+  <metric>t3 "mean" 0</metric>
+  <metric>t3 "median" 0</metric>
+  <metric>t3 "standard-deviation" 0</metric>
+  <metric>t3 "mean" 1</metric>
+  <metric>t3 "median" 1</metric>
+  <metric>t3 "standard-deviation" 1</metric>
+  <metric>t3 "mean" 2</metric>
+  <metric>t3 "median" 2</metric>
+  <metric>t3 "standard-deviation" 2</metric>
+  <metric>t3 "mean" 3</metric>
+  <metric>t3 "median" 3</metric>
+  <metric>t3 "standard-deviation" 3</metric>
+  <metric>t3 "mean" 4</metric>
+  <metric>t3 "median" 4</metric>
+  <metric>t3 "standard-deviation" 4</metric>
+  <metric>t3.bins</metric>
+  <metric>t4 "mean" 0</metric>
+  <metric>t4 "median" 0</metric>
+  <metric>t4 "standard-deviation" 0</metric>
+  <metric>t4 "mean" 1</metric>
+  <metric>t4 "median" 1</metric>
+  <metric>t4 "standard-deviation" 1</metric>
+  <metric>t4 "mean" 2</metric>
+  <metric>t4 "median" 2</metric>
+  <metric>t4 "standard-deviation" 2</metric>
+  <metric>t4 "mean" 3</metric>
+  <metric>t4 "median" 3</metric>
+  <metric>t4 "standard-deviation" 3</metric>
+  <metric>t4 "mean" 4</metric>
+  <metric>t4 "median" 4</metric>
+  <metric>t4 "standard-deviation" 4</metric>
+  <metric>t5.bins "Non integration"</metric>
+  <metric>t5.bins "Institutional distrust"</metric>
+  <metric>t5.bins "Collective relative deprivation"</metric>
+  <metric>t5 "mean" "Non integration" 0</metric>
+  <metric>t5 "mean" "Non integration" 1</metric>
+  <metric>t5 "mean" "Non integration" 2</metric>
+  <metric>t5 "mean" "Non integration" 3</metric>
+  <metric>t5 "mean" "Non integration" 4</metric>
+  <metric>t5 "mean" "Institutional distrust" 0</metric>
+  <metric>t5 "mean" "Institutional distrust" 1</metric>
+  <metric>t5 "mean" "Institutional distrust" 2</metric>
+  <metric>t5 "mean" "Institutional distrust" 3</metric>
+  <metric>t5 "mean" "Institutional distrust" 4</metric>
+  <metric>t5 "mean" "Collective relative deprivation" 0</metric>
+  <metric>t5 "mean" "Collective relative deprivation" 1</metric>
+  <metric>t5 "mean" "Collective relative deprivation" 2</metric>
+  <metric>t5 "mean" "Collective relative deprivation" 3</metric>
+  <metric>t5 "mean" "Collective relative deprivation" 4</metric>
+  <metric>t5 "median" "Non integration" 0</metric>
+  <metric>t5 "median" "Non integration" 1</metric>
+  <metric>t5 "median" "Non integration" 2</metric>
+  <metric>t5 "median" "Non integration" 3</metric>
+  <metric>t5 "median" "Non integration" 4</metric>
+  <metric>t5 "median" "Institutional distrust" 0</metric>
+  <metric>t5 "median" "Institutional distrust" 1</metric>
+  <metric>t5 "median" "Institutional distrust" 2</metric>
+  <metric>t5 "median" "Institutional distrust" 3</metric>
+  <metric>t5 "median" "Institutional distrust" 4</metric>
+  <metric>t5 "median" "Collective relative deprivation" 0</metric>
+  <metric>t5 "median" "Collective relative deprivation" 1</metric>
+  <metric>t5 "median" "Collective relative deprivation" 2</metric>
+  <metric>t5 "median" "Collective relative deprivation" 3</metric>
+  <metric>t5 "median" "Collective relative deprivation" 4</metric>
+  <metric>t5 "standard-deviation" "Non integration" 0</metric>
+  <metric>t5 "standard-deviation" "Non integration" 1</metric>
+  <metric>t5 "standard-deviation" "Non integration" 2</metric>
+  <metric>t5 "standard-deviation" "Non integration" 3</metric>
+  <metric>t5 "standard-deviation" "Non integration" 4</metric>
+  <metric>t5 "standard-deviation" "Institutional distrust" 0</metric>
+  <metric>t5 "standard-deviation" "Institutional distrust" 1</metric>
+  <metric>t5 "standard-deviation" "Institutional distrust" 2</metric>
+  <metric>t5 "standard-deviation" "Institutional distrust" 3</metric>
+  <metric>t5 "standard-deviation" "Institutional distrust" 4</metric>
+  <metric>t5 "standard-deviation" "Collective relative deprivation" 0</metric>
+  <metric>t5 "standard-deviation" "Collective relative deprivation" 1</metric>
+  <metric>t5 "standard-deviation" "Collective relative deprivation" 2</metric>
+  <metric>t5 "standard-deviation" "Collective relative deprivation" 3</metric>
+  <metric>t5 "standard-deviation" "Collective relative deprivation" 4</metric>
+  <metric>t6  "residence" 0</metric>
+  <metric>t6  "residence" 1</metric>
+  <metric>t6  "residence" 2</metric>
+  <metric>t6  "residence" 3</metric>
+  <metric>t6  "residence" 4</metric>
+  <metric>t6  "coffee" 0</metric>
+  <metric>t6  "coffee" 1</metric>
+  <metric>t6  "coffee" 2</metric>
+  <metric>t6  "coffee" 3</metric>
+  <metric>t6  "coffee" 4</metric>
+  <metric>t6  "public space" 0</metric>
+  <metric>t6  "public space" 1</metric>
+  <metric>t6  "public space" 2</metric>
+  <metric>t6  "public space" 3</metric>
+  <metric>t6  "public space" 4</metric>
+  <metric>t6  "propaganda place" 0</metric>
+  <metric>t6  "propaganda place" 1</metric>
+  <metric>t6  "propaganda place" 2</metric>
+  <metric>t6  "propaganda place" 3</metric>
+  <metric>t6  "propaganda place" 4</metric>
+  <metric>t6  "community center" 0</metric>
+  <metric>t6  "community center" 1</metric>
+  <metric>t6  "community center" 2</metric>
+  <metric>t6  "community center" 3</metric>
+  <metric>t6  "community center" 4</metric>
+  <metric>soc-counter</metric>
+  <metric>soc-online-counter</metric>
+  <metric>rec-counter</metric>
+  <metric>min [ hours-to-recruit ] of citizens</metric>
+  <metric>mean [ hours-to-recruit ] of citizens</metric>
+  <metric>count links</metric>
+  <metric>fail-activity-counter</metric>
+  <metric>police-actions-counter</metric>
+  <metric>initial-random-seed</metric>
+  <enumeratedValueSet variable="high-risk-employed">
+      <value value="&quot;no intervention&quot;" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="total-citizens">
+      <value value="10000" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="alpha">
+      <value value="0.3" />
+      <value value="0.5" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="population-employed-%">
+      <value value="10" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="activity-radius">
+      <value value="5" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="activity-debug?">
+      <value value="false" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="number-workers-per-community-center">
+      <value value="1" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="links-cap-mean">
+      <value value="10" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="male-ratio">
+      <value value="50" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="cpo-%">
+      <value value="0" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="recruit-hours-threshold">
+      <value value="200" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="activity-value-update">
+      <value value="0.5" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="scenario">
+      <value value="&quot;neukolln&quot;" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="community-side-length">
+      <value value="35" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="radicalization-percentage">
+      <value value="5.6" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="talk-effect-size">
+      <value value="0.005" />
+       <value value="0.1" />
+  </enumeratedValueSet>
+  <enumeratedValueSet variable="socialize-probability">
+      <value value="0.1" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="criminal-history-percent">
+      <value value="20" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="num-recruiters">
+      <value value="15" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="mean-hours-worked-recruiter">
+      <value value="6" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="running-plan">
+      <value value="&quot;rpT13&quot;" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="opinion-dumps-every">
+      <value value="1000" />
+    </enumeratedValueSet>
+  </experiment>
+</experiments>

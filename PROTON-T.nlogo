@@ -910,7 +910,7 @@ total-citizens
 total-citizens
 100
 2000
-1500.0
+1000.0
 50
 1
 citizens
@@ -1059,7 +1059,7 @@ false
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Institutional distrust\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
+"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 (ticks + 1 )* 3\nif any? topic-links [\n  let topics-to-plot topics-list\n  let prec 1\n  (foreach topics-list [ 10 60 90 ] [ 0 1 2 ] [ [ t colbase i ] -> \n    let values [ opinion-on-topic t ] of citizens\n    let x (ticks * 3 + i)\n    plot-pen-up\n    plotxy ticks -1\n    plot-pen-down\n    let ys map [ n -> precision n prec ] (range -2 2 (10 ^ (0 - prec)))\n    let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n    let max-count max counts\n    let colors map [ cnt -> colbase + 9.9 - (9.9 * cnt / max-count) ] counts\n    (foreach ys colors [ [y c] ->\n      set-plot-pen-color c\n      plotxy x y\n    ])\n  ])\n]"
 
 PLOT
 1100
@@ -1422,7 +1422,7 @@ INPUTBOX
 1510
 120
 running-plan
-rp1.1
+rpT13
 1
 0
 String
