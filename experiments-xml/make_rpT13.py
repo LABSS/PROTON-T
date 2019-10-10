@@ -1,8 +1,8 @@
 import xml.etree.ElementTree as ET
 import pretty_print
 
-version="_rp1.0"
-base = 'base_rp0.8'
+version="_rpT13"
+base = 'base-rpT13'
 
 # the base ones
 # varying alpha and the radicalization percentage. 

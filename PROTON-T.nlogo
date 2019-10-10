@@ -297,7 +297,6 @@ to go
   ]
   if opinion-dumps-every < 99999 and ticks mod opinion-dumps-every = 0 [
     export-risk
-    export-opinions
   ]
   move-police
   if activity-debug? [ update-output ]

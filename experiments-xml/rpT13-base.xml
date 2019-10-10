@@ -1,8 +1,15 @@
 <experiments>
-  <experiment name="base_rp08" repetitions="40" runMetricsEveryStep="true">
-    <setup>setup</setup>
+  <experiment name="rp1.1-10K-10" repetitions="10" runMetricsEveryStep="true">
+    <setup>
+        setup
+        export-risk
+        export-opinions
+    </setup>
   <go>go</go>
-  <final>show (word "Time elapsed:" timer)
+  <final>
+        export-risk
+        export-opinions
+        show (word "Time elapsed:" timer)
     </final>
   <timeLimit steps="3060" />
   <metric>t1</metric>
@@ -38,6 +45,9 @@
   <metric>t4 "mean" 4</metric>
   <metric>t4 "median" 4</metric>
   <metric>t4 "standard-deviation" 4</metric>
+  <metric>t5.bins "Non integration"</metric>
+  <metric>t5.bins "Institutional distrust"</metric>
+  <metric>t5.bins "Collective relative deprivation"</metric>
   <metric>t5 "mean" "Non integration" 0</metric>
   <metric>t5 "mean" "Non integration" 1</metric>
   <metric>t5 "mean" "Non integration" 2</metric>
@@ -115,11 +125,13 @@
   <metric>mean [ hours-to-recruit ] of citizens</metric>
   <metric>count links</metric>
   <metric>fail-activity-counter</metric>
+  <metric>police-actions-counter</metric>
+  <metric>initial-random-seed</metric>
   <enumeratedValueSet variable="high-risk-employed">
-      <value value="75" />
+      <value value="&quot;no intervention&quot;" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="total-citizens">
-      <value value="40000" />
+      <value value="10000" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="alpha">
       <value value="0.1" />
@@ -164,7 +176,7 @@
       <value value="45" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="radicalization-percentage">
-      <value value="5.6" />
+      <value value="10" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="talk-effect-size">
       <value value="0.04" />
@@ -180,6 +192,12 @@
     </enumeratedValueSet>
   <enumeratedValueSet variable="mean-hours-worked-recruiter">
       <value value="6" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="running-plan">
+      <value value="&quot;rp1.1-10K-10&quot;" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="opinion-dumps-every">
+      <value value="1000" />
     </enumeratedValueSet>
   </experiment>
 </experiments>
