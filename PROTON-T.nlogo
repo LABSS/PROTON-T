@@ -178,11 +178,11 @@ to make-recruiters
     set is-job?       true
     set is-mandatory? true
     randomize-recruit-times
-    set location-type test-location-type
+    set location-type "coffee"
     set task          [ -> socialize-and-recruit ]
     hatch-activities 1 [
       set my-activity-type myself
-      move-to one-of locations with [ shape = test-location-type ]
+      move-to one-of locations with [ shape = "coffee" ]
       ask one-of citizens in-radius activity-radius with [
         age >= 21 and
         get "male?"
@@ -291,9 +291,12 @@ to go
     ]
   ]
   if ticks mod ticks-per-day = 0 [
-    ask activity-types with [ location-type = test-location-type and is-mandatory? and is-job? ] [
+    ask activity-types with [ location-type = "coffee" and is-mandatory? and is-job? ] [
       randomize-recruit-times
     ]
+  ]
+  if opinion-dumps-every < 99999 and ticks mod opinion-dumps-every = 0 [
+    export-risk
   ]
   move-police
   if activity-debug? [ update-output ]
@@ -689,8 +692,14 @@ to-report talk-to-tuned [ recipients the-object effect-size ] ; citizen procedur
       let v2 [ value ] of l2
       let t 2 - alpha * abs v2
       if abs (v1 - v2) < t [
-      ;if false [
-        ask l2 [ set value v2 + t * (v1 - v2) / 2 * effect-size ]
+        ask l2 [
+          set value v2 + t * (v1 - v2) / 2 * effect-size
+          ifelse value < -2 [
+            set value -2
+          ] [
+            if value > 2 [ set value 2 ]
+          ]
+        ]
         set success? true
       ]
     ]
@@ -876,10 +885,10 @@ ticks
 30.0
 
 BUTTON
-5
-335
-78
-368
+1100
+10
+1173
+43
 NIL
 setup
 NIL
@@ -893,25 +902,25 @@ NIL
 1
 
 SLIDER
-10
-65
-290
-98
+5
+60
+285
+93
 total-citizens
 total-citizens
 100
 2000
-1500.0
+1000.0
 50
 1
 citizens
 HORIZONTAL
 
 MONITOR
+1575
 10
-265
-80
-310
+1645
+55
 population
 count citizens
 17
@@ -919,10 +928,10 @@ count citizens
 11
 
 SLIDER
-10
-105
-290
-138
+5
+255
+285
+288
 community-side-length
 community-side-length
 20
@@ -934,10 +943,10 @@ patches
 HORIZONTAL
 
 MONITOR
-80
-265
-135
-310
+1650
+10
+1705
+55
 density
 count citizens / count patches
 2
@@ -945,10 +954,10 @@ count citizens / count patches
 11
 
 BUTTON
-165
-335
-225
-368
+1180
+10
+1240
+43
 NIL
 go
 NIL
@@ -962,30 +971,13 @@ NIL
 1
 
 BUTTON
-230
-335
-290
-368
+1245
+10
+1305
+43
 NIL
 go
 T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-25
-375
-145
-408
-NIL
-profile-go
-NIL
 1
 T
 OBSERVER
@@ -996,10 +988,10 @@ NIL
 1
 
 SLIDER
-10
-145
-290
-178
+5
+295
+285
+328
 activity-radius
 activity-radius
 1
@@ -1010,28 +1002,11 @@ activity-radius
 patches
 HORIZONTAL
 
-BUTTON
-150
-375
-272
-408
-NIL
-profile-setup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 MONITOR
-195
-265
-250
-310
+1775
+10
+1850
+55
 time
 (word (current-time) \":00\")
 17
@@ -1039,10 +1014,10 @@ time
 11
 
 SLIDER
-10
-185
-290
-218
+5
+445
+285
+478
 alpha
 alpha
 0
@@ -1054,10 +1029,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-10
-225
-290
-258
+5
+635
+285
+668
 radicalization-percentage
 radicalization-percentage
 5
@@ -1069,28 +1044,28 @@ NIL
 HORIZONTAL
 
 PLOT
-25
-415
-275
-535
-T1
+1575
+470
+1860
+635
+Institutional distrust (each agent)
 NIL
 NIL
 0.0
 1.0
--1.0
-1.0
+-2.0
+2.0
 false
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 ticks + 1\nif any? topic-links [\n  let topic-to-plot \"Institutional distrust\"\n  let prec 2\n  let values [ [ value ] of my-in-topic-links ] of one-of topics with [ topic-name = topic-to-plot ]\n  plot-pen-up\n  plotxy ticks -1\n  plot-pen-down\n  let ys map [ n -> precision n prec ] (range -1 1 (10 ^ (0 - prec)))\n  let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n  let max-count max counts\n  let colors map [ cnt -> 9.9 - (9.9 * cnt / max-count) ] counts\n  (foreach ys colors [ [y c] ->\n    set-plot-pen-color c\n    plotxy ticks y\n  ])\n]"
+"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 (ticks + 1 )* 3\nif any? topic-links [\n  let topics-to-plot topics-list\n  let prec 1\n  (foreach topics-list [ 10 60 90 ] [ 0 1 2 ] [ [ t colbase i ] -> \n    let values [ opinion-on-topic t ] of citizens\n    let x (ticks * 3 + i)\n    plot-pen-up\n    plotxy ticks -1\n    plot-pen-down\n    let ys map [ n -> precision n prec ] (range -2 2 (10 ^ (0 - prec)))\n    let counts map [ y -> length filter [v -> precision v prec = y] values ] ys\n    let max-count max counts\n    let colors map [ cnt -> colbase + 9.9 - (9.9 * cnt / max-count) ] counts\n    (foreach ys colors [ [y c] ->\n      set-plot-pen-color c\n      plotxy x y\n    ])\n  ])\n]"
 
 PLOT
-1115
-690
-1404
-820
+1100
+645
+1560
+790
 Propensity and risk
 NIL
 NIL
@@ -1106,10 +1081,10 @@ PENS
 "pen-1" 1.0 0 -7500403 true "" "if ticks > 0 [ plotxy ticks mean [ risk ] of citizens ]"
 
 PLOT
-1115
-485
-1450
-675
+1100
+470
+1560
+635
 Mean opinions
 NIL
 NIL
@@ -1123,25 +1098,10 @@ true
 PENS
 
 SLIDER
-15
-590
+5
+335
 285
-623
-work-socialization-probability
-work-socialization-probability
-0
-1
-0.1
-0.05
-1
-NIL
-HORIZONTAL
-
-SLIDER
-15
-630
-285
-663
+368
 activity-value-update
 activity-value-update
 0
@@ -1153,10 +1113,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-135
-265
-195
-310
+1710
+10
+1770
+55
 NIL
 weekday
 17
@@ -1164,10 +1124,10 @@ weekday
 11
 
 MONITOR
-1100
-15
-1257
-60
+1575
+110
+1732
+155
 propaganda attendance
 count citizens with [ [ shape ] of locations-here = [ \"propaganda place\" ] ]
 0
@@ -1175,20 +1135,20 @@ count citizens with [ [ shape ] of locations-here = [ \"propaganda place\" ] ]
 11
 
 CHOOSER
+5
 10
-15
-290
-60
+285
+55
 scenario
 scenario
 "neukolln"
 0
 
 SLIDER
-1100
-65
-1302
-98
+5
+755
+285
+788
 recruit-hours-threshold
 recruit-hours-threshold
 1
@@ -1200,10 +1160,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-1105
-110
-1177
-155
+1575
+160
+1647
+205
 recruited
 count citizens with [ recruited? ]
 17
@@ -1211,10 +1171,10 @@ count citizens with [ recruited? ]
 11
 
 MONITOR
-1180
-110
-1262
-155
+1650
+160
+1732
+205
 susceptible
 count citizens with [ risk > radicalization-threshold ]
 17
@@ -1222,10 +1182,10 @@ count citizens with [ risk > radicalization-threshold ]
 11
 
 MONITOR
-1260
-15
-1350
+1650
 60
+1770
+105
 PS attendance
 count citizens with [ [ shape ] of locations-here = [ \"public space\" ] ]
 17
@@ -1233,17 +1193,17 @@ count citizens with [ [ shape ] of locations-here = [ \"public space\" ] ]
 11
 
 OUTPUT
-1115
-320
-1450
-480
+1100
+205
+1560
+465
 10
 
 SWITCH
-1270
-120
-1422
-153
+1360
+10
+1512
+43
 activity-debug?
 activity-debug?
 1
@@ -1251,10 +1211,10 @@ activity-debug?
 -1000
 
 MONITOR
-1305
-65
-1435
-110
+1575
+260
+1730
+305
 socialization attempts
 soc-counter
 0
@@ -1262,53 +1222,32 @@ soc-counter
 11
 
 MONITOR
-1110
-165
-1267
+1575
 210
+1732
+255
 coffee mean attendance
 count citizens with [ [ shape ] of locations-here = [ \"coffee\" ] ] / count locations with [ shape = \"coffee\" ]
-17
+2
 1
 11
 
-CHOOSER
-1110
-260
-1248
-305
-test-location-type
-test-location-type
-"public space" "coffee"
-1
-
 MONITOR
-1275
-165
-1422
-210
-NIL
+1575
+310
+1730
+355
+recruitment attempts
 rec-counter
 17
 1
 11
 
 MONITOR
-1110
-210
-1330
-255
-NIL
-min [hours-to-recruit] of citizens
-17
-1
-11
-
-MONITOR
-1450
-15
-1527
+1775
 60
+1850
+105
 NIL
 count links
 17
@@ -1316,10 +1255,10 @@ count links
 11
 
 SLIDER
-15
-670
+5
+375
 285
-703
+408
 links-cap-mean
 links-cap-mean
 5
@@ -1331,10 +1270,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-1385
-15
-1447
+1575
 60
+1645
+105
 at home
 count citizens with [ [ shape ] of locations-here = [ \"residence\" ] ]
 0
@@ -1342,20 +1281,20 @@ count citizens with [ [ shape ] of locations-here = [ \"residence\" ] ]
 11
 
 CHOOSER
-1255
-260
-1393
-305
+5
+180
+285
+225
 male-ratio
 male-ratio
 "from scenario" 45 50 55
 0
 
 MONITOR
-310
-800
-427
-845
+1735
+110
+1852
+155
 unemployment %
 count citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-activity-type ] ] / count citizens * 100
 0
@@ -1363,10 +1302,10 @@ count citizens with [ not any? activity-link-neighbors with [ [ is-job? ] of my-
 11
 
 SLIDER
-15
-780
+5
+140
 285
-813
+173
 population-employed-%
 population-employed-%
 0
@@ -1378,10 +1317,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
-710
-285
-743
+1100
+115
+1310
+148
 cpo-%
 cpo-%
 0
@@ -1393,52 +1332,35 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
-745
-285
-778
+1100
+160
+1310
+193
 number-workers-per-community-center
 number-workers-per-community-center
 1
 5
 1.0
-2
+1
 1
 NIL
 HORIZONTAL
 
 CHOOSER
-15
-540
-162
-585
+1100
+60
+1310
+105
 high-risk-employed
 high-risk-employed
 "no intervention" 10 25 50 75 100
 0
 
-BUTTON
-80
-335
-162
-368
-set 'n go
-setup repeat 500 [go]
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 SLIDER
-15
-815
+5
+485
 285
-848
+518
 talk-effect-size
 talk-effect-size
 0
@@ -1450,10 +1372,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
-855
-192
-888
+5
+525
+285
+558
 socialize-probability
 socialize-probability
 0
@@ -1465,25 +1387,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-225
-860
-432
-893
-criminal-history-percent
-criminal-history-percent
-0
-100
-20.0
 5
-1
-NIL
-HORIZONTAL
-
-SLIDER
-445
-810
-617
-843
+675
+285
+708
 num-recruiters
 num-recruiters
 0
@@ -1495,10 +1402,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-455
-860
-697
-893
+5
+715
+285
+748
 mean-hours-worked-recruiter
 mean-hours-worked-recruiter
 1
@@ -1508,6 +1415,76 @@ mean-hours-worked-recruiter
 1
 NIL
 HORIZONTAL
+
+INPUTBOX
+1360
+60
+1510
+120
+running-plan
+rpT13
+1
+0
+String
+
+INPUTBOX
+1360
+135
+1510
+195
+opinion-dumps-every
+99999.0
+1
+0
+Number
+
+SLIDER
+5
+100
+285
+133
+criminal-history-percent
+criminal-history-percent
+0
+100
+20.0
+5
+1
+NIL
+HORIZONTAL
+
+SLIDER
+5
+565
+285
+598
+work-socialization-probability
+work-socialization-probability
+0
+1
+0.1
+0.05
+1
+NIL
+HORIZONTAL
+
+PLOT
+1575
+645
+1860
+785
+Recruited citizens
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot count citizens with [ recruited? ]"
 
 @#$#@#$#@
 ## WHAT IS IT?
