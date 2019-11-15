@@ -664,7 +664,7 @@ end
 
 to update-activity-value [ success? ] ; link procedure
   ;if [ special-type ] of myself = 0 [
-  set value value + activity-value-update * (ifelse-value success? [ 2 ][ -2 ] - value)
+  set value value + activity-value-update * ((ifelse-value success? [ 2 ][ -2 ]) - value)
 end
 
 to-report my-opinions ; citizen reporter
@@ -2091,7 +2091,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.4
+NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
