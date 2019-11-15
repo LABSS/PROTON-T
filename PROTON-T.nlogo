@@ -1,6 +1,6 @@
 __includes [ "scenario.nls" "reporters.nls" ]
 
-extensions [ table profiler rnd csv ]
+extensions [vid  table profiler rnd csv ]
 
 globals [
   initial-random-seed
@@ -42,6 +42,7 @@ citizens-own [
   recruit-target
   my-links-cap
   fundamentalism-score ; this exists only to calculate the value of authoritarian?
+  ;recruitable
 ]
 
 breed [ activity-types activity-type ]
@@ -908,7 +909,7 @@ total-citizens
 total-citizens
 100
 2000
-1000.0
+2000.0
 50
 1
 citizens
@@ -1504,6 +1505,25 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "if ticks > 0 [ plot count citizens with [ risk > radicalization-threshold ] ]"
+
+PLOT
+1122
+219
+1512
+441
+risk by citizen
+NIL
+NIL
+-1.0
+3.0
+0.0
+50.0
+true
+false
+"  plot-pen-up\n  plotxy radicalization-threshold 0 \n  plot-pen-down\n  plotxy radicalization-threshold plot-y-max \n  \n  set-histogram-num-bars 50\n" ""
+PENS
+"default" 1.0 1 -16777216 true "" "histogram [ risk ] of citizens\n"
+"pen-1" 1.0 0 -8053223 true "" " plot-pen-up\n  plotxy radicalization-threshold 0 \n  plot-pen-down\n  plotxy radicalization-threshold plot-y-max \n  \n  set-histogram-num-bars 20\n"
 
 @#$#@#$#@
 ## WHAT IS IT?
