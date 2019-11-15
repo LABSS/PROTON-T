@@ -908,7 +908,7 @@ total-citizens
 total-citizens
 100
 2000
-700.0
+1000.0
 50
 1
 citizens
@@ -1069,14 +1069,14 @@ NIL
 NIL
 0.0
 10.0
-0.0
-1.0
+0.3
+0.7
 true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [ propensity ] of citizens ]"
-"pen-1" 1.0 0 -7500403 true "" "if ticks > 0 [ plotxy ticks mean [ risk ] of citizens ]"
+"prop" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [ propensity ] of citizens ]"
+"risk" 1.0 0 -7500403 true "" "if ticks > 0 [ plotxy ticks mean [ risk ] of citizens ]"
 
 PLOT
 1100
