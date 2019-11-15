@@ -108,8 +108,6 @@ to setup
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
   ask activity-types [ set hidden? true ]
-  update-plots
-  display
   show word "Setup complete in " timer
   ; TODO: write some test code to make sure the schedule is consistent.
 end
@@ -910,7 +908,7 @@ total-citizens
 total-citizens
 100
 2000
-1000.0
+700.0
 50
 1
 citizens
@@ -1094,8 +1092,11 @@ NIL
 1.0
 true
 true
-"let n count topics\n(foreach sort topics range n [ [t i] ->\n  ask t [ create-temporary-plot-pen topic-name ]\n  set-plot-pen-color hsb (i * 360 / n) 50 50\n])" "if ticks > 0 [\n  ask topics [\n    set-current-plot-pen topic-name\n    plotxy ticks mean [value] of my-in-topic-links\n  ]\n]"
+"" "if ticks > 0 [\n  ask topics [\n    set-current-plot-pen topic-name\n    plotxy ticks mean [value] of my-in-topic-links\n  ]\n]"
 PENS
+"Non integration" 1.0 0 -7500403 true "" ""
+"Institutional distrust" 1.0 0 -2674135 true "" ""
+"Collective relative deprivation" 1.0 0 -955883 true "" ""
 
 SLIDER
 5
@@ -1160,9 +1161,9 @@ NIL
 HORIZONTAL
 
 MONITOR
-1575
+1735
 160
-1647
+1815
 205
 recruited
 count citizens with [ recruited? ]
@@ -1171,10 +1172,10 @@ count citizens with [ recruited? ]
 11
 
 MONITOR
-1650
-160
-1732
-205
+1735
+210
+1817
+255
 susceptible
 count citizens with [ risk > radicalization-threshold ]
 17
@@ -1212,9 +1213,9 @@ activity-debug?
 
 MONITOR
 1575
-260
+210
 1730
-305
+255
 socialization attempts
 soc-counter
 0
@@ -1223,9 +1224,9 @@ soc-counter
 
 MONITOR
 1575
-210
+160
 1732
-255
+205
 coffee mean attendance
 count citizens with [ [ shape ] of locations-here = [ \"coffee\" ] ] / count locations with [ shape = \"coffee\" ]
 2
@@ -1234,9 +1235,9 @@ count citizens with [ [ shape ] of locations-here = [ \"coffee\" ] ] / count loc
 
 MONITOR
 1575
-310
+260
 1730
-355
+305
 recruitment attempts
 rec-counter
 17
@@ -1310,7 +1311,7 @@ population-employed-%
 population-employed-%
 0
 100
-50.0
+80.0
 5
 1
 NIL
@@ -1485,6 +1486,24 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot count citizens with [ recruited? ]"
+
+PLOT
+1580
+310
+1860
+465
+recruitable
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plot count citizens with [ risk > radicalization-threshold ] ]"
 
 @#$#@#$#@
 ## WHAT IS IT?
