@@ -561,7 +561,7 @@ to setup-free-time-activities
     let reachable-activities my-nearby-activities with [
       [ not is-mandatory? and not is-job? ] of my-activity-type and not [ at-strangers-home? myself ] of the-citizen
     ]
-    create-activity-links-to n-of min list my-links-cap count reachable-activities reachable-activities [
+    create-activity-links-to up-to-n-of my-links-cap reachable-activities [
       set value -2 + random-float 4 ; TODO: how should this be initialized?
     ]
   ]
@@ -909,7 +909,7 @@ total-citizens
 total-citizens
 100
 2000
-2000.0
+1000.0
 50
 1
 citizens
