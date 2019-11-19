@@ -1,13 +1,3 @@
-to make-movie
-  vid:start-recorder
-  vid:record-view
-  repeat 10 [
-    go
-    vid:record-interface
-  ]
-  vid:save-recording  (word running-plan "-" "movie.mpg") 
-end
-
 ;t1 recruited citizens
 to-report t1
   report count citizens with [ recruited? ]
