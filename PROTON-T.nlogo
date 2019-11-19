@@ -1,6 +1,6 @@
 __includes [ "scenario.nls" "reporters.nls" ]
 
-extensions [table profiler rnd csv ]
+extensions [vid table profiler rnd csv]
 
 globals [
   initial-random-seed
