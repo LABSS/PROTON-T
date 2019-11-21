@@ -1,7 +1,3 @@
-to save-plots
-  export-interface (word running-plan "-" ticks "-png")
-end
-
 ;t1 recruited citizens
 to-report t1
   report count citizens with [ recruited? ]
