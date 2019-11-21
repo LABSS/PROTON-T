@@ -208,9 +208,9 @@ end
 
 to-report topics-list report map [ l -> first l ] topic-definitions end
 
-to-report calc-radicalization-threshold
+to-report calc-radicalization-threshold [ percent-over ]
   let big-list sort-on [ -1 * risk ] citizens
-  report [ risk ] of item ((radicalization-percentage / 100 * count citizens) - 1) big-list
+  report [ risk ] of item ((percent-over / 100 * count citizens) - 1) big-list
 end
 
 ; citizen procedure

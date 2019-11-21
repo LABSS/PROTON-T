@@ -18,6 +18,8 @@ globals [
   radicalization-threshold
   police-actions-counter
   police-action-probability
+  r-t-100
+  r-t-56
 ]
 
 patches-own [
@@ -101,7 +103,9 @@ to setup
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
-  set radicalization-threshold calc-radicalization-threshold
+  set radicalization-threshold calc-radicalization-threshold radicalization-percentage
+  set r-t-100 calc-radicalization-threshold 10
+  set r-t-56 calc-radicalization-threshold 5.6
   make-specials
   setup-police
   setup-free-time-activities
@@ -909,7 +913,7 @@ total-citizens
 total-citizens
 100
 2000
-1000.0
+2000.0
 50
 1
 citizens
@@ -1062,9 +1066,9 @@ PENS
 
 PLOT
 1100
-645
+740
 1560
-790
+885
 Propensity and risk
 NIL
 NIL
@@ -1081,9 +1085,9 @@ PENS
 
 PLOT
 1100
-470
+565
 1560
-635
+730
 Mean opinions
 NIL
 NIL
@@ -1195,10 +1199,10 @@ count citizens with [ [ shape ] of locations-here = [ \"public space\" ] ]
 11
 
 OUTPUT
-1100
-205
-1560
-465
+300
+805
+760
+1065
 10
 
 SWITCH
@@ -1507,10 +1511,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "if ticks > 0 [ plot count citizens with [ risk > radicalization-threshold ] ]"
 
 PLOT
-1122
-219
-1512
-441
+1100
+212
+1560
+462
 risk by citizen
 NIL
 NIL
@@ -1520,10 +1524,55 @@ NIL
 50.0
 true
 false
-"  plot-pen-up\n  plotxy radicalization-threshold 0 \n  plot-pen-down\n  plotxy radicalization-threshold plot-y-max \n  \n  set-histogram-num-bars 50\n" ""
+"set-histogram-num-bars 50\n" ""
 PENS
 "default" 1.0 1 -16777216 true "" "histogram [ risk ] of citizens\n"
-"pen-1" 1.0 0 -8053223 true "" " plot-pen-up\n  plotxy radicalization-threshold 0 \n  plot-pen-down\n  plotxy radicalization-threshold plot-y-max \n  \n  set-histogram-num-bars 20\n"
+"pen-1" 1.0 0 -8053223 true "" "plot-pen-up\nplotxy radicalization-threshold 0 \nplot-pen-down\nplotxy radicalization-threshold plot-y-max "
+"pen-2" 1.0 0 -11085214 true "" "plot-pen-up\nplotxy r-t-56 0 \nplot-pen-down\nplotxy r-t-56 plot-y-max \nplot-pen-up\nplotxy r-t-100 0 \nplot-pen-down\nplotxy r-t-100 plot-y-max "
+
+MONITOR
+1100
+465
+1350
+510
+rt-low
+100 * count citizens with [ risk < r-t-100 ] / count citizens
+2
+1
+11
+
+MONITOR
+1355
+465
+1495
+510
+rt-between-10-and-5.6
+100 * count citizens with [ risk >= r-t-100 and risk < r-t-56 ] / count citizens
+2
+1
+11
+
+MONITOR
+1500
+465
+1560
+510
+rt-high
+100 * count citizens with [ risk >= r-t-56 ] / count citizens
+2
+1
+11
+
+MONITOR
+1355
+510
+1560
+555
+rt-10
+100 * count citizens with [ risk >= r-t-100 ] / count citizens
+2
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
