@@ -306,7 +306,6 @@ to go
   if behaviorspace-experiment-name != "" [
     show (word behaviorspace-run-number "." ticks " t:" timer )
   ]
-  export-interface (word running-plan "-" (10000 + ticks) ".png")
   tick
 end
 
