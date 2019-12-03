@@ -18,6 +18,8 @@ globals [
   radicalization-threshold
   police-actions-counter
   police-action-probability
+  r-t-100
+  r-t-56
 ]
 
 patches-own [
@@ -42,6 +44,7 @@ citizens-own [
   recruit-target
   my-links-cap
   fundamentalism-score ; this exists only to calculate the value of authoritarian?
+  ;recruitable
 ]
 
 breed [ activity-types activity-type ]
@@ -100,7 +103,9 @@ to setup
   setup-activity-types
   setup-mandatory-activities
   setup-jobs
-  set radicalization-threshold calc-radicalization-threshold
+  set radicalization-threshold calc-radicalization-threshold radicalization-percentage
+  set r-t-100 calc-radicalization-threshold 10
+  set r-t-56 calc-radicalization-threshold 5.6
   make-specials
   setup-police
   setup-free-time-activities
@@ -108,8 +113,6 @@ to setup
   ask links [ set hidden? true ]
   ask activities [ set hidden? true ]
   ask activity-types [ set hidden? true ]
-  update-plots
-  display
   show word "Setup complete in " timer
   ; TODO: write some test code to make sure the schedule is consistent.
 end
@@ -562,7 +565,7 @@ to setup-free-time-activities
     let reachable-activities my-nearby-activities with [
       [ not is-mandatory? and not is-job? ] of my-activity-type and not [ at-strangers-home? myself ] of the-citizen
     ]
-    create-activity-links-to n-of min list my-links-cap count reachable-activities reachable-activities [
+    create-activity-links-to up-to-n-of my-links-cap reachable-activities [
       set value -2 + random-float 4 ; TODO: how should this be initialized?
     ]
   ]
@@ -664,7 +667,7 @@ end
 
 to update-activity-value [ success? ] ; link procedure
   ;if [ special-type ] of myself = 0 [
-  set value value + activity-value-update * (ifelse-value success? [ 2 ][ -2 ] - value)
+  set value value + activity-value-update * ((ifelse-value success? [ 2 ][ -2 ]) - value)
 end
 
 to-report my-opinions ; citizen reporter
@@ -910,7 +913,7 @@ total-citizens
 total-citizens
 100
 2000
-1000.0
+2000.0
 50
 1
 citizens
@@ -1063,28 +1066,28 @@ PENS
 
 PLOT
 1100
-645
+740
 1560
-790
+885
 Propensity and risk
 NIL
 NIL
 0.0
 10.0
-0.0
-1.0
+0.3
+0.7
 true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [ propensity ] of citizens ]"
-"pen-1" 1.0 0 -7500403 true "" "if ticks > 0 [ plotxy ticks mean [ risk ] of citizens ]"
+"prop" 1.0 0 -16777216 true "" "if ticks > 0 [ plotxy ticks mean [ propensity ] of citizens ]"
+"risk" 1.0 0 -7500403 true "" "if ticks > 0 [ plotxy ticks mean [ risk ] of citizens ]"
 
 PLOT
 1100
-470
+565
 1560
-635
+730
 Mean opinions
 NIL
 NIL
@@ -1094,8 +1097,11 @@ NIL
 1.0
 true
 true
-"let n count topics\n(foreach sort topics range n [ [t i] ->\n  ask t [ create-temporary-plot-pen topic-name ]\n  set-plot-pen-color hsb (i * 360 / n) 50 50\n])" "if ticks > 0 [\n  ask topics [\n    set-current-plot-pen topic-name\n    plotxy ticks mean [value] of my-in-topic-links\n  ]\n]"
+"" "if ticks > 0 [\n  ask topics [\n    set-current-plot-pen topic-name\n    plotxy ticks mean [value] of my-in-topic-links\n  ]\n]"
 PENS
+"Non integration" 1.0 0 -7500403 true "" ""
+"Institutional distrust" 1.0 0 -2674135 true "" ""
+"Collective relative deprivation" 1.0 0 -955883 true "" ""
 
 SLIDER
 5
@@ -1160,9 +1166,9 @@ NIL
 HORIZONTAL
 
 MONITOR
-1575
+1735
 160
-1647
+1815
 205
 recruited
 count citizens with [ recruited? ]
@@ -1171,10 +1177,10 @@ count citizens with [ recruited? ]
 11
 
 MONITOR
-1650
-160
-1732
-205
+1735
+210
+1817
+255
 susceptible
 count citizens with [ risk > radicalization-threshold ]
 17
@@ -1193,10 +1199,10 @@ count citizens with [ [ shape ] of locations-here = [ \"public space\" ] ]
 11
 
 OUTPUT
-1100
-205
-1560
-465
+300
+805
+760
+1065
 10
 
 SWITCH
@@ -1212,9 +1218,9 @@ activity-debug?
 
 MONITOR
 1575
-260
+210
 1730
-305
+255
 socialization attempts
 soc-counter
 0
@@ -1223,9 +1229,9 @@ soc-counter
 
 MONITOR
 1575
-210
+160
 1732
-255
+205
 coffee mean attendance
 count citizens with [ [ shape ] of locations-here = [ \"coffee\" ] ] / count locations with [ shape = \"coffee\" ]
 2
@@ -1234,9 +1240,9 @@ count citizens with [ [ shape ] of locations-here = [ \"coffee\" ] ] / count loc
 
 MONITOR
 1575
-310
+260
 1730
-355
+305
 recruitment attempts
 rec-counter
 17
@@ -1310,7 +1316,7 @@ population-employed-%
 population-employed-%
 0
 100
-50.0
+80.0
 5
 1
 NIL
@@ -1485,6 +1491,88 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot count citizens with [ recruited? ]"
+
+PLOT
+1580
+310
+1860
+465
+recruitable
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "if ticks > 0 [ plot count citizens with [ risk > radicalization-threshold ] ]"
+
+PLOT
+1100
+212
+1560
+462
+risk by citizen
+NIL
+NIL
+-1.0
+3.0
+0.0
+50.0
+true
+false
+"set-histogram-num-bars 50\n" ""
+PENS
+"default" 1.0 1 -16777216 true "" "histogram [ risk ] of citizens\n"
+"pen-1" 1.0 0 -8053223 true "" "plot-pen-up\nplotxy radicalization-threshold 0 \nplot-pen-down\nplotxy radicalization-threshold plot-y-max "
+"pen-2" 1.0 0 -11085214 true "" "plot-pen-up\nplotxy r-t-56 0 \nplot-pen-down\nplotxy r-t-56 plot-y-max \nplot-pen-up\nplotxy r-t-100 0 \nplot-pen-down\nplotxy r-t-100 plot-y-max "
+
+MONITOR
+1100
+465
+1350
+510
+rt-low
+100 * count citizens with [ risk < r-t-100 ] / count citizens
+2
+1
+11
+
+MONITOR
+1355
+465
+1495
+510
+rt-between-10-and-5.6
+100 * count citizens with [ risk >= r-t-100 and risk < r-t-56 ] / count citizens
+2
+1
+11
+
+MONITOR
+1500
+465
+1560
+510
+rt-high
+100 * count citizens with [ risk >= r-t-56 ] / count citizens
+2
+1
+11
+
+MONITOR
+1355
+510
+1560
+555
+rt-10
+100 * count citizens with [ risk >= r-t-100 ] / count citizens
+2
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -2091,7 +2179,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.4
+NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

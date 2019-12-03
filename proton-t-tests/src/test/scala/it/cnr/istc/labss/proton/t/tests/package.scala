@@ -5,6 +5,7 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.fixture.FunSuite
 import org.scalatest.Matchers
 import org.scalactic.Snapshots.snap
+import scala.collection.immutable.StringOps
 
 package object tests {
 
@@ -34,7 +35,7 @@ package object tests {
 
     implicit class RichWorkspace(ws: HeadlessWorkspace) {
       private def concat(str: String): String =
-        str.lines.map(_.trim).filter(_.nonEmpty).mkString(" ")
+        new StringOps(str).lines.map(_.trim).filter(_.nonEmpty).mkString(" ")
       def cmd(str: String): Unit = ws.command(concat(str))
       def rpt(str: String): AnyRef = ws.report(concat(str))
       def show(str: String): Unit = println(concat(str) + " : " + rpt(str))
