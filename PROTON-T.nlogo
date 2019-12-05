@@ -913,7 +913,7 @@ total-citizens
 total-citizens
 100
 2000
-2000.0
+5000.0
 50
 1
 citizens
@@ -1513,8 +1513,8 @@ PENS
 PLOT
 1100
 212
-1560
-462
+1555
+557
 risk by citizen
 NIL
 NIL
@@ -1531,10 +1531,10 @@ PENS
 "pen-2" 1.0 0 -11085214 true "" "plot-pen-up\nplotxy r-t-56 0 \nplot-pen-down\nplotxy r-t-56 plot-y-max \nplot-pen-up\nplotxy r-t-100 0 \nplot-pen-down\nplotxy r-t-100 plot-y-max "
 
 MONITOR
-1100
-465
-1350
-510
+1120
+255
+1345
+300
 rt-low
 100 * count citizens with [ risk < r-t-100 ] / count citizens
 2
@@ -1542,10 +1542,10 @@ rt-low
 11
 
 MONITOR
-1355
-465
-1495
-510
+1300
+300
+1440
+345
 rt-between-10-and-5.6
 100 * count citizens with [ risk >= r-t-100 and risk < r-t-56 ] / count citizens
 2
@@ -1553,10 +1553,10 @@ rt-between-10-and-5.6
 11
 
 MONITOR
-1500
-465
-1560
-510
+1375
+390
+1550
+435
 rt-high
 100 * count citizens with [ risk >= r-t-56 ] / count citizens
 2
@@ -1564,13 +1564,24 @@ rt-high
 11
 
 MONITOR
-1355
-510
-1560
-555
+1345
+345
+1550
+390
 rt-10
 100 * count citizens with [ risk >= r-t-100 ] / count citizens
 2
+1
+11
+
+MONITOR
+1490
+230
+1547
+275
+NIL
+ticks
+17
 1
 11
 
