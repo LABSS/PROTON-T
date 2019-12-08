@@ -33,7 +33,7 @@ to export-opinions
   let first-time? not file-exists? file-name 
   file-open file-name
   if first-time? [
-    file-print csv:to-row (list "run-number" "initial-random-seed" "who" "step" "tick" "immigrant?" "male" "muslim" "age-class" "Non integration" "Institutional distrust" "Collective relative deprivation" "fundamentalism")
+    file-print csv:to-row (list "run-number" "initial-random-seed" "who" "step" "immigrant?" "male" "muslim" "age-class" "Non integration" "Institutional distrust" "Collective relative deprivation" "fundamentalism")
   ]   
   ask citizens [
     file-print csv:to-row     (list
