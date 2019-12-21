@@ -867,7 +867,7 @@ GRAPHICS-WINDOW
 789
 -1
 -1
-11.0
+22.0
 1
 10
 1
@@ -878,9 +878,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-69
+34
 0
-69
+34
 1
 1
 1
@@ -913,7 +913,7 @@ total-citizens
 total-citizens
 100
 2000
-2000.0
+1000.0
 50
 1
 citizens
@@ -1428,7 +1428,7 @@ INPUTBOX
 1510
 120
 running-plan
-rpT13
+none
 1
 0
 String
@@ -1575,6 +1575,66 @@ rt-10
 11
 
 @#$#@#$#@
+# WHAT IS IT?
+
+This is a model of recruitment to terrorist groups, initially created in the PROTON project. The model represent social activities in an idealized city as the diving mechanism of opinion dynamics about topics relevant for radicalization. Radicalized agents can then be recruited.
+
+# CALIBRATION
+
+The model can be calibrated with data from national statistics. The model together with the PROTON calibration can be downloaded from the *git rep*. Instruction for the calibration are available at *PROTON MANUAL LINK*. Without the calibration files, the model runs with simplified assumptions.
+
+
+# HOW IT WORKS
+
+The model can be calibrated with data from national statistics. The model together with the PROTON calibration can be downloaded from the *git rep*. Instruction for the calibration are available at *PROTON MANUAL LINK*. Without the calibration files, the model runs with simplified assumptions.
+
+
+Each “agent,” or member of the general population, has an individual level of grievance toward the central authority. GRIEVANCE is based on the agent’s PERCEIVED-HARDSHIP, which is assigned randomly at startup, and on GOVERNMENT-LEGITIMACY, which is global across agents and specified by a slider in the interface.
+Each agent also calculates an individual risk of rebelling at the beginning of each turn. This ESTIMATED-ARREST-PROBABILITY, is based on the number of cops and already rebelling agents within VISION patches, namely 1 - exp (- k * (C/A)v) — where (C/A)v is the ratio of cops to active agents, and k is a constant set in “startup” to ensure a reasonable value when there is only one cop and one agent within a particular field of vision. In our implementation, we changed one aspect of Epstein’s description. After dividing by C by A, we take the “floor” of the result (that is, round downwards to an integer). Without this change, the model does not exhibit punctuated equilibrium. The effect of the change is that if there are more rebels than cops in the neighborhood, the probability of arrest is zero, otherwise it is very nearly 1.0. In other words, the rule could be written more simply as:
+  ifelse a > c [ report 0 ] [ report 0.99 ] 
+An agent’s NET-RISK is the product of the calculated ESTIMATED-ARREST-PROBABILITY and RISK-AVERSION randomly set for each agent at birth.
+The model cycles through three different rules, known as M (move), A (agents) and C (cops):
+Movement rule M says that each cop and non-imprisoned agent moves to a random unoccupied site within VISION patches.
+Agent rule A says that if an agent’s GRIEVANCE exceeds the NET-RISK by a small threshold (set by default to 0.1 in “setup”), the agent decides to rebel. This is noted by changing the agent’s border color from blue to red. (It is also possible for the agent to move from rebellion to quiet, in which case the border color changes from red to blue.)
+Cop rule C says that each cop should look for active agents within VISION patches. If at least one exists, the cop randomly selects one active agent and sends it to jail for a number of turns between 0 and MAX-JAIL-TERM (settable by a slider in the interface) and moves to the patch of the jailed agent. The patch of the jailed agent is considered unoccupied.
+HOW TO USE IT
+Use the sliders to pick the initial settings for the model. INITIAL-COP-DENSITY and POPULATION-DENSITY respectively determine the density of cops and agents in the world. VISION determines the number of patches in each direction that agents and cops can see.
+Click SETUP to initialize the population. Click GO to begin the simulation.
+As the simulation runs, you can adjust GOVERNMENT-LEGITIMACY and MAX-JAIL-TERM. You can control the mobility of the agents through the MOVEMENT? toggle.
+The visualization chooser allows you to choose between 2D visualization where the turtles are circles and triangles or 3D visualization where the agents have people shapes.
+The color of the agents shows their private level of grievance. The darker the green, the higher the GRIEVANCE. This color does not change throughout the run of a model (unless you change the GOVERNMENT-LEGITIMACY slider).
+THINGS TO NOTICE
+Watch how agents exhibit deceptive behavior by changing their public state when cops are present, despite a constant level of private grievance. To see this press the WATCH ONE button, slow down the model, switch to the 3D view and zoom in on the selected agent. It may be easier to see this phenomenon if you change the sliders, especially reducing the VISION.
+Watch the plot of active agents. Notice that it exhibits “punctuated equilibrium” — periods of quiescence followed by periods of rebellion.
+THINGS TO TRY
+Epstein claims that movement of the agents causes more frequent episodes of rebellion. Run the model with the MOVEMENT? switch on and off to see if you get this result.
+Compare the effects of a gradual erosion in the perceived legitimacy of the central authority to a smaller, but immediate drop. For example, set GOVERNMENT-LEGITIMACY to 0.9 and reduce it to zero over 250 runs, plotting the legitimacy and the number of active agents. Now do another run, beginning with legitimacy at 0.9. This time, leave the legitimacy constant for 80 runs and then drop it to 0.7 at once. Observe the results. Try to explain them. Think of historical examples of this phenomena. What are the implications of this result for the strategy of revolutionary leaders?
+Epstein quotes de Tocqueville: “It is not always when things are going from bad to worse that revolutions break out. On the contrary, it oftener happens that when a people that has put up with oppressive rule over a long period without protest suddenly finds the government relaxing its pressure, it takes up arms against it.” Test de Tocqueville’s observation in the model by comparing the effects of a gradual erosion in perceived legitimacy with a gradual erosion in the number of cops. Observe the results. Explain the difference.
+EXTENDING THE MODEL
+Write a reporter procedure that reports true when there is a rebellion, false during quiescent periods.
+Measure the intervals between episodes of rebellion. What is the distribution of these waiting times?
+Try changing some of Epstein’s assumptions as below. Do these changes create qualitative differences in results?
+Change GOVERNMENT-LEGITIMACY such that it increases proportionally with the number of nearby jailed agents.
+Change the model such that each agent’s grievance is influenced by the value of other nearby agents.
+NETLOGO FEATURES
+Note the use of a patch variable to store precomputed neighborhood agentsets. This improves performance because the neighborhoods don’t have to be calculated over and over again.
+CREDITS AND REFERENCES
+This model, and the preceding explanation, is adapted from Joshua M. Epstein, “Modeling civil violence: An agent-based computational approach”, Proceedings of the National Academy of Sciences, Vol. 99, Suppl. 3, May 14, 2002, and is available at https://www.ncbi.nlm.nih.gov/pmc/articles/PMC128592/.
+HOW TO CITE
+If you mention this model or the NetLogo software in a publication, we ask that you include the citations below.
+For the model itself:
+Wilensky, U. (2004). NetLogo Rebellion model. http://ccl.northwestern.edu/netlogo/models/Rebellion. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
+Please cite the NetLogo software as:
+Wilensky, U. (1999). NetLogo. http://ccl.northwestern.edu/netlogo/. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
+COPYRIGHT AND LICENSE
+Copyright 2004 Uri Wilensky.
+ 
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+Commercial licenses are also available. To inquire about commercial licenses, please contact Uri Wilensky at uri@northwestern.edu.
+This model was created as part of the projects: PARTICIPATORY SIMULATIONS: NETWORK-BASED DESIGN FOR SYSTEMS LEARNING IN CLASSROOMS and/or INTEGRATED SIMULATION AND MODELING ENVIRONMENT. The project gratefully acknowledges the support of the National Science Foundation (REPP & ROLE programs) – grant numbers REC #9814682 and REC-0126227.
+ 
+
+
 ## WHAT IS IT?
 
 (a general understanding of what the model is trying to show or explain)

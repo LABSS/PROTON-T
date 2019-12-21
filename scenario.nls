@@ -1,27 +1,42 @@
 to load-opinions
-  let opinions read-csv "combination_data"  
-  let table table:group-items opinions [ line -> sublist line 0 4 ]; group the rows by lists with initial 4 items
-  ask  citizens [
-    let my-key (list
-      ifelse-value get "immigrant?" [ 1 ] [ 0 ]
-      ifelse-value get "male?"      [ 1 ] [ 0 ]
-      ifelse-value get "muslim?"    [ 1 ] [ 0 ]
-                   age-class)
-    let l item 0 table:get table my-key
-    ; l looks like this: [0 0 1 5 "[-0.06, ..]" "[0.89,..]" "[0.70,..]" "[0.91,..]"]
-    ; netlogo does not understand commas, but once removed them, 
-    ; the runresult of the string is the list we need. 
-    let f-list runresult remove "," item 7 l 
-    ; j is the individual chosen at random
-    let j random length f-list
-    set fundamentalism-score item j f-list
-    ; then we set the three opinions to the same individual j, inverting when needed    
-    set-opinion-value "Non integration" -1 * item j runresult remove "," item 4 l
-    set-opinion-value "Institutional distrust" -1 * item j runresult remove "," item 5 l    
-    set-opinion-value "Collective relative deprivation" item j runresult remove "," item 6 l
+  carefully [
+    let opinions read-csv "combination_data"  
+    let table table:group-items opinions [ line -> sublist line 0 4 ]; group the rows by lists with initial 4 items
+    ask citizens [
+      let my-key (list
+        ifelse-value get "immigrant?" [ 1 ] [ 0 ]
+        ifelse-value get "male?"      [ 1 ] [ 0 ]
+        ifelse-value get "muslim?"    [ 1 ] [ 0 ]
+        age-class)
+      let l item 0 table:get table my-key
+      ; l looks like this: [0 0 1 5 "[-0.06, ..]" "[0.89,..]" "[0.70,..]" "[0.91,..]"]
+      ; netlogo does not understand commas, but once removed them, 
+      ; the runresult of the string is the list we need. 
+      let f-list runresult remove "," item 7 l 
+      ; j is the individual chosen at random
+      let j random length f-list
+      set fundamentalism-score item j f-list
+      ; then we set the three opinions to the same individual j, inverting when needed    
+      set-opinion-value "Non integration" -1 * item j runresult remove "," item 4 l
+      set-opinion-value "Institutional distrust" -1 * item j runresult remove "," item 5 l    
+      set-opinion-value "Collective relative deprivation" item j runresult remove "," item 6 l
+    ]
+  ] [
+    output-print "running with uncalibrated opinions"
+    ask citizens [
+      set fundamentalism-score random-float 4 - 2
+      set-opinion-value "Non integration" random-float 4 - 2
+      set-opinion-value "Institutional distrust" random-float 4 - 2  
+      set-opinion-value "Collective relative deprivation" random-float 4 - 2
+    ]
+    let auth-threshold mean [ fundamentalism-score ] of citizens + 
+    standard-deviation [ fundamentalism-score ] of citizens
+    ask citizens [ 
+      table:put attributes "authoritarian?" fundamentalism-score >= auth-threshold
+    ]
   ]
   let auth-threshold mean [ fundamentalism-score ] of citizens + 
-    standard-deviation [ fundamentalism-score ] of citizens
+  standard-deviation [ fundamentalism-score ] of citizens
   ask citizens [ 
     table:put attributes "authoritarian?" fundamentalism-score >= auth-threshold
   ]
@@ -88,36 +103,54 @@ end
 
 ;                                >0 , <1
 to change-global-gender-ratio [ target-ratio ]
-  let ratio-m []
-  foreach areas [ a -> 
-    let males-pop sum map [ i -> last i ] filter [ i -> item 1 i ] table:get population-details a 
-    let females-pop sum map [ i -> last i ] filter [ i -> not item 1 i ] table:get population-details a 
-    set ratio-m lput (males-pop / (males-pop + females-pop)) ratio-m 
-  ]
-  let l []
-  foreach areas [ a ->
-    foreach table:get population-details a [ i ->
-      ; i here is [ immigrant? male? muslim?  age weight ]
-      ; we update the weight by dividing for the old mean and multiplying for the new
-      set l lput fput a replace-item 4 i (item 4 i * ifelse-value (item 1 i) [ ; male
-        target-ratio / item (a - 1) ratio-m
-      ] [ ; female
-        (1 - target-ratio) / (1 - item (a - 1) ratio-m)
-      ] ) l
+  ifelse population-details = 0 [
+    ; running with random population data
+    ; TODO
+    print "TODO change-global-gender-ratio"
+  ] [
+    ; running with real population data
+    let ratio-m []
+    foreach areas [ a -> 
+      let males-pop sum map [ i -> last i ] filter [ i -> item 1 i ] table:get population-details a 
+      let females-pop sum map [ i -> last i ] filter [ i -> not item 1 i ] table:get population-details a 
+      set ratio-m lput (males-pop / (males-pop + females-pop)) ratio-m 
     ]
+    let l []
+    foreach areas [ a ->
+      foreach table:get population-details a [ i ->
+        ; i here is [ immigrant? male? muslim?  age weight ]
+        ; we update the weight by dividing for the old mean and multiplying for the new
+        set l lput fput a replace-item 4 i (item 4 i * ifelse-value (item 1 i) [ ; male
+          target-ratio / item (a - 1) ratio-m
+        ] [ ; female
+          (1 - target-ratio) / (1 - item (a - 1) ratio-m)
+        ] ) l
+      ]
+    ]
+    set population-details group-by-first-item  l
   ]
-  set population-details group-by-first-item  l
 end
 
 to-report make-attributes-set [ the-area ] ; citizen procedure. Warning: sets age as a side effect.
-  let my-group rnd:weighted-one-of-list table:get population-details the-area [ i -> last i ]
-  set birth-year -1 * item 3 my-group
-  report table:from-list (list
-    (list "immigrant?" item 0 my-group)
-    (list "male?"      item 1 my-group)
-    (list "muslim?"    item 2 my-group)    
-    (list "criminal-history?" ifelse-value (random 100 < criminal-history-percent) [ true ][ false ])
-  )
+  ifelse population-details = 0 [
+    ; running with random population data
+    set birth-year (random (18 - 90)) - 18
+    report table:from-list (list
+      (list "immigrant?" ifelse-value random 2 > 0 [ true ][ false ])
+      (list "male?"      ifelse-value random 2 > 0 [ true ][ false ])
+      (list "muslim?"    ifelse-value random 2 > 0 [ true ][ false ])    
+      (list "criminal-history?" ifelse-value (random 100 < criminal-history-percent) [ true ][ false ])
+    )
+  ] [
+    let my-group rnd:weighted-one-of-list table:get population-details the-area [ i -> last i ]
+    set birth-year -1 * item 3 my-group
+    report table:from-list (list
+      (list "immigrant?" item 0 my-group)
+      (list "male?"      item 1 my-group)
+      (list "muslim?"    item 2 my-group)    
+      (list "criminal-history?" ifelse-value (random 100 < criminal-history-percent) [ true ][ false ])
+    )
+  ]
 end
 
 to-report local-table-by [ name the-area ]
@@ -126,18 +159,30 @@ end
 
 ; this runs before resize, so it should not operate on turtles or links.
 to load-totals
-  set local group-by-first-item read-csv "neighborhoods"
-  let population group-by-first-item read-csv "neukolln-totals"
-  set areas table:keys population
-  assert [ -> sqrt length  areas = round sqrt length areas ]
-  set area-names map [ i -> first first (table:get population i) ] areas
-  set area-population map [ i -> last first table:get population i ] areas
-  ; area-population gives the right number of citizens per neighborhood
-  set area-population table:from-list map [ i -> list i round
-    (item (i - 1) area-population / sum area-population * total-citizens) ] areas
-  ; population-details has, by area and cell, the cell population to use as a weight when drawing attributes.
-  ; example: [[ 1 [[.. ]..[false false false 119 29.675] [false false true 16 79] ..] [2.. ]]
+  carefully [
+    set local group-by-first-item read-csv "neighborhoods"
+    let population group-by-first-item read-csv "neukolln-totals"
+    set areas table:keys population ; [1 2 3 4]
+    assert [ -> sqrt length  areas = round sqrt length areas ]
+    set area-names map [ i -> first first (table:get population i) ] areas
+    set area-population map [ i -> last first table:get population i ] areas
+    ; area-population gives the right number of citizens per neighborhood
+    set area-population table:from-list map [ i -> list i round
+      (item (i - 1) area-population / sum area-population * total-citizens) ] areas
+    ; population-details has, by area and cell, the cell population to use as a weight when drawing attributes.
+    ; example: [[ 1 [[.. ]..[false false false 119 29.675] [false false true 16 79] ..] [2.. ]]
+    set population-details group-by-first-item read-csv "neukolln-by-citizenship-migrantbackground-gender-religion-age"   
+  ] [
+    output-print "running with uncalibrated totals"
+    set areas [ 1 ]
+    set area-names [ "base" ]
+    set area-population table:from-list (list list 1 total-citizens)
+  ]
+  ; for population details, we won't re-build the whole table with random numbers.
+  ; instead, when it is empty, the code will switch to another branch for generation.
+  carefully [
   set population-details group-by-first-item read-csv "neukolln-by-citizenship-migrantbackground-gender-religion-age"   
+  ] [ ]
 end 
 
 to-report location-names
