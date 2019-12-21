@@ -1051,7 +1051,7 @@ PLOT
 470
 1860
 635
-Institutional distrust (each agent)
+opinions (each agent)
 NIL
 NIL
 0.0

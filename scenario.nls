@@ -190,14 +190,19 @@ to-report location-names
 end
 
 to-report location-definitions [ the-area ]
+  ifelse local = 0 [
+    ; no data found, initialization with fixed values (taken from neukolln area 1)
+    report [[14 "propaganda place" 3] [6 "community center" 3] [10 "public space" 3] [5 "workplace" 3] [50 "coffee" 2]]
+  ][
     report (list
     ;                        number                                  name/shape size
     (list local-table-by "num of mosques"           the-area "propaganda place"    3)
     (list local-table-by "num of community centers" the-area "community center"    3)      
     (list local-table-by "num of parks"             the-area     "public space"    3)  
     (list  5                                                        "workplace"    3)
-    (list local-table-by "numof coffees"            the-area           "coffee"    1)
+    (list local-table-by "numof coffees"            the-area           "coffee"    2)
   )
+  ]
 end
 
 to-report mandatory-activity-definition-list
