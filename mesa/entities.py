@@ -9,6 +9,14 @@ from mesa import Agent
 if typing.TYPE_CHECKING:
     from model import ProtonT
 
+
+class Locations:
+
+    def __init__(self, size=0, shape='null'):
+        self.shape: [] = shape
+        self.size: int = size
+
+
 class Citizen(Agent):
 
     def __init__(self, model, unique_id):
@@ -17,9 +25,10 @@ class Citizen(Agent):
         self.unique_id = unique_id
         self.x = 0
         self.y = 0
-        self.area = 0
+        self.area: int = 0
+        self.residence: Locations = Locations()
 
     def __repr__(self):
-        return "Node: " + str(self.unique_id)
+        return "Agent: " + str(self.unique_id)
 
 

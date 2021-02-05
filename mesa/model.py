@@ -26,12 +26,40 @@ class ProtonT(Model):
     def __repr__(self):
         return "ProtonT Model"
 
+    def load_totals(self):
+        print('Load Totals')
+        # load demographic data
+
+    def setup_world(self):
+        print('Load Totals')
+        # load demographic data
+
+    def setup_topics(self):
+        print('Load Totals')
+        # load demographic data
+
+    def load_opinions(self):
+        from scenario import Opinions
+        print('Load Totals')
+        # load demographic data
+
+
+
     def setup_communities_citiziens(self):
         for citizen in range(self.number_of_citizens):
             new_citizen = Citizen(self, citizen)
             self.schedule.add(new_citizen)
 
+
 model = ProtonT()
+
+model.load_totals()
+model.setup_world()
+model.setup_topics()
+
 model.setup_communities_citiziens()
+
+model.load_opinions()
+
 for agent in model.schedule.agents:
     print(agent)
