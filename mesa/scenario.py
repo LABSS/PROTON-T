@@ -12,4 +12,3 @@ def from_db_to_dict(variable_name, db):
             table[db.iloc[i, 0]] = [db.iloc[i, 1], db.iloc[i, 2]]
     return table
 
-
