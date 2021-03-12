@@ -5,6 +5,7 @@ from mesa import Model
 from mesa.time import BaseScheduler
 from numpy.random import default_rng
 from entities import Citizen
+from entities import Topic
 import pandas as pd
 import scenario as scen
 import os
@@ -30,9 +31,15 @@ class ProtonT(Model):
         self.area_population: Dict = dict()  # population into the areas, {1:9999, ...}
         self.population_details: Dict = dict()  #
 
+        # topic list
+        self.topic_agentset: list = []
+
         # todo: add sliders definitions
         self.male_ratio: list = ["from scenario", 45, 50, 55]
         self.male_ratio_index: int = 1
+        self.community_side_length: list = [20, 100]
+        self.community_side_length_dv: int = 35  # default value
+        self.size_patch_grid: list = []
         # todo: add all global definitions
 
         # self.migrant_muslims_ratio
@@ -108,8 +115,8 @@ class ProtonT(Model):
         local_db = self.read_csv_city("neighborhoods")
         self.local = scen.from_db_to_dict("local", local_db)
         population_db = self.read_csv_city("neukolln-totals")
-        model.population = scen.from_db_to_dict("population", population_db)
-        model.areas = list(model.population.keys())
+        self.population = scen.from_db_to_dict("population", population_db)
+        self.areas = list(self.population.keys())
         names = population_db["area_name"].values.tolist()
         population = population_db["sum(value)"].values.tolist()
         population_sum = sum(population)
@@ -124,6 +131,15 @@ class ProtonT(Model):
                     details.append(row.values)
             self.population_details[a] = {a: details}
 
+    def setup_world(self):
+        world_side = self.community_side_length_dv * len(self.areas)**(1/2)
+        self.size_patch_grid = [0, (world_side - 1), 0, (world_side - 1)]
+
+    def setup_topic(self):
+        for a_topic in scen.topic_definition_list():
+            new_topic = Topic(a_topic[0], a_topic[1], a_topic[2])
+            self.topic_agentset.append(new_topic)
+
 
 if __name__ == "__main__":
     model = ProtonT()
@@ -131,8 +147,9 @@ if __name__ == "__main__":
     model.load_totals()
     if model.male_ratio[model.male_ratio_index] != "from scenario":
         model.change_global_gender_ratio(model.male_ratio[model.male_ratio_index] / 100)
+    model.setup_topic()
     model.setup_communities_citizens()
     # todo: time loop
     for agent in model.schedule.agents:
-            print(agent)
+        print(agent)
         # todo: agent activation

@@ -12,3 +12,12 @@ def from_db_to_dict(variable_name, db):
             table[db.iloc[i, 0]] = [db.iloc[i, 1], db.iloc[i, 2]]
     return table
 
+def topic_definition_list():
+    # type, risk-weight, protective-weight
+    return  [
+                ["Non integration", 0.188, 0.178],
+                ["Institutional distrust", 0.277, 0.153],
+                ["Collective relative deprivation", 0.116, 0],
+            ]
+
+
