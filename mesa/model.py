@@ -121,7 +121,7 @@ class ProtonT(Model):
         population = population_db["sum(value)"].values.tolist()
         population_sum = sum(population)
         for i in range(len(model.areas)):
-            key = model.areas[i]
+            key = self.areas[i]
             self.area_population[key] = population[i] / population_sum * self.total_citizens
             self.area_names[key] = names[i]
         for a in self.areas:
