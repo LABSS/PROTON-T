@@ -11,6 +11,17 @@ class Location:
         self.size: int = size
 
 
+class Topic:
+
+    def __init__(self,  name="Topic", risk=0.0, protective=0.0):
+        self.topic_name: str = name
+        self.risk_weight: float = risk
+        self.protective_weight: float = protective
+
+    def __repr__(self):
+        return "Topic: " + self.topic_name
+
+
 class Citizen(Agent):
 
     def __init__(self, model, unique_id):
@@ -24,5 +35,3 @@ class Citizen(Agent):
 
     def __repr__(self):
         return "Agent: " + str(self.unique_id)
-
-
