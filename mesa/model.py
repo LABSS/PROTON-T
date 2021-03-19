@@ -15,6 +15,25 @@ class ProtonT(Model):
 
     def __init__(self, number_of_citizens=150, seed=os.urandom(8)[0]):
         super().__init__(seed=seed)
+        """
+               Directory structure:
+                   ├───inputs (@self.input_directory)
+                   │   ├───neukolln (@self.eindhoven)
+                   │   │   ├───data
+                   │   │   └───raw
+
+               """
+        self.mesa_dir: str = os.getcwd()
+        self.cwd: str = os.path.dirname(self.mesa_dir)
+        self.input_directory: str = os.path.join(self.cwd, "inputs")
+        self.neukolln: str = os.path.join(self.input_directory, "neukolln")
+        self.data_folder: str = os.path.join(self.neukolln, "data")
+        self.population_details_db = self.read_csv_city("neukolln-by-citizenship-migrantbackground-gender-religion-age")
+        self.local = scen.from_db_to_dict("local", self.read_csv_city("neighborhoods"))
+        self.population_db = self.read_csv_city("neukolln-totals")
+        self.population = scen.from_db_to_dict("population", self.population_db)
+
+        # Globals
         self.seed: int = seed
         self.tick: int = 0
         self.space_width: int = 40
@@ -24,8 +43,6 @@ class ProtonT(Model):
         self.total_citizens: int = number_of_citizens
 
         self.number_of_citizens: int = number_of_citizens
-        self.local: Dict = dict()  # table with values for setup
-        self.population: Dict = dict()
         self.areas = []  # list index of areas, [1,2 ...4]
         self.area_names: Dict = dict()  # names of areas, {1:A, ...}
         self.area_population: Dict = dict()  # population into the areas, {1:9999, ...}
@@ -54,21 +71,6 @@ class ProtonT(Model):
         # self.r_t_100
         # self.r_t_56
 
-        """
-        Directory structure:
-            ├───inputs (@self.input_directory)
-            │   ├───neukolln (@self.eindhoven)
-            │   │   ├───data
-            │   │   └───raw
-            
-        """
-        self.mesa_dir: str = os.getcwd()
-        self.cwd: str = os.path.dirname(self.mesa_dir)
-        self.input_directory: str = os.path.join(self.cwd, "inputs")
-        self.neukolln: str = os.path.join(self.input_directory, "neukolln")
-        self.data_folder: str = os.path.join(self.neukolln, "data")
-        self.population_details_db = self.read_csv_city("neukolln-by-citizenship-migrantbackground-gender-religion-age")
-
     def __repr__(self):
         return "ProtonT Model"
 
@@ -93,32 +95,29 @@ class ProtonT(Model):
         males_pop = 0
         females_pop = 0
         for i in self.areas:
-            details_list = self.population_details[i][i]
+            details_list = self.population_details[i]
             for detail in details_list:
                 if detail[2]:  # male
                     males_pop += detail[5]
                 else:
                     females_pop += detail[5]
             ratio_m.append(males_pop / (males_pop + females_pop))
-        new_list = []
+
         for i in self.areas:
-            details_list = self.population_details[i][i]
+            details_list = self.population_details[i]
+            new_list = []
             for detail in details_list:
                 if detail[2]:
                     detail[5] = detail[5] * target_ratio / ratio_m[i - 1]
                 else:
                     detail[5] = detail[5] * (1 - target_ratio) / ratio_m[i - 1]
                 new_list.append(detail)
-            self.population_details[i] = {i: new_list}
+            self.population_details[i] = new_list
 
     def load_totals(self):
-        local_db = self.read_csv_city("neighborhoods")
-        self.local = scen.from_db_to_dict("local", local_db)
-        population_db = self.read_csv_city("neukolln-totals")
-        self.population = scen.from_db_to_dict("population", population_db)
         self.areas = list(self.population.keys())
-        names = population_db["area_name"].values.tolist()
-        population = population_db["sum(value)"].values.tolist()
+        names = self.population_db["area_name"].values.tolist()
+        population = self.population_db["sum(value)"].values.tolist()
         population_sum = sum(population)
         for i in range(len(model.areas)):
             key = self.areas[i]
@@ -129,7 +128,7 @@ class ProtonT(Model):
             for index, row in self.population_details_db.iterrows():
                 if row['area_code'] == a:
                     details.append(row.values)
-            self.population_details[a] = {a: details}
+            self.population_details[a] = details
 
     def setup_world(self):
         world_side = self.community_side_length_dv * len(self.areas)**(1/2)
