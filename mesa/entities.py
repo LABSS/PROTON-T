@@ -13,7 +13,7 @@ class Location:
 
 class Topic:
 
-    def __init__(self,  name="Topic", risk=0.0, protective=0.0):
+    def __init__(self,  name="Topic", risk=0.5, protective=0.5):
         self.topic_name: str = name
         self.risk_weight: float = risk
         self.protective_weight: float = protective
