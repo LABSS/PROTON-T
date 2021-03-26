@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import Dict, Union, Any
 import time
-from mesa import Model
-from mesa.time import BaseScheduler
+from mesa import Agent, Model
+from mesa.time import RandomActivation
 from numpy.random import default_rng
 from entities import Citizen
 from entities import Topic
@@ -32,6 +32,7 @@ class ProtonT(Model):
         self.local = scen.from_db_to_dict("local", self.read_csv_city("neighborhoods"))
         self.population_db = self.read_csv_city("neukolln-totals")
         self.population = scen.from_db_to_dict("population", self.population_db)
+        self.opinions_db = self.read_csv_city("combination_data")
 
         # Globals
         self.seed: int = seed
@@ -39,14 +40,14 @@ class ProtonT(Model):
         self.space_width: int = 40
         self.space_height: int = 40
         self.rng: default_rng = default_rng(self.seed)
-        self.schedule: BaseScheduler = BaseScheduler(self)
+        self.schedule: RandomActivation = RandomActivation(self)
         self.total_citizens: int = number_of_citizens
 
         self.number_of_citizens: int = number_of_citizens
         self.areas = []  # list index of areas, [1,2 ...4]
         self.area_names: Dict = dict()  # names of areas, {1:A, ...}
         self.area_population: Dict = dict()  # population into the areas, {1:9999, ...}
-        self.population_details: Dict = dict()  #
+        self.population_details: Dict = dict()
 
         # topic list
         self.topic_agentset: list = []
@@ -73,6 +74,10 @@ class ProtonT(Model):
 
     def __repr__(self):
         return "ProtonT Model"
+
+    def step(self):
+        '''Advance the model by one step.'''
+        self.schedule.step()
 
     def setup_communities_citizens(self):
         for citizen in range(self.number_of_citizens):
@@ -148,7 +153,6 @@ if __name__ == "__main__":
         model.change_global_gender_ratio(model.male_ratio[model.male_ratio_index] / 100)
     model.setup_topic()
     model.setup_communities_citizens()
+    scen.load_opinions(model)
     # todo: time loop
-    for agent in model.schedule.agents:
-        print(agent)
-        # todo: agent activation
+    # model.step()

@@ -20,4 +20,29 @@ def topic_definition_list():
                 ["Collective relative deprivation", 0.116, 0],
             ]
 
+def get_topic_name_list(sim_model):
+    names = []
+    for topic in sim_model.topic_agentset:
+        names.append(topic.topic_name)
+    return names
+
+def get_topic_index_by_name(sim_model,name):
+    index = 0
+    i= 0
+    for topic in sim_model.topic_agentset:
+        if topic.topic_name == name:
+            index = i
+        i += 1
+    return index
+
+def load_opinions(sim_model):
+    citizen_agentset = sim_model.schedule.agents
+    sim_model.rng.shuffle(citizen_agentset)
+    for i in citizen_agentset:
+        print(i)
+
+
+
+
+
 

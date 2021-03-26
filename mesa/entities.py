@@ -32,6 +32,12 @@ class Citizen(Agent):
         self.y = 0
         self.area: int = 0
         self.residence: Location = Location()
+        self.topics: list = []
 
     def __repr__(self):
         return "Agent: " + str(self.unique_id)
+
+    def step(self):
+        # The agent's step will go here.
+        # For demonstration purposes we will print the agent's unique_id
+        print("Hi, I am agent " + str(self.unique_id) + ".")
