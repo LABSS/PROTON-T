@@ -13,16 +13,9 @@ import os
 
 class ProtonT(Model):
 
-    def __init__(self, number_of_citizens=150, seed=os.urandom(8)[0]):
+    def __init__(self, number_of_citizens=25, seed=os.urandom(8)[0]):
         super().__init__(seed=seed)
-        """
-               Directory structure:
-                   ├───inputs (@self.input_directory)
-                   │   ├───neukolln (@self.eindhoven)
-                   │   │   ├───data
-                   │   │   └───raw
 
-               """
         self.mesa_dir: str = os.getcwd()
         self.cwd: str = os.path.dirname(self.mesa_dir)
         self.input_directory: str = os.path.join(self.cwd, "inputs")
@@ -36,6 +29,7 @@ class ProtonT(Model):
 
         # Globals
         self.seed: int = seed
+        self.ticks: int = 3
         self.tick: int = 0
         self.space_width: int = 40
         self.space_height: int = 40
@@ -50,7 +44,7 @@ class ProtonT(Model):
         self.population_details: Dict = dict()
 
         # topic list
-        self.topic_agentset: list = []
+        self.topic_list: list = []
 
         # todo: add sliders definitions
         self.male_ratio: list = ["from scenario", 45, 50, 55]
@@ -75,13 +69,10 @@ class ProtonT(Model):
     def __repr__(self):
         return "ProtonT Model"
 
-    def step(self):
-        '''Advance the model by one step.'''
-        self.schedule.step()
-
     def setup_communities_citizens(self):
         for citizen in range(self.number_of_citizens):
             new_citizen = Citizen(self, citizen)
+            # todo from netlogo setup_communities_citizen
             self.schedule.add(new_citizen)
 
     def read_csv_city(self, filename: str):
@@ -142,7 +133,7 @@ class ProtonT(Model):
     def setup_topic(self):
         for a_topic in scen.topic_definition_list():
             new_topic = Topic(a_topic[0], a_topic[1], a_topic[2])
-            self.topic_agentset.append(new_topic)
+            self.topic_list.append(new_topic)
 
 
 if __name__ == "__main__":
@@ -154,5 +145,19 @@ if __name__ == "__main__":
     model.setup_topic()
     model.setup_communities_citizens()
     scen.load_opinions(model)
-    # todo: time loop
-    # model.step()
+    # time loop
+    for t in range(1, model.ticks):
+        model.tick = t
+        citizen_agentset = model.schedule.agents
+        model.rng.shuffle(citizen_agentset)
+        # citizen loop
+        for citizen_agent in citizen_agentset:
+            # end activity or activity without duration
+            if citizen_agent.countdown == 0:
+                citizen_agent.current_task = "none"
+                citizen_agent.current_activity = "none"
+                # todo activity class
+
+
+
+
