@@ -7,7 +7,9 @@ lazy val root = (project in file(".")).
     name := "proton-t-tests"
   )
 
-resolvers += Resolver.bintrayRepo("netlogo", "NetLogo-JVM")
+// https://github.com/NetLogo/NetLogo/issues/1915
+resolvers +=
+  "NetLogoJVM" at "https://dl.bintray.com/netlogo/NetLogo-JVM/"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.5" % Test,
@@ -36,8 +38,8 @@ downloadFromZip := {
   }
 }
 
-compile in Test := (compile in Test).dependsOn(downloadFromZip).value
+Test / compile := (Test /compile dependsOn downloadFromZip).value
 
-fork in Test := true
+Test / fork  := true
 
-javaOptions in test += "-Xms512M -Xmx3000M -Xss1M -XX:+UseConcMarkSweepGC -XX:NewRatio=8"
+test / javaOptions += "-Xms512M -Xmx3000M -Xss1M -XX:+UseConcMarkSweepGC -XX:NewRatio=8"
