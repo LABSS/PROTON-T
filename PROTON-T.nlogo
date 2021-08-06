@@ -317,11 +317,11 @@ end
 
 to profile-go
   set total-citizens 10000
-  profiler:reset         ; clear the data
-  profiler:start         ; start profiling
   random-seed 12
   setup                  ; set up the model
-  repeat 40 [ go show ticks]
+  profiler:reset         ; clear the data
+  profiler:start         ; start profiling
+  repeat 30 [ go show ticks]
   profiler:stop          ; stop profiling
   print profiler:report  ; view the results
   profiler:reset         ; clear the data

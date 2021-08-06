@@ -1,0 +1,8 @@
+How-to
+
+access the wizard data
+
+The results are in T-0.9 (T_rp0.9) che sta nella radice di GitHub sul notebook.
+
+poi 
+(base) paolucci@tiny:~/GitHub/PROTON-T-RESULTS$ jupyter-notebook 
