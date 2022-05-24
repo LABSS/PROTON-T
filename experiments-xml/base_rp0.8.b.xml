@@ -5,7 +5,7 @@
     <final>show (word "Time elapsed:" timer)
     </final>   
     <!--                                assuming 6 months = 3060 steps with 17-hours days  -->
-    <timeLimit steps="6120"/>
+    <timeLimit steps="61200"/>
     <!-- t1 recruited citizens -->
     <metric>t1</metric>
     <!-- t2 citizen at risk (over threshold) -->

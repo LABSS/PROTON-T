@@ -1,10 +1,10 @@
 <experiments>
-  <experiment name="high-risk_rp0.8" repetitions="3" runMetricsEveryStep="true">
+  <experiment name="cpos_rp0.8" repetitions="2" runMetricsEveryStep="true">
     <setup>setup</setup>
   <go>go</go>
   <final>show (word "Time elapsed:" timer)
     </final>
-  <timeLimit steps="6120" />
+  <timeLimit steps="61200" />
   <metric>t1</metric>
   <metric>t2</metric>
   <metric>t3 "mean" 0</metric>
@@ -32,7 +32,7 @@
   <metric>fail-activity-counter</metric>
   <metric>police-actions-counter</metric>
   <enumeratedValueSet variable="high-risk-employed">
-      <value value="75" />
+      <value value="&quot;no intervention&quot;" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="total-citizens">
       <value value="40000" />
@@ -62,7 +62,7 @@
       <value value="50" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="cpo-%">
-      <value value="0" />
+      <value value="50" />
     </enumeratedValueSet>
   <enumeratedValueSet variable="recruit-hours-threshold">
       <value value="200" />

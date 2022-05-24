@@ -1,10 +1,10 @@
 <experiments>
-  <experiment name="communityworkers_rp0.8" repetitions="3" runMetricsEveryStep="true">
+  <experiment name="communityworkers_rp0.8" repetitions="2" runMetricsEveryStep="true">
     <setup>setup</setup>
   <go>go</go>
   <final>show (word "Time elapsed:" timer)
     </final>
-  <timeLimit steps="6120" />
+  <timeLimit steps="61200" />
   <metric>t1</metric>
   <metric>t2</metric>
   <metric>t3 "mean" 0</metric>

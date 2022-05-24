@@ -1,11 +1,11 @@
 <experiments>
-  <experiment name="base_rp08" repetitions="3" runMetricsEveryStep="true">
+  <experiment name="base_rp08" repetitions="2" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <final>show (word "Time elapsed:" timer)
     </final>   
     <!--                                assuming 6 months = 3060 steps with 17-hours days  -->
-    <timeLimit steps="6120"/>
+    <timeLimit steps="61200"/>
     <!-- t1 recruited citizens -->
     <metric>t1</metric>
     <!-- t2 citizen at risk (over threshold) -->
