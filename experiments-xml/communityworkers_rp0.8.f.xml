@@ -1,0 +1,98 @@
+<experiments>
+  <experiment name="communityworkers_rp0.8" repetitions="3" runMetricsEveryStep="true">
+    <setup>setup</setup>
+  <go>go</go>
+  <final>show (word "Time elapsed:" timer)
+    </final>
+  <timeLimit steps="6120" />
+  <metric>t1</metric>
+  <metric>t2</metric>
+  <metric>t3 "mean" 0</metric>
+  <metric>t4 "mean" 0</metric>
+  <metric>t5 "mean" "Non integration" 0</metric>
+  <metric>t5 "mean" "Institutional distrust" 0</metric>
+  <metric>t5 "mean" "Collective relative deprivation" 0</metric>
+  <metric>t5 "median" "Non integration" 0</metric>
+  <metric>t5 "median" "Institutional distrust" 0</metric>
+  <metric>t5 "median" "Collective relative deprivation" 0</metric>
+  <metric>t5 "standard-deviation" "Non integration" 0</metric>
+  <metric>t5 "standard-deviation" "Institutional distrust" 0</metric>
+  <metric>t5 "standard-deviation" "Collective relative deprivation" 0</metric>
+  <metric>t6  "residence" 0</metric>
+  <metric>t6  "coffee" 0</metric>
+  <metric>t6  "public space" 0</metric>
+  <metric>t6  "propaganda place" 0</metric>
+  <metric>t6  "community center" 0</metric>
+  <metric>soc-counter</metric>
+  <metric>soc-online-counter</metric>
+  <metric>rec-counter</metric>
+  <metric>min [ hours-to-recruit ] of citizens</metric>
+  <metric>mean [ hours-to-recruit ] of citizens</metric>
+  <metric>count links</metric>
+  <metric>fail-activity-counter</metric>
+  <metric>police-actions-counter</metric>
+  <enumeratedValueSet variable="high-risk-employed">
+      <value value="&quot;no intervention&quot;" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="total-citizens">
+      <value value="40000" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="alpha">
+      <value value="0.1" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="population-employed-%">
+      <value value="10" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="activity-radius">
+      <value value="5" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="activity-debug?">
+      <value value="false" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="work-socialization-probability">
+      <value value="0.1" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="number-workers-per-community-center">
+      <value value="5" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="links-cap-mean">
+      <value value="10" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="male-ratio">
+      <value value="50" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="cpo-%">
+      <value value="0" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="recruit-hours-threshold">
+      <value value="200" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="activity-value-update">
+      <value value="0.5" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="scenario">
+      <value value="&quot;neukolln&quot;" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="community-side-length">
+      <value value="45" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="radicalization-percentage">
+      <value value="5.6" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="talk-effect-size">
+      <value value="0.04" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="socialize-probability">
+      <value value="0.1" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="criminal-history-percent">
+      <value value="20" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="num-recruiters">
+      <value value="60" />
+    </enumeratedValueSet>
+  <enumeratedValueSet variable="mean-hours-worked-recruiter">
+      <value value="6" />
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
