@@ -1,0 +1,34 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@type": "SoftwareSourceCode",
+    "license": "https://spdx.org/licenses/MIT",
+    "codeRepository": "https://github.com/LABSS/PROTON-T/tree/recoveringRun8",
+    "name": "PROTON-T simulator",
+    "description": "Simulation of recruitment to terrorism\n\nDeveloped by LABSS-CNR for the PROTON project, https://www.projectproton.eu/",
+    "applicationCategory": "Social simulation",
+    "funding": "Horizon 2020  grant agreement N° 699824. ",
+    "funder": {
+        "@type": "Organization",
+        "name": "European Commission"
+    },
+    "keywords": [
+        "simulation",
+        "recruitment",
+        "terrorism"
+    ],
+    "programmingLanguage": [
+        "NetLogo"
+    ],
+    "author": [
+        {
+            "@type": "Person",
+            "@id": " https://orcid.org/ 0000-0002-8276-1086 ",
+            "givenName": "Mario",
+            "familyName": "Paolucci",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "LABSS-CNR"
+            }
+        }
+    ]
+}
