@@ -8,7 +8,6 @@
 *.icloud
 *.graphml
 *.world
-*.out
 *.swp
 *.ipynb_checkpoints*
 *__pycache__*
